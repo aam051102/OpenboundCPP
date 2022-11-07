@@ -1,0 +1,49 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Ignore build directories
+build/
+
+# Ignore Visual Studio files/directories
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.*
+
+# Ignore conan build files
+graph_info.json
+conanbuildinfo.premake.lua
+conanbuildinfo.txt
+conaninfo.txt
+conan.lock
+
+# Ignore premake build files
+*.make
+Makefile
+
+# Examples
+/examples/default
