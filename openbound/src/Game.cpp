@@ -8,35 +8,7 @@
 #include "BatchHandler.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-
-static inline std::string trim(std::string s) {
-    const int len = s.length();
-
-    int start = 0;
-    int end = len - 1;
-
-    for (int i = 0; i < len; i++) {
-        if (s[i] != ' ') {
-            start = i;
-            break;
-        }
-    }
-
-    for (int i = len - 1; i >= start; i--) {
-        if (s[i] != ' ') {
-            end = i;
-            break;
-        }
-    }
-
-    std::string newStr = "";
-
-    for (int i = start; i <= end; i++) {
-        newStr += s[i];
-    }
-
-    return newStr;
-}
+#include "Path.h"
 
 namespace SBURB
 {
@@ -44,7 +16,8 @@ namespace SBURB
 
     Game::Game()
     {
-        this->title = "Openbound";
+        this->name = "Jterniabound";
+        this->version = "1.0";
         this->icon = sf::Image();
 
         this->FPS = 30;
@@ -188,12 +161,28 @@ namespace SBURB
         }
         
         std::string resourcePath = rootNode.attribute("resourcePath").value();
+        if (resourcePath != "") {
+            this->resourcePath = resourcePath;
+        }
+
         std::string name = rootNode.attribute("name").value();
-        std::string version = rootNode.attribute("version").value();
-        std::string width = rootNode.attribute("width").value();
-        std::string height = rootNode.attribute("height").value();
+        if(name != "") this->name = name;
         
+        std::string version = rootNode.attribute("version").value();
+        if(version != "") this->version = version;
+       
+        std::string width = rootNode.attribute("width").value();
+        if (width != "") {
+            this->window.SetSize({stoi(width), this->window.GetSize().y});
+        }
+
+        std::string height = rootNode.attribute("height").value();
+        if (height != "") {
+            this->window.SetSize({  this->window.GetSize().y, stoi(height) });
+        }
+
         LoadDependencies(rootNode);
+        LoadSerialAssets(rootNode);
 
         return true;
     }
@@ -209,16 +198,88 @@ namespace SBURB
 
                 LoadSerial(this->levelPath + trim(dependencyPath));
             }
-
         }
 
         return true;
     }
 
+    bool Game::LoadSerialAssets(pugi::xml_node node) {
+        std::string description = node.attribute("description").value();
+        if (description != "") {
+            this->assetManager.SetDescription(description);
+        }
+        else {
+            this->assetManager.SetDescription("assets");
+        }
+
+        pugi::xml_node assetsNode = node.child("assets");
+
+        if (assetsNode) {
+            auto assetNodes = assetsNode.children("asset");
+
+            for (pugi::xml_node assetNode : assetNodes) {
+                if (!this->assetManager.IsLoaded(assetNode.attribute("name").value())) {
+                    LoadSerialAsset(assetNode);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    bool Game::LoadSerialAsset(pugi::xml_node node) {
+        auto newAsset = ParseSerialAsset(node);
+        this->assetManager.LoadAsset(newAsset);
+        return true;
+    }
+
+    Asset Game::ParseSerialAsset(pugi::xml_node node) {
+        std::string name = node.attribute("name").value();
+        std::string type = node.attribute("type").value();
+        std::string value = trim(node.text().as_string());
+
+        std::string blobUrlsAttr = node.attribute("blob-urls").value();
+        std::vector<std::string> blobUrls = {};
+
+        if (blobUrlsAttr != "") {
+            blobUrls = split(blobUrlsAttr, ';');
+        }
+
+        Asset asset;
+        if (type == "graphic") {
+            asset = CreateGraphicAsset(name, value, blobUrls);
+        }
+        else if(type == "audio") {
+            asset = CreateAudioAsset(name, split(value, ';'), blobUrls);
+        }
+        else if (type == "path") {
+            std::vector<std::string> points = split(value, ';');
+            Path path = Path();
+
+            for (auto point : points) {
+                auto pointCoords = split(point, ',');
+                path.Push({ stoi(pointCoords[0]), stoi(pointCoords[1]) });
+            }
+
+            asset = CreatePathAsset(name, path);
+        }
+        else if (type == "movie") {
+            asset = CreateMovieAsset(name, value, blobUrls);
+        }
+        else if (type == "font") {
+            asset = CreateFontAsset(name, value);
+        }
+        else if (type == "text") {
+            asset = CreateTextAsset(name, value);
+        }
+        
+        return asset;
+    }
+
     bool Game::Start()
     {
         // Create & initialize main window
-        window.Init(title, { 650, 450 }, sf::Style::Close | sf::Style::Titlebar, icon); // Standard
+        window.Init(name, { 650, 450 }, sf::Style::Close | sf::Style::Titlebar, icon); // Standard
 
         if (!window.GetWin())
         {
@@ -287,9 +348,9 @@ namespace SBURB
         return this->FPS;
     }
 
-    std::string Game::GetTitle()
+    std::string Game::GetName()
     {
-        return title;
+        return name;
     }
 
     Room *Game::GetRoom()

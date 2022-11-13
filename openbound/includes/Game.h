@@ -9,6 +9,8 @@
 #include "Room.h"
 #include "CollisionHandler.h"
 #include "SaveHandler.h"
+#include "Asset.h"
+#include "AssetManager.h"
 
 #include <pugixml.hpp>
 
@@ -42,12 +44,16 @@ namespace SBURB
         static void LoadRoom(Room *room);
 
         double GetFPS();
-        std::string GetTitle();
+        std::string GetName();
         Room *GetRoom();
         static Game *GetInstance();
 
         bool LoadSerial(std::string path);
         bool LoadDependencies(pugi::xml_node node);
+        bool LoadSerialAssets(pugi::xml_node node);
+        bool LoadSerialAsset(pugi::xml_node node);
+
+        Asset ParseSerialAsset(pugi::xml_node node);
 
         // TODO: Replace this map into a map of memory locations
         // in our binary file format.
@@ -60,7 +66,13 @@ namespace SBURB
     private:
         InputHandler inputHandler;
 
-        std::string title;
+        std::string name;
+        std::string version;
+        std::string levelPath;
+        std::string resourcePath;
+
+        AssetManager assetManager;
+
         sf::Image icon;
 
         sf::Int32 FPS;
@@ -68,8 +80,6 @@ namespace SBURB
 
         std::vector<Object *> globalObjects;
         std::vector<Object *> UIObjects;
-
-        std::string levelPath;
 
         Room *room;
 
