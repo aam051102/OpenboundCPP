@@ -13,7 +13,7 @@ namespace SBURB
         ~Event();
 
         virtual void Reset() = 0;
-        virtual std::string Serialize() = 0;
+        virtual std::string Serialize();
         virtual bool CheckCompletion() = 0;
 
         bool canSerialize;

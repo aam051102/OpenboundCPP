@@ -7,7 +7,7 @@
 
 namespace SBURB
 {
-    class EventWithinRange : Event
+    class EventWithinRange : public Event
     {
     public:
         EventWithinRange(std::string spriteName1, std::string spriteName2, int distance);

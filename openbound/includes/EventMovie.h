@@ -7,7 +7,7 @@
 
 namespace SBURB
 {
-    class EventMovie: Event
+    class EventMovie: public Event
     {
     public:
         EventMovie(std::string movieName);

@@ -8,7 +8,7 @@
 
 namespace SBURB
 {
-    class EventPlayed : Event
+    class EventPlayed : public Event
     {
     public:
         EventPlayed(std::string spriteName);

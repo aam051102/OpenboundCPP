@@ -8,4 +8,8 @@ namespace SBURB {
     Event::~Event() {
 
     }
+
+    std::string Event::Serialize() {
+        return "";
+    }
 }

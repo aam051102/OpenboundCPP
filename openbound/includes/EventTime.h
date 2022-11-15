@@ -7,7 +7,7 @@
 
 namespace SBURB
 {
-    class EventTime : Event
+    class EventTime : public Event
     {
     public:
         EventTime(int time = 0);

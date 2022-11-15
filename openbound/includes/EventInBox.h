@@ -7,7 +7,7 @@
 
 namespace SBURB
 {
-    class EventInBox : Event
+    class EventInBox : public Event
     {
     public:
         EventInBox(std::string spriteName, int x, int y, int width, int height);

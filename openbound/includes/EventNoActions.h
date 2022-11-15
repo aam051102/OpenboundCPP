@@ -7,7 +7,7 @@
 
 namespace SBURB
 {
-    class EventNoActions: Event
+    class EventNoActions: public Event
     {
     public:
         EventNoActions();

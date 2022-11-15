@@ -7,7 +7,7 @@
 
 namespace SBURB
 {
-    class EventGameState : Event
+    class EventGameState : public Event
     {
     public:
         EventGameState(std::string query);

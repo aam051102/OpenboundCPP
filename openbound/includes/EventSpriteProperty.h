@@ -7,7 +7,7 @@
 
 namespace SBURB
 {
-    class EventSpriteProperty: Event
+    class EventSpriteProperty: public Event
     {
     public:
         EventSpriteProperty(std::string spriteName, std::string query);

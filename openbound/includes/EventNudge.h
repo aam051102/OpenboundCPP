@@ -7,7 +7,7 @@
 
 namespace SBURB
 {
-    class EventNudge: Event
+    class EventNudge: public Event
     {
     public:
         EventNudge();
