@@ -9,7 +9,7 @@ namespace SBURB
     class Animation
     {
     public:
-        Animation(std::string name, std::string sheet, int x, int y, int colSize, int rowSize, int startPos, int length, int frameInterval, int loopNum, int followUp, bool flipX = false, bool flipY = false, bool sliced = false, int numCols = 0, int numRows = 0);
+        Animation(std::string name, std::string sheet, int x, int y, int colSize, int rowSize, int startPos, int length, int frameInterval, int loopNum, std::string followUp, bool flipX = false, bool flipY = false, bool sliced = false, int numCols = 0, int numRows = 0);
         ~Animation();
 
         void NextFrame();

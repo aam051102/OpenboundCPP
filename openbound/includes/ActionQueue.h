@@ -11,19 +11,22 @@ namespace SBURB
     class ActionQueue
     {
     public:
-        ActionQueue(std::shared_ptr<Action> action, uint16_t id, std::vector<std::string> groups, bool noWait = false, bool isPaused = false, std::shared_ptr<Trigger> trigger = NULL);
+        ActionQueue(std::shared_ptr<Action> action, std::string id, std::vector<std::string> groups, bool noWait = false, bool isPaused = false, std::shared_ptr<Trigger> trigger = NULL);
         ~ActionQueue();
 
         bool HasGroup(std::string group);
         std::string Serialize(std::string output);
 
+
     protected:
         std::shared_ptr<Action> curAction;
-        uint16_t id;
+        std::string id;
         std::vector<std::string> groups;
         bool noWait;
         bool isPaused;
         std::shared_ptr<Trigger> trigger;
+
+        static int nextQueueId;
 
     };
 }

@@ -2,9 +2,9 @@
 #include <format>
 
 namespace SBURB {
-    ActionQueue::ActionQueue(std::shared_ptr<Action> action, uint16_t id, std::vector<std::string> groups, bool noWait, bool isPaused, std::shared_ptr<Trigger> trigger) {
+    ActionQueue::ActionQueue(std::shared_ptr<Action> action, std::string id, std::vector<std::string> groups, bool noWait, bool isPaused, std::shared_ptr<Trigger> trigger) {
         this->curAction = action;
-        this->id = id; // TODO: Maybe auto-increment (see source)
+		this->id = id == "" ? std::to_string(nextQueueId++) : id;
         this->groups = groups;
         this->noWait = noWait;
         this->isPaused = isPaused;
@@ -37,7 +37,7 @@ namespace SBURB {
 		}
 
 		std::string newOutput = output + "\n<actionQueue " + ">";
-			"id = '" + std::to_string(this->id) +
+			"id = '" + this->id +
 			"' noWait='" + std::to_string(this->noWait) +
 			"' paused='" + std::to_string(this->isPaused) + "'" +
 			(groupString.length() == 0 ? "" : " groups='" + groupString + "'") +

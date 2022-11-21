@@ -62,6 +62,7 @@ namespace SBURB
         Window window;
         Camera *camera;
         Shader shaderProgram;
+        AssetManager assetManager;
 
     private:
         InputHandler inputHandler;
@@ -71,7 +72,6 @@ namespace SBURB
         std::string levelPath;
         std::string resourcePath;
 
-        AssetManager assetManager;
 
         sf::Image icon;
 

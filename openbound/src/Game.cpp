@@ -12,7 +12,7 @@
 
 namespace SBURB
 {
-    static Game *instance;
+    static Game* gameInstance = nullptr;
 
     Game::Game()
     {
@@ -27,8 +27,11 @@ namespace SBURB
         this->camera = nullptr;
 
         this->globalObjects = {};
+        this->assetManager = AssetManager();
 
-        instance = this;
+        if (gameInstance == nullptr) {
+            gameInstance = this;
+        }
     }
 
     Game::~Game()
@@ -135,7 +138,7 @@ namespace SBURB
 
     Room *Game::GetRoomStatic()
     {
-        return instance->GetRoomInternal();
+        return gameInstance->GetRoomInternal();
     }
 
     bool Game::LoadSerial(std::string path) {
@@ -218,7 +221,7 @@ namespace SBURB
             auto assetNodes = assetsNode.children("asset");
 
             for (pugi::xml_node assetNode : assetNodes) {
-                if (!this->assetManager.IsLoaded(assetNode.attribute("name").value())) {
+                if (!this->assetManager.CheckIsLoaded(assetNode.attribute("name").value())) {
                     LoadSerialAsset(assetNode);
                 }
             }
@@ -242,7 +245,7 @@ namespace SBURB
         std::vector<std::string> blobUrls = {};
 
         if (blobUrlsAttr != "") {
-            blobUrls = split(blobUrlsAttr, ';');
+            blobUrls = split(blobUrlsAttr, ";");
         }
 
         Asset asset;
@@ -250,14 +253,14 @@ namespace SBURB
             asset = CreateGraphicAsset(name, value, blobUrls);
         }
         else if(type == "audio") {
-            asset = CreateAudioAsset(name, split(value, ';'), blobUrls);
+            asset = CreateAudioAsset(name, split(value, ";"), blobUrls);
         }
         else if (type == "path") {
-            std::vector<std::string> points = split(value, ';');
+            std::vector<std::string> points = split(value, ";");
             Path path = Path();
 
             for (auto point : points) {
-                auto pointCoords = split(point, ',');
+                auto pointCoords = split(point, ",");
                 path.Push({ stoi(pointCoords[0]), stoi(pointCoords[1]) });
             }
 
@@ -334,12 +337,12 @@ namespace SBURB
 
     void Game::LoadRoom(int roomId)
     {
-        instance->LoadRoomInternal(roomId);
+        gameInstance->LoadRoomInternal(roomId);
     }
 
     void Game::LoadRoom(Room *room)
     {
-        instance->LoadRoomInternal(room);
+        gameInstance->LoadRoomInternal(room);
     }
 
     // Getters
@@ -360,6 +363,6 @@ namespace SBURB
 
     Game *Game::GetInstance()
     {
-        return instance;
+        return gameInstance;
     }
 }
