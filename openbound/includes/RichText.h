@@ -6,19 +6,13 @@
 
 namespace SBURB
 {
-    enum class TextType : unsigned char
-    {
-        Normal = 0,
-        Wavy = 1,
-        Shaky = 2,
-    };
-
     class RichText : public sf::Drawable, sf::Transformable
     {
     public:
         RichText();
 
         void Update(float delta);
+        void AddColor(std::string name, int32_t color);
 
         Font *font;
         std::string rawText;
@@ -31,8 +25,6 @@ namespace SBURB
 
     private:
         sf::Vector2f renderOffset;
-
-        float wavyAngle;
 
         std::unordered_map<std::string, int32_t> colorPresets;
 

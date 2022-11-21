@@ -4,7 +4,9 @@
 #include <vector>
 #include <string>
 #include <stdint.h>
-
+#include <cctype>
+#include <iomanip>
+#include <sstream>
 #include <SFML/Graphics.hpp>
 
 const std::map<char, bool> specialCharsIgnore = {
@@ -15,6 +17,16 @@ namespace SBURB
 {
     class Object; // Forward declare
     class Sprite;
+
+    // Vector 2
+    struct Vector2
+    {
+        int x;
+        int y;
+
+        Vector2() : x(0), y(0) {};
+        Vector2(int x, int y) : x(x), y(y) {};
+    };
 
     // Vector 4
     struct Vector4
@@ -50,40 +62,89 @@ namespace SBURB
         Transform(sf::Vector2f position, int rotation) : position(position), rotation(rotation){};
     };
 
-    static inline std::string escape(std::string s) {
-        std::string newStr = "";
-
-        for (int i = 0; i < s.size(); i++) {
-            char c = s[i];
-
-            if ((c > 'a' && c < 'z') || (c > 'A' && c < 'Z') || (c > '0' && c < '9') || specialCharsIgnore.at(c) == true) {
-                newStr += c;
-                continue;
-            }
-
-            newStr += c;
-            //newStr += "%";
-        }
-
-        return newStr;
+    /*
+    TODO
+    */
+    static inline std::string unescape(const std::string& value) {
+        return value;
     }
 
-    // TODO: Update to allow for string search.
-    static inline std::vector<std::string> split(std::string s, char c) {
-        std::vector<std::string> list = {};
-        std::string current = "";
+    /*
+    Source 1: https://stackoverflow.com/questions/154536/encode-decode-urls-in-c
+    Source 2: https://stackoverflow.com/questions/23689733/convert-string-from-utf-8-to-iso-8859-1
+    */
+    static inline std::string escape(const char* in) {
+        std::ostringstream escaped;
+        escaped.fill('0');
+        escaped << std::hex;
+        if (in == NULL)
+            return escaped.str();
 
-        for (int i = 0; i < s.size(); i++) {
-            if (s[i] == c) {
-                list.push_back(current);
-                current = "";
-            }
-            else {
-                current += s[i];
+        unsigned int codepoint;
+        while (*in != 0)
+        {
+            unsigned char ch = static_cast<unsigned char>(*in);
+            if (ch <= 0x7f)
+                codepoint = ch;
+            else if (ch <= 0xbf)
+                codepoint = (codepoint << 6) | (ch & 0x3f);
+            else if (ch <= 0xdf)
+                codepoint = ch & 0x1f;
+            else if (ch <= 0xef)
+                codepoint = ch & 0x0f;
+            else
+                codepoint = ch & 0x07;
+            ++in;
+            if (((*in & 0xc0) != 0x80) && (codepoint <= 0x10ffff))
+            {
+                if (codepoint <= 255)
+                {
+                    const char c = static_cast<char>(codepoint);
+
+                    // Keep alphanumeric and other accepted characters intact
+                    if (isalnum(c) || c == '_' || c == '@' || c == '*' || c == '+' || c == '-' || c == '.' || c == '/') {
+                        escaped << c;
+                        continue;
+                    }
+
+                    // Any other characters are percent-encoded
+                    escaped << std::setfill('0') << std::uppercase;
+                    escaped << "%";
+                    escaped << std::setw(2);
+                    escaped << codepoint;
+                    escaped << std::nouppercase;
+                }
+                else
+                {
+                    // out-of-bounds
+                    escaped << std::setfill('0') << std::uppercase;
+                    escaped << "%u";
+                    escaped << std::setw(4);
+                    escaped << codepoint;
+                    escaped << std::nouppercase;
+                }
             }
         }
 
-        return list;
+        return escaped.str();
+    }
+
+    /*
+    Source: https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
+    */
+    static inline std::vector<std::string> split(std::string s, std::string delimiter) {
+        size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+        std::string token;
+        std::vector<std::string> res;
+
+        while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
+            token = s.substr(pos_start, pos_end - pos_start);
+            pos_start = pos_end + delim_len;
+            res.push_back(token);
+        }
+
+        res.push_back(s.substr(pos_start));
+        return res;
     }
 
     static inline std::string trim(std::string s) {

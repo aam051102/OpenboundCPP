@@ -15,6 +15,8 @@ namespace SBURB
         Action Clone();
         std::string Serialize(std::string output);
 
+        void SetFollowUp(std::shared_ptr<Action> followUp) { this->followUp = followUp; };
+
         std::string info;
 
     protected:

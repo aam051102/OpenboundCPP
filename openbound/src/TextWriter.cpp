@@ -49,54 +49,12 @@ namespace SBURB
                     timeout = textSpeed;
                     RawDataCheck();
                 }
-                else if (rawText[(size_t)textPosition + 1] == 'i')
-                {
-                    textPosition += 2;
-                    timeout = textSpeed;
-                    RawDataCheck();
-                }
                 else
                 {
                     cancelNext = true;
                     textPosition++;
                     timeout = textSpeed;
                     RawDataCheck();
-                }
-            }
-            else if (rawText[textPosition] == '[')
-            {
-                if (!cancelNext)
-                {
-                    std::string temp = rawText.substr((size_t)textPosition + 1, rawText.substr((size_t)textPosition + 1).find_first_of(']'));
-                    bool verifiedTag = false;
-
-                    // Pause
-                    switch (temp[0])
-                    {
-                    case 'p':
-                        timeout = std::stoi(temp.substr(temp.find_first_of(":") + 1), nullptr, 0);
-                        verifiedTag = true;
-                        break;
-
-                    default:
-                        timeout = textSpeed;
-                        break;
-                    }
-
-                    if (verifiedTag)
-                    {
-                        rawText = rawText.erase(textPosition, temp.length() + 2);
-                    }
-                    else
-                    {
-                        textPosition += temp.length() + 2;
-                    }
-                }
-                else
-                {
-                    cancelNext = false;
-                    textPosition++;
-                    timeout = textSpeed;
                 }
             }
             else

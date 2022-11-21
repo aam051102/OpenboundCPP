@@ -15,19 +15,49 @@ namespace SBURB
         this->monospacing = -1;
         this->renderOffset = {0, 0};
         this->ignoreTags = false;
-        this->wavyAngle = 0;
         this->scale = 1.0;
-        this->textTypeFlags = static_cast<char>(TextType::Normal);
 
         this->colorPresets = std::unordered_map<std::string, int32_t>();
-        colorPresets.insert(std::pair<std::string, int32_t>("Yellow", 0xFFFF00FF));
-        colorPresets.insert(std::pair<std::string, int32_t>("Black", 0x000000FF));
-        colorPresets.insert(std::pair<std::string, int32_t>("White", 0xFFFFFFFF));
+
+        AddColor("aa", 0xa10000);
+        AddColor("aradia", 0xa10000);
+        AddColor("ac", 0x416600);
+        AddColor("nepeta", 0x416600);
+        AddColor("ag", 0x005682);
+        AddColor("vriska", 0x005682);
+        AddColor("at", 0xa15000);
+        AddColor("tavros", 0xa15000);
+        AddColor("ca", 0x6a006a);
+        AddColor("eridan", 0x6a006a);
+        AddColor("cc", 0x77003c);
+        AddColor("feferi", 0x77003c);
+        AddColor("cg", 0x626262);
+        AddColor("karkat", 0x626262);
+        AddColor("ct", 0x000056);
+        AddColor("equius", 0x000056);
+        AddColor("ga", 0x008141);
+        AddColor("kanaya", 0x008141);
+        AddColor("gc", 0x008282);
+        AddColor("terezi", 0x008282);
+        AddColor("ta", 0xa1a100);
+        AddColor("sollux", 0xa1a100);
+        AddColor("dave", 0xe00707);
+        AddColor("meenah", 0x77003c);
+        AddColor("rose", 0xb536da);
+        AddColor("aranea", 0x005682);
+        AddColor("kankri", 0xff0000);
+        AddColor("porrum", 0x008141);
+        AddColor("latula", 0x008282);
+    }
+
+    void RichText::AddColor(std::string name, int32_t color)
+    {
+        colorPresets.insert(std::pair<std::string, int32_t>(name, color));
     }
 
     void RichText::Update(float delta)
     {
-        wavyAngle -= 0.3;
+        
     }
 
     void RichText::draw(sf::RenderTarget &target, sf::RenderStates states) const
@@ -40,7 +70,6 @@ namespace SBURB
         sf::Color formatColor = sf::Color(255, 255, 255);
 
         bool cancelNext = false;
-        float localWavyAngle = wavyAngle;
 
         for (int i = 0; i < rawText.size(); i++)
         {
@@ -83,55 +112,6 @@ namespace SBURB
 
                 break;
 
-            case '[':
-                if (!cancelNext && !ignoreTags)
-                {
-                    std::string temp = rawText.substr((size_t)i + 1, rawText.substr((size_t)i + 1).find_first_of(']'));
-                    std::string tempData = temp.substr(temp.find_first_of(":") + 1);
-                    bool verifiedTag = false;
-
-                    if (temp[0] == 'c')
-                    {
-                        if (colorPresets.count(tempData))
-                        {
-                            formatColor = sf::Color(colorPresets.at(tempData));
-
-                            colorStack.push_back(colorPresets.at(tempData));
-                        }
-                        else
-                        {
-                            int32_t hexColor = std::stoul((tempData.length() < 8) ? tempData + "FF" : tempData, 0, 16);
-
-                            formatColor = sf::Color(hexColor);
-
-                            colorStack.push_back(hexColor);
-                        }
-                    }
-                    else if (temp[0] == '/')
-                    {
-                        if (temp[1] == 'c')
-                        {
-                            if (colorStack.size() > 1)
-                            {
-                                colorStack.pop_back();
-                                formatColor = sf::Color((colorStack.back()));
-                            }
-                            else
-                            {
-                                formatColor = sf::Color(255, 255, 255);
-                            }
-                        }
-                    }
-
-                    i += temp.length() + 2;
-                    verifiedTag = true;
-                }
-                else
-                {
-                    cancelNext = false;
-                }
-                break;
-
             default:
                 break;
             }
@@ -144,16 +124,6 @@ namespace SBURB
             if (i < rawText.length() && font->HasGlyph(rawText.at(i)))
             {
                 sf::Vector2f localRenderOffset = {0, 0};
-                if (textTypeFlags & static_cast<char>(TextType::Shaky))
-                {
-                    localRenderOffset.x += (std::rand() % 2 + 1) - (std::rand() % 2 + 1);
-                    localRenderOffset.y += (std::rand() % 2 + 1) - (std::rand() % 2 + 1);
-                }
-                if (textTypeFlags & static_cast<char>(TextType::Wavy))
-                {
-                    localRenderOffset.x += (std::cos(localWavyAngle) * 0.75);
-                    localRenderOffset.y += (std::sin(localWavyAngle) * 1.75);
-                }
 
                 auto glyph = font->GetGlyph(rawText.at(i));
                 auto sprite = font->GetGlyphSprite(rawText.at(i));
@@ -169,8 +139,6 @@ namespace SBURB
                 {
                     x += (glyph.texture.width + monospacing) * scale;
                 }
-
-                localWavyAngle--;
 
                 target.draw(sprite, states);
             }
