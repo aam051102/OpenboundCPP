@@ -65,8 +65,13 @@ namespace SBURB
     /*
     TODO
     */
-    static inline std::string unescape(const std::string& value) {
-        return value;
+    static inline const char* unescape(std::string in) {
+        return "";
+        /*std::basic_ostringstream<unsigned char, std::char_traits<unsigned char>, std::allocator<unsigned char>> unescaped;
+        unescaped.fill('0');
+        unescaped << std::hex;
+        
+        return unescaped.str().c_str();*/
     }
 
     /*
@@ -80,21 +85,28 @@ namespace SBURB
         if (in == NULL)
             return escaped.str();
 
-        unsigned int codepoint;
+        unsigned int codepoint = 0;
         while (*in != 0)
         {
             unsigned char ch = static_cast<unsigned char>(*in);
-            if (ch <= 0x7f)
+            if (ch <= 0x7f) {
                 codepoint = ch;
-            else if (ch <= 0xbf)
+            }
+            else if (ch <= 0xbf) {
                 codepoint = (codepoint << 6) | (ch & 0x3f);
-            else if (ch <= 0xdf)
+            }
+            else if (ch <= 0xdf) {
                 codepoint = ch & 0x1f;
-            else if (ch <= 0xef)
+            }
+            else if (ch <= 0xef) {
                 codepoint = ch & 0x0f;
-            else
+            }
+            else {
                 codepoint = ch & 0x07;
-            ++in;
+            }
+
+            in++;
+
             if (((*in & 0xc0) != 0x80) && (codepoint <= 0x10ffff))
             {
                 if (codepoint <= 255)

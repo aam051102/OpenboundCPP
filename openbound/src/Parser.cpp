@@ -28,7 +28,7 @@ namespace SBURB {
 			std::string info = GetNodeText(*curNode);
 			info = trim(unescape(info));
 			
-			std::shared_ptr<Action> newAction = std::shared_ptr<Action>(new Action(
+			std::shared_ptr<Action> newAction = std::make_shared<Action>(
 				curNode->attribute("command").as_string(),
 				info,
 				unescape(curNode->attribute("name").as_string()),
@@ -38,10 +38,10 @@ namespace SBURB {
 				curNode->attribute("noDelay").as_bool(),
 				times,
 				curNode->attribute("soft").as_bool(),
-				curNode->attribute("silent").as_bool()));
+				curNode->attribute("silent").as_bool());
 
 			if (oldAction) {
-				oldAction->SetFollowUp(std::shared_ptr<Action>(newAction));
+				oldAction->SetFollowUp(newAction);
 			}
 
 			if (!firstAction) {

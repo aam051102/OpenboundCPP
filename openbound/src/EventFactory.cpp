@@ -12,52 +12,52 @@
 #include <vector>
 
 namespace SBURB {
-	Event* EventFactory::CreateEvent(std::string type, std::string info) {
+	std::shared_ptr<Event> EventFactory::CreateEvent(std::string type, std::string info) {
 		// Parse params
-		std::vector<std::string> params = split(info, ',');
+		std::vector<std::string> params = split(info, ",");
 		for (int i = 0; i < params.size(); i++) {
 			params[i] = trim(params[i]);
 		}
 
 		// Create event
 		if (type == "gameState") {
-			return new EventGameState(params[0]);
+			return std::make_shared<EventGameState>(params[0]);
 		}
 		
 		if (type == "inBox") {
-			return new EventInBox(params[0], stoi(params[1]), stoi(params[2]), stoi(params[3]), stoi(params[4]));
+			return std::make_shared<EventInBox>(params[0], stoi(params[1]), stoi(params[2]), stoi(params[3]), stoi(params[4]));
 		}
 
 		if (type == "inBox2") {
-			return new EventInBox2(params[0], stoi(params[1]), stoi(params[2]), stoi(params[3]), stoi(params[4]));
+			return std::make_shared<EventInBox2>(params[0], stoi(params[1]), stoi(params[2]), stoi(params[3]), stoi(params[4]));
 		}
 
 		if (type == "movie") {
-			return new EventMovie(params[0]);
+			return std::make_shared<EventMovie>(params[0]);
 		}
 
 		if (type == "noActions") {
-			return new EventNoActions();
+			return std::make_shared<EventNoActions>();
 		}
 		
 		if (type == "nudge") {
-			return new EventNudge();
+			return std::make_shared<EventNudge>();
 		}
 
 		if (type == "played") {
-			return new EventPlayed(params[0]);
+			return std::make_shared<EventPlayed>(params[0]);
 		}
 
 		if (type == "spriteProperty") {
-			return new EventSpriteProperty(params[0], params[1]);
+			return std::make_shared<EventSpriteProperty>(params[0], params[1]);
 		}
 
 		if (type == "time") {
-			return new EventTime();
+			return std::make_shared<EventTime>();
 		}
 
 		if (type == "withinRange") {
-			return new EventWithinRange(params[0], params[1], stoi(params[2]));
+			return std::make_shared<EventWithinRange>(params[0], params[1], stoi(params[2]));
 		}
 	}
 }
