@@ -10,7 +10,7 @@ namespace SBURB
     {
     public:
 		// TODO: Figure out what to do for "sheet", since it can be either a string (for sliced) or an Asset for unsliced. Is sliced necessary? I suppose it's best to keep it.
-        Animation(std::string name, Asset sheet, int x = 0, int y = 0, int colSize = 0, int rowSize = 0, int startPos = 0, int length = 0, int frameInterval = 0, int loopNum = 0, std::string followUp = "", bool flipX = false, bool flipY = false, bool sliced = false, int numCols = 0, int numRows = 0);
+		Animation(std::string name, Asset sheet, int x = 0, int y = 0, int colSize = 0, int rowSize = 0, int startPos = 0, int length = 1, std::string frameInterval = "", int loopNum = -1, std::string followUp = "", bool flipX = false, bool flipY = false, bool sliced = false, int numCols = 0, int numRows = 0);
         ~Animation();
 
         void NextFrame();
@@ -26,9 +26,9 @@ namespace SBURB
 
         void SetColSize(int newSize);
         void SetRowSize(int newSize);
-        void SetSheet(std::string newSheet);
+        void SetSheet(Asset newSheet);
 
-        Animation Clone(int x, int y);
+        Animation Clone(int x = 0, int y = 0);
 
         std::string Serialize(std::string output);
 
@@ -46,6 +46,7 @@ namespace SBURB
 		int length;
 		int curInterval;
 		int curFrame;
+		int curLoop;
 		std::string name;
 		int loopNum;
 		std::string followUp;
@@ -53,8 +54,8 @@ namespace SBURB
 		bool flipY;
 		int numRows;
 		int numCols;
-		std::vector<std::vector<std::shared_ptr<Asset>>> sheets;
-		std::vector<int> frameIntervals;
+		std::map<int, std::map<int, std::shared_ptr<Asset>>> sheets;
+		std::map<int, int> frameIntervals;
 		int frameInterval;
 
 	private:

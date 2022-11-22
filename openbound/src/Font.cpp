@@ -1,6 +1,5 @@
 #include "Font.h"
 
-// TODO: Modify this slightly to use some sort of BaseSprite, which will be the original Sprite from UTEngine, instead of the current Sprite.
 namespace SBURB
 {
     Font::Font()
