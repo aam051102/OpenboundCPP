@@ -6,7 +6,7 @@
 
 namespace SBURB
 {
-    class Animation
+    class Animation : public sf::Drawable, public sf::Transformable
     {
     public:
 		// TODO: Figure out what to do for "sheet", since it can be either a string (for sliced) or an Asset for unsliced. Is sliced necessary? I suppose it's best to keep it.
@@ -56,6 +56,9 @@ namespace SBURB
 		std::vector<std::vector<std::shared_ptr<Asset>>> sheets;
 		std::vector<int> frameIntervals;
 		int frameInterval;
+
+	private:
+		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     };
 }
