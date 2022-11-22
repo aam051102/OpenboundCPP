@@ -1,8 +1,9 @@
 #include "Input.h"
 
-static SBURB::InputHandler *_instance;
 namespace SBURB
 {
+    static InputHandler* inputHandlerInstance;
+
     typedef std::function<void(sf::Event::KeyEvent)> CallbackSignature;
     InputHandler::InputHandler()
     {
@@ -32,7 +33,7 @@ namespace SBURB
             {InputState::Pressed, std::vector<CallbackSignature>()},
             {InputState::Released, std::vector<CallbackSignature>()}};
 
-        _instance = this;
+        inputHandlerInstance = this;
     }
 
     void InputHandler::Update(sf::Event event, bool focused)
@@ -196,9 +197,9 @@ namespace SBURB
 
     bool InputHandler::IsInputPressed(InputActions input)
     {
-        if (_instance->keyStates[input] == InputState::Pressed)
+        if (inputHandlerInstance->keyStates[input] == InputState::Pressed)
         {
-            _instance->keyStates[input] = InputState::Held;
+            inputHandlerInstance->keyStates[input] = InputState::Held;
             return true;
         }
         return false;
@@ -206,23 +207,23 @@ namespace SBURB
 
     bool InputHandler::IsInputHeld(InputActions input)
     {
-        return _instance->keyStates[input] == InputState::Pressed || _instance->keyStates[input] == InputState::Held;
+        return inputHandlerInstance->keyStates[input] == InputState::Pressed || inputHandlerInstance->keyStates[input] == InputState::Held;
     }
 
     bool InputHandler::IsInputReleased(InputActions input)
     {
-        return _instance->keyStates[input] == InputState::Released;
+        return inputHandlerInstance->keyStates[input] == InputState::Released;
     }
 
     void InputHandler::Set(InputActions action, sf::Keyboard::Key key, bool alt)
     {
         if (alt)
         {
-            _instance->keyboardAliases[action][1] = key;
+            inputHandlerInstance->keyboardAliases[action][1] = key;
         }
         else
         {
-            _instance->keyboardAliases[action][0] = key;
+            inputHandlerInstance->keyboardAliases[action][0] = key;
         }
     }
 
@@ -230,29 +231,29 @@ namespace SBURB
     {
         if (alt)
         {
-            _instance->gamepadAliases[action][1] = button;
+            inputHandlerInstance->gamepadAliases[action][1] = button;
         }
         else
         {
-            _instance->gamepadAliases[action][0] = button;
+            inputHandlerInstance->gamepadAliases[action][0] = button;
         }
     }
 
     void InputHandler::Reset(InputActions action, bool clear)
     {
-        if (_instance->keyStates[action] == InputState::Held && !clear)
+        if (inputHandlerInstance->keyStates[action] == InputState::Held && !clear)
         {
-            _instance->keyStates[action] = InputState::Pressed;
+            inputHandlerInstance->keyStates[action] = InputState::Pressed;
         }
         else if (clear)
         {
-            _instance->keyStates[action] = InputState::None;
+            inputHandlerInstance->keyStates[action] = InputState::None;
         }
     }
 
     void InputHandler::Reset(bool clear)
     {
-        for (auto const &[key, val] : _instance->keyStates)
+        for (auto const &[key, val] : inputHandlerInstance->keyStates)
         {
             Reset(key);
         }
@@ -262,6 +263,6 @@ namespace SBURB
     // TODO: Check for duplicate callback
     void InputHandler::RegisterCallback(InputState state, CallbackSignature func)
     {
-        _instance->callbacks[state].push_back(func);
+        inputHandlerInstance->callbacks[state].push_back(func);
     }
 }

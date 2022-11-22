@@ -15,14 +15,14 @@ namespace SBURB
         this->glyphs = glyphs;
     }
 
-    Sprite Font::GetGlyphSprite(char character)
+    RenderSprite Font::GetGlyphSprite(char character)
     {
-        return Sprite(this->texId, glyphs[character].texture);
+        return RenderSprite(this->texId, glyphs[character].texture);
     }
 
-    Sprite Font::GetGlyphAsColor(char character, sf::Color color)
+    RenderSprite Font::GetGlyphAsColor(char character, sf::Color color)
     {
-        Sprite sprite{this->texId, glyphs[character].texture};
+        RenderSprite sprite{this->texId, glyphs[character].texture};
         sprite.color = color;
         return sprite;
     }

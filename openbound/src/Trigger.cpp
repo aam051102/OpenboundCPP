@@ -1,4 +1,5 @@
 #include "Trigger.h"
+#include "EventFactory.h"
 
 namespace SBURB {
     Trigger::Trigger(std::vector<std::string> info, std::shared_ptr<Action> action, std::shared_ptr<Trigger> followUp, bool shouldRestart, bool shouldDetonate, std::string op) {
@@ -13,10 +14,10 @@ namespace SBURB {
         this->events = {};
         for (int i = 0; i < info.size(); i++) {
             std::string inf = trim(this->info[i]);
-            std::vector<std::string> params = split(inf, ',');
+            std::vector<std::string> params = split(inf, ",");
             std::string type = params[0];
-            // TODO: Refactor to use a factory or whatever it's called???
-            this->events.push_back(Event(inf));
+
+            this->events.push_back(*EventFactory::CreateEvent(type, inf));
         }
         this->Reset();
     }
@@ -46,7 +47,7 @@ namespace SBURB {
         }
         if (this->CheckCompletion()) {
             if (this->action) {
-                bool result = Sburb.performAction(this->action); // TODO: Not actually bool. figure out type?
+                bool result = Sburb.PerformAction(this->action); // TODO: Not actually bool. figure out type?
                 if (result) {
                     this->waitFor = Sburb.Trigger("noActions," + result.id);
                 }
@@ -74,10 +75,10 @@ namespace SBURB {
             ">";
         for (int i = 0; i < this->info.size(); i++) {
             if (this->events[i].canSerialize) {
-                newOutput = newOutput + "<args>" + escape(this->events[i].Serialize()) + "</args>";
+                newOutput = newOutput + "<args>" + escape(this->events[i].Serialize().c_str()) + "</args>";
             }
             else {
-                newOutput = newOutput + "<args>" + escape(this->info[i]) + "</args>";
+                newOutput = newOutput + "<args>" + escape(this->info[i].c_str()) + "</args>";
             }
         }
         if (this->action) {
