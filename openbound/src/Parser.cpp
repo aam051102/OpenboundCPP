@@ -139,9 +139,6 @@ namespace SBURB {
     }
 
     Animation Parser::ParseAnimation(pugi::xml_node node) {
-		// TODO: Sheet seems to be either a string or an Asset?? How to solve for this?
-		std::string sheet = "";
-
 		int colSize = 0;
 		int rowSize = 0;
 
@@ -149,6 +146,7 @@ namespace SBURB {
 
 		std::string name = node.attribute("name").as_string("image");
 
+		Asset sheet;
 		std::string tmpSheet = node.attribute("sheet").as_string();
 		if (!sliced) {
 			sheet = assets[tmpSheet];
@@ -218,7 +216,7 @@ namespace SBURB {
 			newChar.AddAnimation(newAnim);
 		}
 		newChar.StartAnimation(node.attribute("state").as_string());
-		newChar.facing = node.attribute("facing").as_string();
+		newChar.SetFacing(node.attribute("facing").as_string());
 
 		return newChar;
     }
@@ -336,14 +334,145 @@ namespace SBURB {
     }
 
     Sprite Parser::ParseSprite(pugi::xml_node node) {
+		std::string name = node.attribute("name").as_string();
+		int x = node.attribute("x").as_int();
+		int y = node.attribute("y").as_int();
+		int width = node.attribute("width").as_int();
+		int height = node.attribute("height").as_int();
+		int dx = node.attribute("dx").as_int();
+		int dy = node.attribute("dy").as_int();
+		int depthing = node.attribute("depthing").as_int();
+		bool collidable = node.attribute("collidable").as_bool();
+		std::string state = node.attribute("state").as_string();
 
+
+		Sprite newSprite = Sprite(name, x, y, width, height, dx, dy, depthing, collidable);
+
+
+		auto anims = node.children("animation");
+
+		for (pugi::xml_node anim : anims) {
+			Animation newAnim = ParseAnimation(anim);
+			newSprite.AddAnimation(newAnim);
+
+			if (state == "") {
+				state = newAnim.GetName();
+			}
+		}
+
+		if (anims.empty()) {
+			Asset asset = assets[name];
+
+			if (asset && asset.GetType() == "graphic") {
+				newSprite.AddAnimation(Animation("image", asset));
+				state = "image";
+			}
+		}
+
+		newSprite.StartAnimation(state);
+
+		return newSprite;
     }
 
     SpriteButton Parser::ParseSpriteButton(pugi::xml_node node) {
+		Asset sheet = assets[node.attribute("sheet").as_string()];
+		SpriteButton newButton = SpriteButton(node.attribute("name").as_string(),
+			node.attribute("x").as_int(),
+			node.attribute("y").as_int(),
+			node.attribute("width").as_int(sheet.width),
+			node.attribute("height").as_int(sheet.height),
+			sheet);
 
+		auto action = node.child("action");
+		if (action) {
+			Action newAction = ParseAction(action);
+			newButton.SetAction(newAction);
+		}
+
+		return newButton;
     }
 
-    Trigger Parser::ParseTrigger(pugi::xml_node node) {
+	std::vector<std::string> GetTriggerNodeText(pugi::xml_node node) {
+		std::vector<std::string> outputs = {};
 
+		for (pugi::xml_node child : node.children()) {
+			if (child.name() == "args") {
+				for (pugi::xml_node subChild : child.children()) {
+					if (subChild.first_child()) {
+						serializer = new XMLSerializer();
+
+						std::string output = "";
+						for (pugi::xml_node subSubChild : subChild.children()) {
+							output += serializer.serializeToString(subSubChild);
+						}
+
+						outputs.push_back(output);
+					}
+				}
+
+				if (!child.text().empty()) {
+					outputs.push_back(child.text().as_string());
+				}
+				else {
+					outputs.push_back(child.first_child().value());
+				}
+			}
+		}
+
+		if (outputs.size() == 0) {
+			outputs.push_back(node.first_child().value());
+		}
+
+		return outputs;
+	}
+
+    Trigger Parser::ParseTrigger(pugi::xml_node node) {
+		pugi::xml_node* curNode = &node;
+		std::shared_ptr<Trigger> firstTrigger = nullptr;
+		std::shared_ptr<Trigger> oldTrigger = nullptr;
+
+		do {
+			std::vector<std::string> info = GetTriggerNodeText(*curNode);
+			for (int i = 0; i < info.size(); i++) {
+				info[i] = unescape(info[i]);
+			}
+
+			auto action = curNode->child("action");
+
+			std::shared_ptr<Action> curAction = nullptr;
+			if (action && action.parent() == *curNode) {
+				curAction = std::make_shared<Action>(ParseAction(action));
+			}
+
+			bool restart = curNode->attribute("restart").as_bool();
+			bool detonate = curNode->attribute("detonate").as_bool();
+			std::string op = curNode->attribute("operator").as_string();
+
+			std::shared_ptr<Trigger> trigger = std::make_shared<Trigger>(info, curAction, nullptr, restart, detonate, op);
+
+			if (!firstTrigger) {
+				firstTrigger = trigger;
+			}
+			if (oldTrigger) {
+				oldTrigger->SetFollowUp(trigger);
+			}
+			oldTrigger = trigger;
+
+			bool found = false;
+
+			for (pugi::xml_node child : curNode->children()) {
+				if (child.name() == "trigger") {
+					curNode = &child;
+					found = true;
+					break;
+				}
+			}
+
+			if (!found) {
+				break;
+			}
+		} while (curNode);
+
+		return *firstTrigger;
     }
 }

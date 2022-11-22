@@ -8,7 +8,7 @@ namespace SBURB
     class Character : public Sprite
     {
     public:
-        Character(std::string name, int x, int y, int width, int height, int sx, int sy, int sWidth, int sHeight, std::string sheet, bool bootstrap = false);
+        Character(std::string name, int x, int y, int width, int height, int sx, int sy, int sWidth, int sHeight, Asset sheet, bool bootstrap = false);
         ~Character();
 
         std::string Serialize(std::string output);

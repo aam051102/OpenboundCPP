@@ -11,12 +11,23 @@ namespace SBURB
     class Sprite : public sf::Drawable, public sf::Transformable
     {
     public:
-        Sprite();
+        Sprite(std::string name, int x, int y, int width, int height, int dx, int dy, int depthing, bool collidable);
         Sprite(int texId, sf::IntRect texRect);
 
         sf::IntRect textureRect;
         sf::Color color;
         int textureId;
+
+    protected:
+        std::string name;
+        int x;
+        int y;
+        int width;
+        int height;
+        int dx;
+        int dy;
+        int depthing;
+        bool collidable;
 
     private:
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;

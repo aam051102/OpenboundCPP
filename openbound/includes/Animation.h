@@ -9,7 +9,8 @@ namespace SBURB
     class Animation
     {
     public:
-        Animation(std::string name, std::string sheet, int x, int y, int colSize, int rowSize, int startPos, int length, int frameInterval, int loopNum, std::string followUp, bool flipX = false, bool flipY = false, bool sliced = false, int numCols = 0, int numRows = 0);
+		// TODO: Figure out what to do for "sheet", since it can be either a string (for sliced) or an Asset for unsliced. Is sliced necessary? I suppose it's best to keep it.
+        Animation(std::string name, Asset sheet, int x = 0, int y = 0, int colSize = 0, int rowSize = 0, int startPos = 0, int length = 0, int frameInterval = 0, int loopNum = 0, std::string followUp = "", bool flipX = false, bool flipY = false, bool sliced = false, int numCols = 0, int numRows = 0);
         ~Animation();
 
         void NextFrame();
@@ -35,7 +36,7 @@ namespace SBURB
 
 
     protected:
-		std::string sheet;
+		Asset sheet;
 		bool sliced;
 		int x;
 		int y;

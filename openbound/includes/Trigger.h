@@ -17,6 +17,8 @@ namespace SBURB {
         bool TryToTrigger();
         std::string Serialize(std::string output);
 
+        void SetFollowUp(std::shared_ptr<Trigger> followUp) { this->followUp = followUp; };
+
         
     protected:
         std::vector<std::string> info;
