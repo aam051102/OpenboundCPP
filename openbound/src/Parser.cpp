@@ -138,8 +138,7 @@ namespace SBURB {
 		return ActionQueue(newAction, newId, newGroups, newNoWait, newPaused, newTrigger);
     }
 
-	// TODO: What is assetFolder
-    Animation Parser::ParseAnimation(pugi::xml_node node, std::string assetFolder) {
+    Animation Parser::ParseAnimation(pugi::xml_node node) {
 		// TODO: Sheet seems to be either a string or an Asset?? How to solve for this?
 		std::string sheet = "";
 
@@ -152,7 +151,7 @@ namespace SBURB {
 
 		std::string tmpSheet = node.attribute("sheet").as_string();
 		if (!sliced) {
-			sheet = assetFolder[tmpSheet];
+			sheet = assets[tmpSheet];
 		}
 		else {
 			sheet = tmpSheet;
@@ -185,7 +184,7 @@ namespace SBURB {
 		return Animation(name, sheet, x, y, colSize, rowSize, startPos, length, frameInterval, loopNum, followUp, flipX, flipY, sliced, numCols, numRows);
     }
 
-    Character Parser::ParseCharacter(pugi::xml_node node, std::string assetolder) {
+    Character Parser::ParseCharacter(pugi::xml_node node) {
 		Character newChar = Character(node.attribute("name").as_string(),
 			node.attribute("x").as_int(),
 			node.attribute("y").as_int(),
@@ -195,7 +194,7 @@ namespace SBURB {
 			node.attribute("sy").as_int(),
 			node.attribute("sWidth").as_int(),
 			node.attribute("sHeight").as_int(),
-			assetFolder[node.attribute("sheet").as_string()]);
+			assets[node.attribute("sheet").as_string()]);
 
 		std::string tmpFollowing = node.attribute("following").as_string();
 		if (tmpFollowing != "") {
@@ -215,7 +214,7 @@ namespace SBURB {
 
 		auto anims = node.children("animation");
 		for (auto anim : anims) {
-			Animation newAnim = parseAnimation(anim, assetFolder);
+			Animation newAnim = ParseAnimation(anim);
 			newChar.AddAnimation(newAnim);
 		}
 		newChar.StartAnimation(node.attribute("state").as_string());
@@ -269,7 +268,7 @@ namespace SBURB {
 		return newDialoger;
     }
 
-    Fighter Parser::ParseFighter(pugi::xml_node node, std::string assetFolder) {
+    Fighter Parser::ParseFighter(pugi::xml_node node) {
 		std::string name = node.attribute("name").as_string();
 		int x = node.attribute("x").as_int();
 		int y = node.attribute("y").as_int();
@@ -284,7 +283,7 @@ namespace SBURB {
 
 		auto anims = node.children("animation");
 		for (pugi::xml_node anim : anims) {
-			Animation newAnim = ParseAnimation(anim, assetFolder);
+			Animation newAnim = ParseAnimation(anim);
 			newSprite.AddAnimation(newAnim);
 
 			if (newState == "") {
@@ -297,7 +296,7 @@ namespace SBURB {
 		return newSprite;
     }
 
-    Room Parser::ParseRoom(pugi::xml_node node, std::string assetFolder, std::string spriteFolder) {
+    Room Parser::ParseRoom(pugi::xml_node node) {
 		Room newRoom = Room(node.attribute("name").as_string(),
 			node.attribute("width").as_int(),
 			node.attribute("height").as_int());
@@ -309,7 +308,7 @@ namespace SBURB {
 
 		std::string walkableMap = node.attribute("walkableMap").as_string();
 		if (walkableMap != "") {
-			newRoom.SetWalkableMap(assetFolder[walkableMap]);
+			newRoom.SetWalkableMap(assets[walkableMap]);
 			if (!newRoom.GetWidth()) {
 				newRoom.SetWidth(newRoom.GetWalkableMap().GetWidth() * newRoom.GetMapScale());
 			}
@@ -319,24 +318,24 @@ namespace SBURB {
 			}
 		}
 
-		SerialLoadRoomSprites(newRoom, node.children("sprite"), spriteFolder);
-		SerialLoadRoomSprites(newRoom, node.children("character"), spriteFolder);
-		SerialLoadRoomSprites(newRoom, node.children("fighter"), spriteFolder);
+		SerialLoadRoomSprites(newRoom, node.children("sprite"));
+		SerialLoadRoomSprites(newRoom, node.children("character"));
+		SerialLoadRoomSprites(newRoom, node.children("fighter"));
 
 		auto paths = node.children("paths");
 		if (!paths.empty()) {
-			SerialLoadRoomPaths(newRoom, paths, assetFolder);
+			SerialLoadRoomPaths(newRoom, paths);
 		}
 
 		auto triggers = node.children("triggers");
 		if (!triggers.empty()) {
-			SerialLoadRoomTriggers(newRoom, triggers, spriteFolder);
+			SerialLoadRoomTriggers(newRoom, triggers);
 		}
 
 		return newRoom;
     }
 
-    Sprite Parser::ParseSprite(pugi::xml_node node, std::string assetFolder) {
+    Sprite Parser::ParseSprite(pugi::xml_node node) {
 
     }
 
