@@ -138,7 +138,8 @@ namespace SBURB {
 		return ActionQueue(newAction, newId, newGroups, newNoWait, newPaused, newTrigger);
     }
 
-    Animation Parser::ParseAnimation(pugi::xml_node node) {
+	// TODO: What is assetFolder
+    Animation Parser::ParseAnimation(pugi::xml_node node, std::string assetFolder) {
 		// TODO: Sheet seems to be either a string or an Asset?? How to solve for this?
 		std::string sheet = "";
 
@@ -223,16 +224,116 @@ namespace SBURB {
 		return newChar;
     }
 
-    Dialoger Parser::ParseDialoger(pugi::xml_node node) {
+	Vector2 parse2Dimensions(std::string in) {
+		std::vector<std::string> values = split(in, ",");
+		Vector2 dimensions = Vector2();
 
+		dimensions.x = stoi(values[0]);
+
+		return dimensions;
+	}
+
+	Vector4 parse4Dimensions(std::string in) {
+		std::vector<std::string> values = split(in, ",");
+		Vector4 dimensions = Vector4();
+
+		dimensions.x = stoi(values[0]);
+		dimensions.y = stoi(values[1]);
+		dimensions.z = stoi(values[2]);
+		dimensions.w = stoi(values[3]);
+
+		return dimensions;
+	}
+
+    Dialoger Parser::ParseDialoger(pugi::xml_node node) {
+		Vector2 hiddenPos = parse2Dimensions(node.attribute("hiddenPos").as_string());
+		Vector2 alertPos = parse2Dimensions(node.attribute("alertPos").as_string());
+		Vector2 talkPosLeft = parse2Dimensions(node.attribute("talkPosLeft").as_string());
+		Vector2 talkPosRight = parse2Dimensions(node.attribute("talkPosRight").as_string());
+		Vector2 spriteStartRight = parse2Dimensions(node.attribute("spriteStartRight").as_string());
+		Vector2 spriteEndRight = parse2Dimensions(node.attribute("spriteEndRight").as_string());
+		Vector2 spriteStartLeft = parse2Dimensions(node.attribute("spriteStartLeft").as_string());
+		Vector2 spriteEndLeft = parse2Dimensions(node.attribute("spriteEndLeft").as_string());
+		Vector4 alertTextDimensions = parse4Dimensions(node.attribute("alertTextDimensions").as_string());
+		Vector4 leftTextDimensions = parse4Dimensions(node.attribute("leftTextDimensions").as_string());
+		Vector4 rightTextDimensions = parse4Dimensions(node.attribute("rightTextDimensions").as_string());
+		std::string type = node.attribute("type").as_string("standard");
+
+		Dialoger newDialoger = Dialoger(hiddenPos, alertPos, talkPosLeft, talkPosRight,
+			spriteStartRight, spriteEndRight, spriteStartLeft, spriteEndLeft,
+			alertTextDimensions, leftTextDimensions, rightTextDimensions, type);
+
+		std::string box = node.attribute("box").as_string();
+		newDialoger.SetBox(box);
+
+		return newDialoger;
     }
 
     Fighter Parser::ParseFighter(pugi::xml_node node, std::string assetFolder) {
+		std::string name = node.attribute("name").as_string();
+		int x = node.attribute("x").as_int();
+		int y = node.attribute("y").as_int();
+		int width = node.attribute("width").as_int();
+		int height = node.attribute("height").as_int();
 
+		std::string newState = node.attribute("state").as_string();
+		std::string newFacing = node.attribute("facing").as_string("Right");
+
+		Fighter newSprite = Fighter(name, x, y, width, height);
+		newSprite.SetFacing(newFacing);
+
+		auto anims = node.children("animation");
+		for (pugi::xml_node anim : anims) {
+			Animation newAnim = ParseAnimation(anim, assetFolder);
+			newSprite.AddAnimation(newAnim);
+
+			if (newState == "") {
+				newState = newAnim.GetName();
+			}
+		}
+
+		newSprite.StartAnimation(newState);
+
+		return newSprite;
     }
 
     Room Parser::ParseRoom(pugi::xml_node node, std::string assetFolder, std::string spriteFolder) {
+		Room newRoom = Room(node.attribute("name").as_string(),
+			node.attribute("width").as_int(),
+			node.attribute("height").as_int());
 
+		int mapScale = node.attribute("mapScale").as_int();
+		if (mapScale != 0) {
+			newRoom.SetMapScale(mapScale);
+		}
+
+		std::string walkableMap = node.attribute("walkableMap").as_string();
+		if (walkableMap != "") {
+			newRoom.SetWalkableMap(assetFolder[walkableMap]);
+			if (!newRoom.GetWidth()) {
+				newRoom.SetWidth(newRoom.GetWalkableMap().GetWidth() * newRoom.GetMapScale());
+			}
+
+			if (!newRoom.GetHeight()) {
+				newRoom.SetHEight(newRoom.GetWalkableMap().GetHeight() * newRoom.GetMapScale());
+			}
+		}
+
+		SerialLoadRoomSprites(newRoom, node.children("sprite"), spriteFolder);
+		SerialLoadRoomSprites(newRoom, node.children("character"), spriteFolder);
+		SerialLoadRoomSprites(newRoom, node.children("fighter"), spriteFolder);
+
+		auto paths = node.children("paths");
+		if (!paths.empty()) {
+			SerialLoadRoomPaths(newRoom, paths, assetFolder);
+		}
+
+		auto triggers = node.children("triggers");
+		if (!triggers.empty()) {
+			SerialLoadRoomTriggers(newRoom, triggers, spriteFolder);
+		}
+
+		return newRoom;
     }
 
     Sprite Parser::ParseSprite(pugi::xml_node node, std::string assetFolder) {

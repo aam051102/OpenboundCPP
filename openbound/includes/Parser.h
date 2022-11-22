@@ -21,7 +21,7 @@ namespace SBURB
     public:
         static Action ParseAction(pugi::xml_node node);
         static ActionQueue ParseActionQueue(pugi::xml_node node);
-        static Animation ParseAnimation(pugi::xml_node node);
+        static Animation ParseAnimation(pugi::xml_node node, std::string assetFolder);
         static Character ParseCharacter(pugi::xml_node node, std::string assetFolder);
         static Dialoger ParseDialoger(pugi::xml_node node);
         static Fighter ParseFighter(pugi::xml_node node, std::string assetFolder);

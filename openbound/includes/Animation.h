@@ -31,6 +31,8 @@ namespace SBURB
 
         std::string Serialize(std::string output);
 
+		std::string GetName() { return this->name; };
+
 
     protected:
 		std::string sheet;

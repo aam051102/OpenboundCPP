@@ -11,8 +11,10 @@ namespace SBURB
         Fighter(std::string name, int x, int y, int width, int height);
         ~Fighter();
 
-    protected:
+        void SetFacing(std::string facing) { this->facing = facing; };
 
+    protected:
+        std::string facing;
 
     };
 }

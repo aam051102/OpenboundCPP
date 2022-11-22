@@ -7,41 +7,31 @@
 #include "TileMap.h"
 #include "Zone.h"
 #include "Player.h"
+#include "Animation.h"
+#include "Path.h"
+#include "Trigger.h"
 
 namespace SBURB
 {
-    // Represents a game room, containing game objects and tiles, etc.
     class Room
     {
     public:
-        Room();
-        Room(sf::Vector2f size);
+        Room(std::string name, int width, int height);
 
-        inline void AddElement(Object *object)
-        {
-            objects.push_back(object);
-            isInitialized = false;
-        }
-        inline void AddElement(Zone *zone)
-        {
-            zones.push_back(zone);
-            isInitialized = false;
-        }
-
-        inline std::vector<Object *> &GetObjects() { return objects; }
-        inline std::vector<Zone *> &GetZones() { return zones; }
-
-        inline sf::Vector2i GetSize() { return size; };
-
-        inline bool IsInitialized() const { return isInitialized; }
-
-        void Initialize();
 
     private:
-        bool isInitialized = false;
-        sf::Vector2i size = {};
-        std::vector<Object *> objects = {};
-        std::vector<Zone *> zones = {};
+		std::string name;
+		int width;
+		int height;
+		std::vector<Sprite> sprites;
+		std::vector<Animation> effects;
+		std::vector<Path> walkables;
+		std::vector<Path> unwalkables;
+		std::vector<Path> motionPaths;
+		std::vector<Trigger> triggers;
+		std::string walkableMap;
+		int mapScale;
     };
 }
+
 #endif
