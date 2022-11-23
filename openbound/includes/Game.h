@@ -46,14 +46,8 @@ namespace SBURB
         double GetFPS();
         std::string GetName();
         Room *GetRoom();
+
         static Game *GetInstance();
-
-        bool LoadSerial(std::string path);
-        bool LoadDependencies(pugi::xml_node node);
-        bool LoadSerialAssets(pugi::xml_node node);
-        bool LoadSerialAsset(pugi::xml_node node);
-
-        Asset ParseSerialAsset(pugi::xml_node node);
 
         // TODO: Replace this map into a map of memory locations
         // in our binary file format.
@@ -64,14 +58,13 @@ namespace SBURB
         Shader shaderProgram;
         AssetManager assetManager;
 
-    private:
-        InputHandler inputHandler;
-
         std::string name;
-        std::string version;
         std::string levelPath;
+        std::string version;
         std::string resourcePath;
 
+    private:
+        InputHandler inputHandler;
 
         sf::Image icon;
 
@@ -82,9 +75,6 @@ namespace SBURB
         std::vector<Object *> UIObjects;
 
         Room *room;
-
-        CollisionHandler collisionHandler;
-        SaveHandler saveHandler;
     };
 }
 

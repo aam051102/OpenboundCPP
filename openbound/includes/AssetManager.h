@@ -16,6 +16,7 @@ namespace SBURB
         std::string GetAsset(std::string name);
         void LoadAsset(Asset name);
         bool CheckIsLoaded(std::string name);
+        bool FinishedLoading();
         
         void SetDescription(std::string description) { this->description = description;  };
 

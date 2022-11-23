@@ -13,6 +13,10 @@ namespace SBURB {
 
     }
 
+    bool AssetManager::FinishedLoading() {
+        
+    }
+
     std::string AssetManager::GetAsset(std::string name) {
 
     }

@@ -5,7 +5,7 @@
 
 namespace SBURB
 {
-    class Fighter
+    class Fighter : public Sprite
     {
     public:
         Fighter(std::string name, int x, int y, int width, int height);
