@@ -15,7 +15,6 @@ const std::map<char, bool> specialCharsIgnore = {
 
 namespace SBURB
 {
-    class Object; // Forward declare
     class Sprite;
 
     // Vector 2

@@ -4,25 +4,18 @@
 #include <Common.h>
 
 namespace SBURB {
-    struct Point {
-        int x;
-        int y;
-
-        Point(int x, int y) { this->x = x; this->y = y; };
-    };
-
     class Path {
     public:
         Path();
         ~Path();
 
-        void Push(Point point);
-        void QueryBatchPos(std::vector<Point> queries, std::vector<bool>* results);
-        void QueryBatchNeg(std::vector<Point> queries, std::vector<bool>* results);
-        bool Query(Point point);
+        void Push(Vector2 point);
+        void QueryBatchPos(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results);
+        void QueryBatchNeg(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results);
+        bool Query(Vector2 point);
 
     private:
-        std::vector<Point> points;
+        std::vector<Vector2> points;
 
     };
 }

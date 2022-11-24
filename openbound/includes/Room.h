@@ -6,6 +6,7 @@
 #include "Animation.h"
 #include "Path.h"
 #include "Trigger.h"
+#include "Sprite.h"
 
 namespace SBURB
 {
@@ -25,16 +26,15 @@ namespace SBURB
     {
     public:
         Room(std::string name, int width, int height);
+		~Room();
 
 		void AddEffect(std::shared_ptr<Animation> effect);
 		void AddTrigger(std::shared_ptr<Trigger> trigger);
 
 		void AddSprite(std::shared_ptr<Sprite> sprite);
-		void RemoveSprite(std::shared_ptr<Sprite> sprite);
+		bool RemoveSprite(std::shared_ptr<Sprite> sprite);
 
 		void AddMotionPath(std::shared_ptr<Path> path, int xtox, int xtoy, int ytox, int ytoy, int dx, int dy);
-		std::shared_ptr<Path> GetMotionPath(std::shared_ptr<Sprite> sprite);
-		void RemoveMotionPath(std::shared_ptr<Path> path);
 
 		void AddWalkable(std::shared_ptr<Path> path);
 		void RemoveWalkable(std::shared_ptr<Path> path);
@@ -55,9 +55,9 @@ namespace SBURB
 		std::vector<std::shared_ptr<Action>> QueryActionsVisual(std::shared_ptr<Sprite> query, int x, int y);
 
 		bool IsInBounds(std::shared_ptr<Sprite> sprite, int dx, int dy);
-		std::map<std::string, bool> IsInBoundsBatch(std::map<std::string, Vector2> queries);
+		std::map<std::string, bool> IsInBoundsBatch(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results = nullptr);
 
-		bool Collides(std::shared_ptr<Sprite> sprite, int dx, int dy);
+		std::shared_ptr<Sprite> Collides(std::shared_ptr<Sprite> sprite, int dx, int dy);
 
 		std::string Serialize(std::string output);
 
@@ -69,7 +69,7 @@ namespace SBURB
 		std::vector<std::shared_ptr<Animation>> effects;
 		std::vector<std::shared_ptr<Path>> walkables;
 		std::vector<std::shared_ptr<Path>> unwalkables;
-		std::vector<std::shared_ptr<Path>> motionPaths;
+		std::vector<std::shared_ptr<MotionPath>> motionPaths;
 		std::vector<std::shared_ptr<Trigger>> triggers;
 		std::string walkableMap;
 		int mapScale;
