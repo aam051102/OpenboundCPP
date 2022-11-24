@@ -9,6 +9,9 @@
 namespace SBURB {
     class Serializer {
     public:
+        template <typename T>
+        static std::string SerializeAttribute(std::string name, T value, T defaultValue = T());
+
         static bool LoadSerial(std::string path);
         static bool LoadDependencies(pugi::xml_node node);
         static bool LoadSerialAssets(pugi::xml_node node);

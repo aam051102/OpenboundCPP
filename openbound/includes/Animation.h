@@ -9,16 +9,11 @@ namespace SBURB
     class Animation : public sf::Drawable, public sf::Transformable
     {
     public:
-		// TODO: Figure out what to do for "sheet", since it can be either a string (for sliced) or an Asset for unsliced. Is sliced necessary? I suppose it's best to keep it.
-		Animation(std::string name, Asset sheet, int x = 0, int y = 0, int colSize = 0, int rowSize = 0, int startPos = 0, int length = 1, std::string frameInterval = "", int loopNum = -1, std::string followUp = "", bool flipX = false, bool flipY = false, bool sliced = false, int numCols = 0, int numRows = 0);
+		Animation(std::string name, std::string sheetName, int x = 0, int y = 0, int colSize = 0, int rowSize = 0, int startPos = 0, int length = 1, std::string frameInterval = "", int loopNum = -1, std::string followUp = "", bool flipX = false, bool flipY = false, bool sliced = false, int numCols = 0, int numRows = 0);
         ~Animation();
 
         void NextFrame();
         void Update();
-
-        void DrawNormal(int x, int y);
-        void DrawSliced(int x, int y);
-		void Draw(int x, int y);
 
         void Reset();
         bool HasPlayed();
@@ -26,7 +21,6 @@ namespace SBURB
 
         void SetColSize(int newSize);
         void SetRowSize(int newSize);
-        void SetSheet(Asset newSheet);
 
         Animation Clone(int x = 0, int y = 0);
 
@@ -34,9 +28,9 @@ namespace SBURB
 
 		std::string GetName() { return this->name; };
 
-
     protected:
-		Asset sheet;
+		std::string sheetName;
+		std::shared_ptr<sf::Texture> sheet;
 		bool sliced;
 		int x;
 		int y;

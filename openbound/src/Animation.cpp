@@ -1,17 +1,17 @@
 #include "Animation.h"
+#include "Serializer.h"
+#include "AssetHandler.h"
 
 namespace SBURB {
 	// Problem: Sheet can be either string or asset.
 	// Solution: ???
 	// Thoughts:
 	// Is it even necessary to parse it on like that? If we keep all assets in the asset handler, couldn't we simply always pass along the ID/sheet name? Check original code.
-    Animation::Animation(std::string name, Asset sheet, int x, int y, int colSize, int rowSize, int startPos, int length, std::string frameInterval, int loopNum, std::string followUp, bool flipX, bool flipY, bool sliced, int numCols, int numRows) {
-		this->sheet = sheet;
+    Animation::Animation(std::string name, std::string sheetName, int x, int y, int colSize, int rowSize, int startPos, int length, std::string frameInterval, int loopNum, std::string followUp, bool flipX, bool flipY, bool sliced, int numCols, int numRows) {
+		this->sheetName = sheetName;
 		this->sliced = sliced;
 		this->x = x;
 		this->y = y;
-		this->rowSize = rowSize ? rowSize : sheet.height;
-		this->colSize = colSize ? colSize : sheet.width;
 		this->startPos = startPos;
 		this->length = length;
 		this->curInterval = 0;
@@ -30,21 +30,26 @@ namespace SBURB {
 
 			for (int colNum = 0; colNum < this->numCols; colNum++) {
 				for (int rowNum = 0; rowNum < this->numRows; rowNum++) {
-					std::shared_ptr<Asset> asset = assets[this->sheet + "_" + colNum + "_" + rowNum];
+					std::shared_ptr<sf::Texture> asset = AssetHandler::GetTextureByName(sheetName + "_" + std::to_string(colNum) + "_" + std::to_string(rowNum));
 
 					if (asset) {
 						if (this->sheets.find(colNum) == this->sheets.end()) {
 							this->sheets[colNum] = {};
 						}
+
 						this->sheets[colNum][rowNum] = std::make_shared<Asset>(asset);
 					}
 				}
 			}
 		}
 		else {
-			this->numRows = sheet.height / this->rowSize;
-			this->numCols = sheet.width / this->colSize;
+			this->sheet = AssetHandler::GetTextureByName(sheetName);
+			this->numRows = this->sheet->getSize().y / this->rowSize;
+			this->numCols = this->sheet->getSize().x / this->colSize;
 		}
+
+		this->rowSize = rowSize ? rowSize : this->sheet->getSize().y;
+		this->colSize = colSize ? colSize : this->sheet->getSize().x;
 
 		if (frameInterval == "") {
 			this->frameInterval = 1;
@@ -73,27 +78,40 @@ namespace SBURB {
     }
 
 	void Animation::NextFrame() {
+		this->curFrame++;
 
+		if (this->curFrame >= this->length) {
+			if (this->curLoop == this->loopNum) {
+				this->curFrame = this->length - 1;
+			}
+			else {
+				this->curFrame = 0;
+				if (this->loopNum >= 0) {
+					this->curLoop++;
+				}
+			}
+		}
+
+		if (this->frameIntervals[this->curFrame]) {
+			this->frameInterval = this->frameIntervals[this->curFrame];
+		}
 	}
 
 	void Animation::Update() {
+		this->curInterval++;
 
+		while (this->curInterval > this->frameInterval) {
+			this->curInterval -= this->frameInterval;
+			NextFrame();
+		}
 	}
 
-	void Animation::DrawNormal(int x, int y) {
-
-	}
-
-	void Animation::DrawSliced(int x, int y) {
-
-	}
-
-	void Animation::Draw(int x, int y) {
+	void Animation::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 		if (this->sliced) {
-			DrawSliced(x, y);
+			target.draw();
 		}
 		else {
-			DrawNormal(x, y);
+			target.draw();
 		}
 	}
 
@@ -119,25 +137,18 @@ namespace SBURB {
 
 	void Animation::SetColSize(int newSize) {
 		this->colSize = newSize;
-		this->numCols = this->sheet.width / this->colSize;
+		this->numCols = this->sheet->getSize().x / this->colSize;
 		Reset();
 	}
 
 	void Animation::SetRowSize(int newSize) {
 		this->rowSize = newSize;
-		this->numRows = this->sheet.height / this->rowSize;
-		Reset();
-	}
-
-	void Animation::SetSheet(Asset newSheet) {
-		this->sheet = newSheet;
-		this->numRows = this->sheet.height / this->rowSize;
-		this->numCols = this->sheet.width / this->colSize;
+		this->numRows = this->sheet->getSize().y / this->rowSize;
 		Reset();
 	}
 
 	Animation Animation::Clone(int x, int y) {
-		return Animation(this->name, this->sheet, x + this->x, y + this->y, this->colSize, this->rowSize, this->startPos, this->length, std::to_string(this->frameInterval), this->loopNum, this->followUp, this->flipX, this->flipY, this->sliced, this->numCols, this->numRows);
+		return Animation(this->name, this->sheetName, x + this->x, y + this->y, this->colSize, this->rowSize, this->startPos, this->length, std::to_string(this->frameInterval), this->loopNum, this->followUp, this->flipX, this->flipY, this->sliced, this->numCols, this->numRows);
 	}
 
 	std::string Animation::Serialize(std::string output) {
@@ -158,16 +169,19 @@ namespace SBURB {
 		}
 
 		output = output + "\n<animation " +
-			("sheet='" + this->sheet.name + "' ") +
+			("sheet='" + this->sheetName + "' ") +
 			((this->name != "image") ? "name='" + this->name + "' " : "") +
-			SerializeAttributes(this, "x", "y") +
-			((this->rowSize != this->sheet.height) ? "rowSize='" + std::to_string(this->rowSize) + "' " : "") +
-			((this->colSize != this->sheet.width) ? "colSize='" + std::to_string(this->colSize) + "' " : "") +
-			SerializeAttribute(this, "startPos") +
+			Serializer::SerializeAttribute("x", this->x) +
+			Serializer::SerializeAttribute("y", this->y) +
+			((this->rowSize != this->sheet->getSize().y) ? "rowSize='" + std::to_string(this->rowSize) + "' " : "") +
+			((this->colSize != this->sheet->getSize().x) ? "colSize='" + std::to_string(this->colSize) + "' " : "") +
+			Serializer::SerializeAttribute("startPos", this->startPos) +
 			((this->length != 1) ? "length='" + std::to_string(this->length) + "' " : "") +
 			((frameInterval != "") ? "frameInterval='" + frameInterval + "' " : "") +
 			((this->loopNum != -1) ? "loopNum='" + std::to_string(this->loopNum) + "' " : "") +
-			SerializeAttributes(this, "folowUp", "flipX", "flipY") +
+			Serializer::SerializeAttribute("followUp", this->followUp) +
+			Serializer::SerializeAttribute("flipX", this->flipX) +
+			Serializer::SerializeAttribute("flipY", this->flipY) +
 			(this->sliced ? ("sliced='true' numCols='" + std::to_string(this->numCols) + "' numRows='" + std::to_string(this->numRows) + "' ") : ("")) +
 			" />";
 

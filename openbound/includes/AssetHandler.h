@@ -2,10 +2,9 @@
 #define SBURB_ASSET_HANDLER_H
 
 #include "Logger.h"
-#include "Font.h"
-
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Audio.hpp>
+#include <SFML/Graphics/Font.hpp>
 #include <memory>
 
 namespace SBURB
@@ -14,20 +13,19 @@ namespace SBURB
     {
     public:
         // Texture handling
-        static std::shared_ptr<sf::Texture> GetTextureById(int texID);
-        static int LoadTextureFromFile(const std::string &path);
-        static int LoadTextureFromMemory(const void *data, size_t size);
+        static std::shared_ptr<sf::Texture> GetTextureByName(const std::string& name);
+        static std::shared_ptr<sf::Texture> LoadTextureFromFile(const std::string& name, const std::string &path);
+        static std::shared_ptr<sf::Texture> LoadTextureFromMemory(const std::string& name, const void *data, size_t size);
         static void ClearTextures();
 
         // Sound handling
-        static std::shared_ptr<sf::SoundBuffer> GetSoundById(int soundID);
-        static int LoadSoundFromFile(const std::string &path);
+        static std::shared_ptr<sf::SoundBuffer> GetSoundByName(const std::string& name);
+        static std::shared_ptr<sf::SoundBuffer> LoadSoundFromFile(const std::string& name, const std::string &path);
         static void ClearSounds();
 
         // Font handling
-        static std::shared_ptr<Font> GetFontById(int fontID);
-        static int LoadFontFromMemory(const void *data, size_t size);
-        static int LoadFontFromFile(const std::string &texturePath, const std::string &path);
+        static std::shared_ptr<sf::Font> GetFontByName(const std::string& name);
+        static std::shared_ptr<sf::Font> LoadFontFromFile(const std::string& name, const std::string &path);
         static void ClearFonts();
     };
 }

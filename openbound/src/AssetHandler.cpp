@@ -1,202 +1,112 @@
 #include "AssetHandler.h"
-#include "BinaryReader.h"
-
 #include <vector>
 #include <unordered_map>
 
-static std::unordered_map<uint8_t, std::shared_ptr<sf::Texture>> textures;
-static std::unordered_map<uint8_t, std::shared_ptr<sf::SoundBuffer>> sounds;
-static std::unordered_map<uint8_t, std::shared_ptr<SBURB::Font>> fonts;
-static std::map<uint8_t, std::string_view> paths;
+static std::unordered_map<std::string, std::shared_ptr<sf::Texture>> textures;
+static std::unordered_map<std::string, std::shared_ptr<sf::SoundBuffer>> sounds;
+static std::unordered_map<std::string, std::shared_ptr<sf::Font>> fonts;
+static std::map<std::string, std::string_view> paths;
 
 namespace SBURB
 {
     // Texture handling
-    std::shared_ptr<sf::Texture> AssetHandler::GetTextureById(int texID)
+    std::shared_ptr<sf::Texture> AssetHandler::GetTextureByName(const std::string& name)
     {
-        if (texID >= textures.size())
-            return nullptr;
-        return textures[texID];
+        return textures[name];
     }
 
-    int AssetHandler::LoadTextureFromFile(const std::string &path)
+    std::shared_ptr<sf::Texture> AssetHandler::LoadTextureFromFile(const std::string& name, const std::string &path)
     {
         std::shared_ptr<sf::Texture> texture = std::make_shared<sf::Texture>();
         if (!texture->loadFromFile(path))
         {
             texture.reset();
-            return -1;
+            return nullptr;
         }
         // textures.push_back(std::move(texture));
-        textures.insert(std::pair(textures.size(), texture));
-        return textures.size() - 1;
+        textures.insert(std::pair(name, texture));
+        return texture;
     }
 
-    int AssetHandler::LoadTextureFromMemory(const void *data, size_t size)
+    std::shared_ptr<sf::Texture> AssetHandler::LoadTextureFromMemory(const std::string& name, const void *data, size_t size)
     {
         std::shared_ptr<sf::Texture> texture = std::make_shared<sf::Texture>();
         if (!texture->loadFromMemory(data, size))
         {
             texture.reset();
-            return -1;
+            return nullptr;
         }
-        textures.insert(std::pair(textures.size(), texture));
-        return textures.size() - 1;
+        textures.insert(std::pair(name, texture));
+        return texture;
     }
 
     void AssetHandler::ClearTextures()
     {
-        for (int i = textures.size() - 1; i >= 0; i--)
+        for (auto texture : textures)
         {
-            textures[i].reset();
+            texture.second.reset();
         }
 
         textures.clear();
     }
 
     // Sound handling
-    std::shared_ptr<sf::SoundBuffer> AssetHandler::GetSoundById(int soundID)
+    std::shared_ptr<sf::SoundBuffer> AssetHandler::GetSoundByName(const std::string& name)
     {
-        if (soundID >= sounds.size())
-            return nullptr;
-        return sounds[soundID];
+        return sounds[name];
     }
 
-    int AssetHandler::LoadSoundFromFile(const std::string &path)
+    std::shared_ptr<sf::SoundBuffer> AssetHandler::LoadSoundFromFile(const std::string& name, const std::string &path)
     {
-        for (auto it = paths.begin(); it != paths.end(); ++it)
-        {
-            if (it->second == path)
-            {
-                return it->first;
-            }
-        }
+        if (sounds[name]) return sounds[name];
 
         std::shared_ptr<sf::SoundBuffer> buffer = std::make_shared<sf::SoundBuffer>();
         if (!buffer->loadFromFile(path))
         {
             GlobalLogger->Log(Logger::Error, "Failed to load sound from path: '" + path + "'");
             buffer.reset();
-            return -1;
+            return nullptr;
         }
 
-        sounds.insert(std::pair(sounds.size(), buffer));
-        paths.insert(std::pair(paths.size(), path));
+        sounds.insert(std::pair(name, buffer));
 
-        return sounds.size() - 1;
+        return buffer;
     }
 
     void AssetHandler::ClearSounds()
     {
-        for (int i = sounds.size() - 1; i >= 0; i--)
+        for (auto sound : sounds)
         {
-            sounds[i].reset();
+            sound.second.reset();
         }
 
         sounds.clear();
-        paths.clear();
     }
 
     // Font handling
-    std::shared_ptr<Font> AssetHandler::GetFontById(int fontID)
+    std::shared_ptr<sf::Font> AssetHandler::GetFontByName(const std::string& name)
     {
-        if (fontID >= fonts.size())
+        return fonts[name];
+    }
+
+    std::shared_ptr<sf::Font> AssetHandler::LoadFontFromFile(const std::string& name, const std::string &path)
+    {
+        std::shared_ptr<sf::Font> font;
+        if (!font->loadFromFile(path)) {
+            GlobalLogger->Log(Logger::Error, "Failed to load font from path: '" + path + "'");
             return nullptr;
-        return fonts[fontID];
-    }
-
-    int AssetHandler::LoadFontFromMemory(const void *data, size_t size)
-    {
-        std::unordered_map<char, Glyph> glyphs;
-        BinaryBufferReader bbr = BinaryBufferReader(&data, size);
-
-        void *texData;
-        size_t texSize;
-
-        // Read glyph length
-        uint8_t len = bbr.ReadUInt8();
-
-        // Read glyphs
-        for (int i = 0; i < len; i++)
-        {
-            // Read data
-            uint8_t character = bbr.ReadUInt8();
-            uint16_t x = bbr.ReadUInt16();
-            uint16_t y = bbr.ReadUInt16();
-            uint16_t w = bbr.ReadUInt16();
-            uint16_t h = bbr.ReadUInt16();
-            uint8_t shift = bbr.ReadUInt8();
-            uint8_t offset = bbr.ReadUInt8();
-
-            // Add glyph
-            Glyph glyph;
-            glyph.character = character;
-            glyph.offset = offset;
-            glyph.shift = shift;
-            glyph.texture = sf::IntRect(x, y, w, h);
-
-            glyphs.insert(std::pair<char, Glyph>(character, glyph));
         }
 
-        // Read texture size
-        texSize = bbr.ReadUInt64();
+        fonts.insert(std::pair(name, font));
 
-        // Read texture
-        texData = 0; // TODO: Read texture, texture path, texture id or texture name
-
-        // Create font
-        std::shared_ptr<Font> font = std::make_shared<Font>();
-        font->SetGlyphs(glyphs);
-        font->SetTexId(AssetHandler::LoadTextureFromMemory(texData, texSize));
-
-        fonts.insert(std::pair(fonts.size(), font));
-
-        return fonts.size() - 1;
-    }
-
-    int AssetHandler::LoadFontFromFile(const std::string &texturePath, const std::string &path)
-    {
-        std::unordered_map<char, Glyph> glyphs;
-        BinaryFileReader bfr = BinaryFileReader(path);
-
-        // Read length
-        uint8_t len = bfr.ReadUInt8();
-
-        for (int i = 0; i < len; i++)
-        {
-            // Read data
-            uint8_t character = bfr.ReadUInt8();
-            uint16_t x = bfr.ReadUInt16();
-            uint16_t y = bfr.ReadUInt16();
-            uint16_t w = bfr.ReadUInt16();
-            uint16_t h = bfr.ReadUInt16();
-            uint8_t shift = bfr.ReadUInt8();
-            uint8_t offset = bfr.ReadUInt8();
-
-            // Add glyph
-            Glyph glyph;
-            glyph.character = character;
-            glyph.offset = offset;
-            glyph.shift = shift;
-            glyph.texture = sf::IntRect(x, y, w, h);
-
-            glyphs.insert(std::pair<char, Glyph>(character, glyph));
-        }
-
-        std::shared_ptr<Font> font = std::make_shared<Font>();
-        font->SetGlyphs(glyphs);
-        font->SetTexId(AssetHandler::LoadTextureFromFile(texturePath));
-
-        fonts.insert(std::pair(fonts.size(), font));
-
-        return fonts.size() - 1;
+        return font;
     }
 
     void AssetHandler::ClearFonts()
     {
-        for (int i = fonts.size() - 1; i >= 0; i--)
+        for (auto font : fonts)
         {
-            fonts[i].reset();
+            font.second.reset();
         }
 
         fonts.clear();

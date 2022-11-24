@@ -424,4 +424,9 @@ namespace SBURB {
             actionQueues.push_back(actionQueue);
         }
     }
+
+    template<typename T>
+    std::string Serializer::SerializeAttribute(std::string name, T value, T defaultValue) {
+        return value != defaultValue ? " " + name + "='" + std::to_string(value) + "' " : "";
+    }
 }
