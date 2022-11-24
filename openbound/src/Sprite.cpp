@@ -1,6 +1,7 @@
 #include "Sprite.h"
 #include "BatchHandler.h"
 #include "Serializer.h"
+#include "Game.h"
 
 namespace SBURB
 {
@@ -176,7 +177,7 @@ namespace SBURB
             newSprite.StartAnimation(this->animation->GetName());
         }
         
-        Sburb.sprites[newName] = newSprite;
+        Game::GetInstance()->AddSprite(newName, std::make_shared<Sprite>(newSprite));
 
         return newSprite;
     }

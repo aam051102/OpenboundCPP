@@ -1,7 +1,6 @@
 #include <sstream>
 #include <algorithm>
 #include "Game.h"
-#include "Resources.h"
 #include "Logger.h"
 #include "Sprite.h"
 #include "AssetHandler.h"
@@ -9,6 +8,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include "Path.h"
+#include "Serializer.h"
+#include "Parser.h"
 
 namespace SBURB
 {
@@ -155,14 +156,10 @@ namespace SBURB
         // Center window
         window.CenterWindow();
 
-        // Initialize handlers
-        collisionHandler.Reset();
-        saveHandler.Reset();
-
         // Initialize room
         if(room != nullptr) room->Initialize();
 
-        if (!LoadSerial("./levels/init.xml")) return false;
+        if (!Serializer::LoadSerial("./levels/init.xml")) return false;
 
         // Start update loop
         while (window->isOpen())
@@ -226,5 +223,10 @@ namespace SBURB
     Game *Game::GetInstance()
     {
         return gameInstance;
+    }
+
+    void Game::AddSprite(std::string name, std::shared_ptr<Sprite> sprite)
+    {
+        this->sprites[name] = sprite;
     }
 }

@@ -5,10 +5,7 @@
 #include "Shader.h"
 #include "Window.h"
 #include "Input.h"
-#include "Object.h"
 #include "Room.h"
-#include "CollisionHandler.h"
-#include "SaveHandler.h"
 #include "Asset.h"
 #include "AssetManager.h"
 
@@ -49,6 +46,8 @@ namespace SBURB
 
         static Game *GetInstance();
 
+        void AddSprite(std::string name, std::shared_ptr<Sprite> sprite);
+
         // TODO: Replace this map into a map of memory locations
         // in our binary file format.
         std::map<unsigned int, Room *> tempRoomList;
@@ -64,6 +63,8 @@ namespace SBURB
         std::string resourcePath;
 
     private:
+        std::map<std::string, std::shared_ptr<Sprite>> sprites;
+
         InputHandler inputHandler;
 
         sf::Image icon;
