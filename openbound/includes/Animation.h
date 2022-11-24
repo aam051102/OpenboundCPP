@@ -48,7 +48,7 @@ namespace SBURB
 		bool flipY;
 		int numRows;
 		int numCols;
-		std::map<int, std::map<int, std::shared_ptr<Asset>>> sheets;
+		std::map<int, std::map<int, std::shared_ptr<sf::Texture>>> sheets;
 		std::map<int, int> frameIntervals;
 		int frameInterval;
 

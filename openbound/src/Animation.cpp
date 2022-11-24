@@ -1,12 +1,9 @@
 #include "Animation.h"
 #include "Serializer.h"
 #include "AssetHandler.h"
+#include "BatchHandler.h"
 
 namespace SBURB {
-	// Problem: Sheet can be either string or asset.
-	// Solution: ???
-	// Thoughts:
-	// Is it even necessary to parse it on like that? If we keep all assets in the asset handler, couldn't we simply always pass along the ID/sheet name? Check original code.
     Animation::Animation(std::string name, std::string sheetName, int x, int y, int colSize, int rowSize, int startPos, int length, std::string frameInterval, int loopNum, std::string followUp, bool flipX, bool flipY, bool sliced, int numCols, int numRows) {
 		this->sheetName = sheetName;
 		this->sliced = sliced;
@@ -30,14 +27,14 @@ namespace SBURB {
 
 			for (int colNum = 0; colNum < this->numCols; colNum++) {
 				for (int rowNum = 0; rowNum < this->numRows; rowNum++) {
-					std::shared_ptr<sf::Texture> asset = AssetHandler::GetTextureByName(sheetName + "_" + std::to_string(colNum) + "_" + std::to_string(rowNum));
+					std::shared_ptr<sf::Texture> texture = AssetHandler::GetTextureByName(sheetName + "_" + std::to_string(colNum) + "_" + std::to_string(rowNum));
 
-					if (asset) {
+					if (texture) {
 						if (this->sheets.find(colNum) == this->sheets.end()) {
 							this->sheets[colNum] = {};
 						}
 
-						this->sheets[colNum][rowNum] = std::make_shared<Asset>(asset);
+						this->sheets[colNum][rowNum] = texture;
 					}
 				}
 			}
@@ -107,11 +104,72 @@ namespace SBURB {
 	}
 
 	void Animation::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+		// Instead of doing transformations here, do them directly on Animation.
+		states.transform *= getTransform();
+
 		if (this->sliced) {
-			target.draw();
+			// TODO: Keep inside of camera view for optimization??? May not be necessary.
+			for (int colNum = 0; colNum <= this->numCols; colNum++) {
+				for (int rowNum = 0; rowNum <= this->numRows; rowNum++) {
+					if (this->sheets.at(colNum).at(rowNum)) {
+						std::shared_ptr<sf::Texture> sheet = this->sheets.at(colNum).at(rowNum);
+						int frameX = 0;
+						int frameY = 0;
+						int drawWidth = sheet->getSize().x;
+						int drawHeight = sheet->getSize().y;
+						int offsetX = colNum * this->colSize;
+						int offsetY = rowNum * this->rowSize;
+
+						sf::FloatRect transformRect({ offsetX, offsetY }, sf::Vector2f(drawWidth, drawHeight));
+						transformRect = states.transform.transformRect(transformRect);
+						sf::VertexArray arr(sf::Quads, 4);
+						arr[0].position = sf::Vector2f(transformRect.left, transformRect.top);
+						arr[1].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top);
+						arr[2].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top + transformRect.height);
+						arr[3].position = sf::Vector2f(transformRect.left, transformRect.top + transformRect.height);
+
+						arr[0].texCoords = sf::Vector2f(frameX, frameY);
+						arr[1].texCoords = sf::Vector2f(frameX + drawWidth, frameY);
+						arr[2].texCoords = sf::Vector2f(frameX + drawWidth, frameY + drawHeight);
+						arr[3].texCoords = sf::Vector2f(frameX, frameY + drawHeight);
+
+						arr[0].color = sf::Color::White;
+						arr[1].color = sf::Color::White;
+						arr[2].color = sf::Color::White;
+						arr[3].color = sf::Color::White;
+
+						BatchHandler::getInstance().DrawSpriteRect(this->sheetName, arr, target);
+					}
+				}
+			}
 		}
 		else {
-			target.draw();
+			int colNum = ((this->startPos + this->curFrame) % this->numCols);
+			int rowNum = (floor((this->startPos + this->curFrame - colNum) / this->numCols));
+			int frameX = colNum * this->colSize;
+			int frameY = rowNum * this->rowSize;
+			int drawWidth = this->colSize;
+			int drawHeight = this->rowSize;
+
+			sf::FloatRect transformRect({ 0, 0 }, sf::Vector2f(drawWidth, drawHeight));
+			transformRect = states.transform.transformRect(transformRect);
+			sf::VertexArray arr(sf::Quads, 4);
+			arr[0].position = sf::Vector2f(transformRect.left, transformRect.top);
+			arr[1].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top);
+			arr[2].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top + transformRect.height);
+			arr[3].position = sf::Vector2f(transformRect.left, transformRect.top + transformRect.height);
+
+			arr[0].texCoords = sf::Vector2f(frameX, frameY);
+			arr[1].texCoords = sf::Vector2f(frameX + drawWidth, frameY);
+			arr[2].texCoords = sf::Vector2f(frameX + drawWidth, frameY + drawHeight);
+			arr[3].texCoords = sf::Vector2f(frameX, frameY + drawHeight);
+
+			arr[0].color = sf::Color::White;
+			arr[1].color = sf::Color::White;
+			arr[2].color = sf::Color::White;
+			arr[3].color = sf::Color::White;
+
+			BatchHandler::getInstance().DrawSpriteRect(this->sheetName, arr, target);
 		}
 	}
 
