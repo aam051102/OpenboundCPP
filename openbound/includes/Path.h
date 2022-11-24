@@ -14,7 +14,10 @@ namespace SBURB {
         void QueryBatchNeg(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results);
         bool Query(Vector2 point);
 
+        std::string GetName() { return this->name; };
+
     private:
+        std::string name;
         std::vector<Vector2> points;
 
     };

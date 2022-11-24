@@ -14,7 +14,8 @@ namespace SBURB
 		this->unwalkables = {};
 		this->motionPaths = {};
 		this->triggers = {};
-		this->walkableMap = "";
+		this->walkableMap = nullptr;
+		this->mapData = nullptr;
 		this->mapScale = 4;
     }
 
@@ -70,12 +71,15 @@ namespace SBURB
 	}
 
 	void Room::Enter() {
-		// TODO
+		if (this->walkableMap) {
+			sf::Image img = this->walkableMap->copyToImage();
+			this->mapData = std::make_shared<sf::Image>(img);
+		}
 	}
 
 	void Room::Exit() {
 		this->effects.clear();
-		// TODO: Clear mapdata?
+		this->mapData = nullptr;
 	}
 
 	bool Room::Contains(std::shared_ptr<Sprite> sprite) {
@@ -179,22 +183,27 @@ namespace SBURB
 	}
 
 	std::map<std::string, bool> Room::IsInBoundsBatch(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results) {
+		// TODO: walkableMap/mapData probably needs to be a texture converted to an image to get the pixel value.
+
 		if (results == nullptr) {
 			results = &std::map<std::string, bool>();
 		}
 
-		if (this->walkableMap != "") {
+		if (this->walkableMap) {
 			for (auto query : queries) {
 				Vector2 pt = query.second;
-				int width = this->walkableMap.width;
-				int height = this->walkableMap.height;
+				int width = this->walkableMap->getSize().x;
+				int height = this->walkableMap->getSize().y;
 				
 				if (pt.x<0 || pt.x>width * this->mapScale || pt.y<0 || pt.y>height * this->mapScale) {
 					(*results)[query.first] = false;
 				}
 				else {
-					int imgPt = (round(pt.x / this->mapScale) + round(pt.y / this->mapScale) * width) * 4;
-					(*results)[query.first] = !!this->mapData[imgPt];
+					// NOTE: Why multiplied by 4? Is this an error?
+					int mapX = round(pt.x / this->mapScale) * 4;
+					int mapY = round(pt.y / this->mapScale) * 4;
+
+					(*results)[query.first] = this->mapData->getPixel(mapX, mapY) == sf::Color::White;
 				}
 			}
 		}
@@ -222,5 +231,49 @@ namespace SBURB
 		}
 
 		return nullptr;
+	}
+	
+	std::string Room::Serialize(std::string output) {
+		output = output + "\n<room name='" + this->name +
+			"' width='" + std::to_string(this->width) +
+			"' height='" + std::to_string(this->height) +
+			(this->walkableMap ? ("' walkableMap='" + this->walkableMap->name) : "") +
+			(this->mapScale != 4 ? ("' mapScale='" + std::to_string(this->mapScale)) : "") +
+			"' >";
+
+		output = output + "\n<paths>";
+
+		for (int i = 0; i < this->walkables.size(); i++) {
+			std::shared_ptr<Path> walkable = this->walkables[i];
+			output = output + "\n<walkable path='" + walkable->GetName() + "'/>";
+		}
+
+		for (int i = 0; i < this->unwalkables.size(); i++) {
+			std::shared_ptr<Path> unwalkable = this->unwalkables[i];
+			output = output + "\n<unwalkable path='" + unwalkable->GetName() + "'/>";
+		}
+
+		for (int i = 0; i < this->motionPaths.size(); i++) {
+			std::shared_ptr<MotionPath> motionPath = this->motionPaths[i];
+			output = output + "\n<motionpath path='" + motionPath->path->GetName()  + "' xtox='" + std::to_string(motionPath->xtox) + "' xtoy='" + std::to_string(motionPath->xtoy) +
+				"' ytox='" + std::to_string(motionPath->ytox) + "' ytoy='" + std::to_string(motionPath->ytoy) + "' dx='" + std::to_string(motionPath->dx) + "' dy='" + std::to_string(motionPath->dy) + "'/>";
+		}
+
+		output = output + "\n</paths>";
+		output = output + "\n<triggers>";
+
+		for (int i = 0; i < this->triggers.size(); i++) {
+			output = this->triggers[i]->Serialize(output);
+		}
+
+		output = output + "\n</triggers>";
+
+		for (int i = 0; i < this->sprites.size(); i++) {
+			output = this->sprites[i]->Serialize(output);
+		}
+
+		output = output + "\n</room>";
+
+		return output;
 	}
 }
