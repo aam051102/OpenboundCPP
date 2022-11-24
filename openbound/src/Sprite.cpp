@@ -1,5 +1,6 @@
 #include "Sprite.h"
 #include "BatchHandler.h"
+#include "Serializer.h"
 
 namespace SBURB
 {
@@ -14,9 +15,170 @@ namespace SBURB
         this->dy = dy;
         this->depthing = depthing;
         this->collidable = collidable;
+        this->queries = BoundaryQueries();
 
         textureId = -1;
         textureRect = sf::IntRect(0, 0, 0, 0);
+    }
+
+    void Sprite::AddAnimation(std::shared_ptr<Animation> anim) {
+        if (anim == nullptr) return;
+        this->animations.insert(std::pair(anim->GetName(), anim));
+    }
+
+    void Sprite::StartAnimation(std::string name) {
+        if (this->state != name && this->animations[name]) {
+            this->animation = this->animations[name];
+            this->animation->Reset();
+            this->state = name;
+        }
+    }
+
+    void Sprite::Update() {
+        if (this->animation) {
+            if (this->animation->HasPlayed() && this->animation->GetFollowUp() != "") {
+                StartAnimation(this->animation->GetFollowUp());
+            }
+            else {
+                this->animation->Update();
+            }
+        }
+    }
+
+    bool Sprite::IsBehind(std::shared_ptr<Sprite> other) {
+        if (this->depthing == other->depthing) {
+            return this->y + this->dy < other->y + other->dy;
+        }
+        else {
+            return this->depthing < other->depthing;
+        }
+    }
+
+    bool Sprite::Collides(std::shared_ptr<Sprite> other, int dx = 0, int dy = 0) {
+        int x = this->x + dx;
+        int y = this->y + dy;
+
+        if (other->collidable) {
+            if ((x - this->width / 2 < other->x + other->width / 2) &&
+                (x + this->width / 2 > other->x - other->width / 2) &&
+                (y - this->height / 2 < other->y + other->height / 2) &&
+                (y + this->height / 2 > other->y - other->height / 2)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool Sprite::HitsPoint(int x, int y) {
+        if ((this->x - this->width / 2 <= x) &&
+            (this->x + this->width / 2 >= x) &&
+            (this->y - this->height / 2 <= y) &&
+            (this->y + this->height / 2 >= y)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool Sprite::IsVisuallyUnder(int x, int y) {
+        return this->animation && this->animation->IsVisuallyUnder(x - this->x, y - this->y);
+    }
+
+    void Sprite::AddAction(std::shared_ptr<Action> action) {
+        this->actions.insert(std::pair(action->GetName(), action));
+    }
+
+    void Sprite::RemoveAction(std::string name) {
+        this->actions.erase(name);
+    }
+
+    std::vector<std::shared_ptr<Action>> Sprite::GetActions(std::shared_ptr<Sprite> sprite) {
+        std::vector<std::shared_ptr<Action>> validActions = {};
+
+        for (auto action : (this->actions)) {
+            std::string desired = action.second->GetSprite();
+            if (desired == "" || desired == sprite->GetName()
+                || (desired[0] == '!' && desired.substr(1) != sprite->GetName())) {
+                validActions.push_back(action.second);
+            }
+        }
+
+        return validActions;
+    }
+
+    BoundaryQueries Sprite::GetBoundaryQueries(int dx = 0, int dy = 0) {
+        int spriteX = this->x + dx;
+        int spriteY = this->y + dy;
+        int w = this->width / 2;
+        int h = this->height / 2;
+
+        this->queries.upRight.x = spriteX + w;
+        this->queries.upRight.y = spriteY - h;
+        this->queries.upLeft.x = spriteX - w;
+        this->queries.upLeft.y = spriteY - h;
+        this->queries.downLeft.x = spriteX - w;
+        this->queries.downLeft.y = spriteY + h;
+        this->queries.downRight.x = spriteX + w;
+        this->queries.downRight.y = spriteY + h;
+        this->queries.downMid.x = spriteX;
+        this->queries.downMid.y = spriteY + h;
+        this->queries.upMid.x = spriteX;
+        this->queries.upMid.y = spriteY - h;
+
+        return this->queries;
+    }
+
+    std::string Sprite::Serialize(std::string output) {
+        int animationCount = 0;
+        for (auto anim : this->animations) {
+            animationCount++;
+        }
+
+        output = output + "\n<sprite " +
+            Serializer::SerializeAttribute("name", this->name) +
+            Serializer::SerializeAttribute("x", this->x) +
+            Serializer::SerializeAttribute("y", this->y) +
+            Serializer::SerializeAttribute("dx", this->dx) +
+            Serializer::SerializeAttribute("dy", this->dy) +
+            Serializer::SerializeAttribute("width", this->width) +
+            Serializer::SerializeAttribute("height", this->height) +
+            Serializer::SerializeAttribute("depthing", this->depthing) +
+            Serializer::SerializeAttribute("collidable", this->collidable) +
+            (animationCount > 1 ? "state='" + this->state + "' " : "") +
+            ">";
+
+        for (auto anim : this->animations) {
+            output = anim.second->Serialize(output);
+        }
+
+        for (auto action : this->actions) {
+            output = action.second->Serialize(output);
+        }
+
+        output = output + "\n</sprite>";
+
+        return output;
+    }
+
+    Sprite Sprite::Clone(std::string newName) {
+        Sprite newSprite = Sprite(newName, this->x, this->y, this->width, this->height, this->dx, this->dy, this->depthing, this->collidable);
+
+        for (auto anim : this->animations) {
+            newSprite.AddAnimation(std::make_shared<Animation>(anim.second->Clone()));
+        }
+        
+        for (auto action : this->actions) {
+            newSprite.AddAction(std::make_shared<Action>(action.second->Clone()));
+        }
+        
+        if (this->animation) {
+            newSprite.StartAnimation(this->animation->GetName());
+        }
+        
+        Sburb.sprites[newName] = newSprite;
+
+        return newSprite;
     }
 
     void Sprite::draw(sf::RenderTarget& target, sf::RenderStates states) const

@@ -3,7 +3,6 @@
 #include <SFML/Graphics.hpp>
 
 #include "Common.h"
-#include "Object.h"
 #include "Texture.h"
 #include "Animation.h"
 #include "Action.h"
@@ -27,23 +26,25 @@ namespace SBURB
     public:
         Sprite(std::string name, int x, int y, int width, int height, int dx, int dy, int depthing, bool collidable);
 
-        void AddAnimation(Animation anim);
+        void AddAnimation(std::shared_ptr<Animation> anim);
         void StartAnimation(std::string name);
-        void Update(Room curRoom);
+        void Update();
         
-        bool IsBehind(Sprite other);
-        bool Collides(Sprite other, int dx, int dy);
+        bool IsBehind(std::shared_ptr<Sprite> other);
+        bool Collides(std::shared_ptr<Sprite> other, int dx, int dy);
         bool HitsPoint(int x, int y);
         bool IsVisuallyUnder(int x, int y);
         
-        void AddAction(Action action);
+        void AddAction(std::shared_ptr<Action> action);
         void RemoveAction(std::string name);
-        std::vector<Action> GetActions(Sprite sprite);
+        std::vector<std::shared_ptr<Action>> GetActions(std::shared_ptr<Sprite> sprite);
 
         BoundaryQueries GetBoundaryQueries(int dx, int dy);
 
         Sprite Clone(std::string name);
         std::string Serialize(std::string output);
+
+        std::string GetName() { return this->name; };
 
         sf::IntRect textureRect;
         int textureId;
@@ -58,12 +59,12 @@ namespace SBURB
         int dy;
         int depthing;
         bool collidable;
-        std::map<std::string, Animation> animations;
+        std::map<std::string, std::shared_ptr<Animation>> animations;
         std::shared_ptr<Animation> animation;
         std::string state;
         int lastTime;
-        std::vector<Action> actions;
-        std::vector<int> queries;
+        std::map<std::string, std::shared_ptr<Action>> actions;
+        BoundaryQueries queries;
 
     private:
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;

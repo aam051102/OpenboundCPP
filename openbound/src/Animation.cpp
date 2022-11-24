@@ -68,6 +68,10 @@ namespace SBURB {
 				this->frameInterval = this->frameIntervals[this->curFrame];
 			}
 		}
+
+		// Set transform
+		setPosition(this->x, this->y);
+		setScale(this->flipX ? -1 : 1, this->flipY ? -1 : 1);
     }
 
     Animation::~Animation() {
@@ -104,11 +108,11 @@ namespace SBURB {
 	}
 
 	void Animation::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-		// Instead of doing transformations here, do them directly on Animation.
 		states.transform *= getTransform();
 
 		if (this->sliced) {
 			// TODO: Keep inside of camera view for optimization??? May not be necessary.
+
 			for (int colNum = 0; colNum <= this->numCols; colNum++) {
 				for (int rowNum = 0; rowNum <= this->numRows; rowNum++) {
 					if (this->sheets.at(colNum).at(rowNum)) {
@@ -204,6 +208,26 @@ namespace SBURB {
 		this->numRows = this->sheet->getSize().y / this->rowSize;
 		Reset();
 	}
+
+	void Animation::SetX(int newX) {
+		this->x = newX;
+		setPosition(this->x, this->y);
+	};
+
+	void Animation::SetY(int newY) {
+		this->y = newY;
+		setPosition(this->x, this->y);
+	};
+
+	void Animation::SetFlipX(bool newFlipX) {
+		this->flipX = newFlipX;
+		setScale(this->flipX, this->flipY);
+	};
+
+	void Animation::SetFlipY(bool newFlipY) {
+		this->flipY = newFlipY;
+		setScale(this->flipY, this->flipY);
+	};
 
 	Animation Animation::Clone(int x, int y) {
 		return Animation(this->name, this->sheetName, x + this->x, y + this->y, this->colSize, this->rowSize, this->startPos, this->length, std::to_string(this->frameInterval), this->loopNum, this->followUp, this->flipX, this->flipY, this->sliced, this->numCols, this->numRows);

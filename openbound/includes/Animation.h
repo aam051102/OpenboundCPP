@@ -22,6 +22,13 @@ namespace SBURB
         void SetColSize(int newSize);
         void SetRowSize(int newSize);
 
+		void SetX(int newX);
+		void SetY(int newY);
+		void SetFlipX(bool newFlipX);
+		void SetFlipY(bool newFlipY);
+
+		std::string GetFollowUp() { return this->followUp; };
+
         Animation Clone(int x = 0, int y = 0);
 
         std::string Serialize(std::string output);

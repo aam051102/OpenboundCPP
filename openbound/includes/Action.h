@@ -16,6 +16,9 @@ namespace SBURB
         std::string Serialize(std::string output);
 
         void SetFollowUp(std::shared_ptr<Action> followUp) { this->followUp = followUp; };
+      
+        std::string GetSprite() { return this->sprite; };
+        std::string GetName() { return this->name; };
 
         std::string info;
 
