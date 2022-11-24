@@ -10,17 +10,6 @@
 
 namespace SBURB
 {
-    struct BoundaryQueries {
-        Vector2 upLeft = Vector2(0, 0);
-        Vector2 upMid = Vector2(0, 0);
-        Vector2 upRight = Vector2(0, 0);
-        Vector2 downLeft = Vector2(0, 0);
-        Vector2 downMid = Vector2(0, 0);
-        Vector2 downRight = Vector2(0, 0);
-
-        BoundaryQueries() {  };
-    };
-
     class Sprite : public sf::Drawable, public sf::Transformable
     {
     public:
@@ -39,7 +28,7 @@ namespace SBURB
         void RemoveAction(std::string name);
         std::vector<std::shared_ptr<Action>> GetActions(std::shared_ptr<Sprite> sprite);
 
-        BoundaryQueries GetBoundaryQueries(int dx, int dy);
+        std::map<std::string, Vector2> GetBoundaryQueries(int dx, int dy);
 
         Sprite Clone(std::string name);
         std::string Serialize(std::string output);
@@ -64,7 +53,7 @@ namespace SBURB
         std::string state;
         int lastTime;
         std::map<std::string, std::shared_ptr<Action>> actions;
-        BoundaryQueries queries;
+        std::map<std::string, Vector2> queries;
 
     private:
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;

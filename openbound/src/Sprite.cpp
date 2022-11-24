@@ -16,7 +16,7 @@ namespace SBURB
         this->dy = dy;
         this->depthing = depthing;
         this->collidable = collidable;
-        this->queries = BoundaryQueries();
+        this->queries = {};
 
         textureId = -1;
         textureRect = sf::IntRect(0, 0, 0, 0);
@@ -108,24 +108,18 @@ namespace SBURB
         return validActions;
     }
 
-    BoundaryQueries Sprite::GetBoundaryQueries(int dx = 0, int dy = 0) {
+    std::map<std::string, Vector2> Sprite::GetBoundaryQueries(int dx = 0, int dy = 0) {
         int spriteX = this->x + dx;
         int spriteY = this->y + dy;
         int w = this->width / 2;
         int h = this->height / 2;
 
-        this->queries.upRight.x = spriteX + w;
-        this->queries.upRight.y = spriteY - h;
-        this->queries.upLeft.x = spriteX - w;
-        this->queries.upLeft.y = spriteY - h;
-        this->queries.downLeft.x = spriteX - w;
-        this->queries.downLeft.y = spriteY + h;
-        this->queries.downRight.x = spriteX + w;
-        this->queries.downRight.y = spriteY + h;
-        this->queries.downMid.x = spriteX;
-        this->queries.downMid.y = spriteY + h;
-        this->queries.upMid.x = spriteX;
-        this->queries.upMid.y = spriteY - h;
+        this->queries["upRight"] = Vector2(spriteX + w, spriteY - h);
+        this->queries["upLeft"] = Vector2(spriteX - w, spriteY - h);
+        this->queries["downLeft"] = Vector2(spriteX - w, spriteY + h);
+        this->queries["downRight"] = Vector2(spriteX + w, spriteY + h);
+        this->queries["downMid"] = Vector2(spriteX, spriteY + h);
+        this->queries["upMid"] = Vector2(spriteX, spriteY - h);
 
         return this->queries;
     }

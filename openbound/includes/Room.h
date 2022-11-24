@@ -9,24 +9,74 @@
 
 namespace SBURB
 {
-    class Room
+	struct MotionPath {
+		std::shared_ptr<Path> path;
+		int xtox;
+		int xtoy;
+		int ytox;
+		int ytoy;
+		int dx;
+		int dy;
+
+		MotionPath(std::shared_ptr<Path> path, int xtox, int xtoy, int ytox, int ytoy, int dx, int dy) : path(path), xtox(xtox), xtoy(xtoy), ytox(ytox), ytoy(ytoy), dx(dx), dy(dy) {};
+	};
+
+    class Room : public sf::Drawable
     {
     public:
         Room(std::string name, int width, int height);
 
+		void AddEffect(std::shared_ptr<Animation> effect);
+		void AddTrigger(std::shared_ptr<Trigger> trigger);
+
+		void AddSprite(std::shared_ptr<Sprite> sprite);
+		void RemoveSprite(std::shared_ptr<Sprite> sprite);
+
+		void AddMotionPath(std::shared_ptr<Path> path, int xtox, int xtoy, int ytox, int ytoy, int dx, int dy);
+		std::shared_ptr<Path> GetMotionPath(std::shared_ptr<Sprite> sprite);
+		void RemoveMotionPath(std::shared_ptr<Path> path);
+
+		void AddWalkable(std::shared_ptr<Path> path);
+		void RemoveWalkable(std::shared_ptr<Path> path);
+
+		void AddUnwalkable(std::shared_ptr<Path> path);
+		void RemoveUnwalkable(std::shared_ptr<Path> path);
+
+		void Enter();
+		void Exit();
+
+		bool Contains(std::shared_ptr<Sprite> sprite);
+
+		void Update();
+
+		void SortDepths();
+
+		std::vector<std::shared_ptr<Action>> QueryActions(std::shared_ptr<Sprite> query, int x, int y);
+		std::vector<std::shared_ptr<Action>> QueryActionsVisual(std::shared_ptr<Sprite> query, int x, int y);
+
+		bool IsInBounds(std::shared_ptr<Sprite> sprite, int dx, int dy);
+		std::map<std::string, bool> IsInBoundsBatch(std::map<std::string, Vector2> queries);
+
+		bool Collides(std::shared_ptr<Sprite> sprite, int dx, int dy);
+
+		std::string Serialize(std::string output);
 
     private:
 		std::string name;
 		int width;
 		int height;
-		std::vector<Sprite> sprites;
-		std::vector<Animation> effects;
-		std::vector<Path> walkables;
-		std::vector<Path> unwalkables;
-		std::vector<Path> motionPaths;
-		std::vector<Trigger> triggers;
+		std::vector<std::shared_ptr<Sprite>> sprites;
+		std::vector<std::shared_ptr<Animation>> effects;
+		std::vector<std::shared_ptr<Path>> walkables;
+		std::vector<std::shared_ptr<Path>> unwalkables;
+		std::vector<std::shared_ptr<Path>> motionPaths;
+		std::vector<std::shared_ptr<Trigger>> triggers;
 		std::string walkableMap;
 		int mapScale;
+
+	private:
+		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
     };
 }
 

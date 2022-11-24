@@ -1,5 +1,7 @@
 #include "Room.h"
 
+constexpr int BLOCK_SIZE = 500;
+
 namespace SBURB
 {
     Room::Room(std::string name, int width, int height) {
