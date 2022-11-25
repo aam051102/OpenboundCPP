@@ -2,18 +2,19 @@
 #define SBURB_CHARACTER_H
 
 #include "Common.h"
+#include "Room.h"
+#include "Sprite.h"
 
 namespace SBURB
 {
     class Character : public Sprite
     {
     public:
-        Character(std::string name, int x, int y, int width, int height, int sx, int sy, int sWidth, int sHeight, Asset sheet, bool bootstrap = false);
+        Character(std::string name, int x, int y, int width, int height, int sx, int sy, int sWidth, int sHeight, std::string sheetName, bool bootstrap = false);
         ~Character();
 
-        std::string Serialize(std::string output);
         void Update();
-        void HandleFollowing(Room room);
+        void HandleFollowing();
 
         void MoveUp(bool movingSideways);
         void MoveDown(bool movingSideways);
@@ -28,7 +29,7 @@ namespace SBURB
 
         void HandleInputs();
 
-        void TryToMove(int vx, int vy, Room room);
+        void TryToMove(int vx, int vy);
         
         void Follow(Sprite* sprite);
         void Unfollow();
@@ -36,8 +37,26 @@ namespace SBURB
 
         bool IsNPC();
 
-    protected:
+        std::string Serialize(std::string output);
 
+    protected:
+        int speed;
+        int vx;
+        int vy;
+        std::string facing;
+        bool npc;
+        std::string spriteType;
+        int handledInput;
+        int oldX;
+        int oldY;
+        bool bootstrap;
+        std::shared_ptr<Character> following;
+        std::vector<Vector2> followBuffer;
+        std::shared_ptr<Character> follower;
+        Vector2 lastLeaderPos;
+
+    private:
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     };
 }

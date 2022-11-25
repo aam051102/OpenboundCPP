@@ -3,17 +3,23 @@
 #include <SFML/Graphics.hpp>
 
 #include "Common.h"
-#include "Texture.h"
+#include "AssetTexture.h"
 #include "Animation.h"
 #include "Action.h"
 #include "Room.h"
 
 namespace SBURB
 {
+    enum class Depth {
+        BG_DEPTHING = 0,
+        MG_DEPTHING = 1,
+        FG_DEPTHING = 2
+    };
+
     class Sprite : public sf::Drawable, public sf::Transformable
     {
     public:
-        Sprite(std::string name, int x, int y, int width, int height, int dx, int dy, int depthing, bool collidable);
+        Sprite(std::string name, int x, int y, int width, int height, int dx = 0, int dy = 0, Depth depthing = Depth::BG_DEPTHING, bool collidable = false);
 
         void AddAnimation(std::shared_ptr<Animation> anim);
         void StartAnimation(std::string name);
@@ -44,7 +50,7 @@ namespace SBURB
         int height;
         int dx;
         int dy;
-        int depthing;
+        Depth depthing;
         bool collidable;
         std::map<std::string, std::shared_ptr<Animation>> animations;
         std::shared_ptr<Animation> animation;

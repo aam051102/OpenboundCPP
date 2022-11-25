@@ -2,7 +2,6 @@
 #define SBURB_ANIMATION_H
 
 #include "Common.h"
-#include "Asset.h"
 #include "AssetTexture.h"
 
 namespace SBURB

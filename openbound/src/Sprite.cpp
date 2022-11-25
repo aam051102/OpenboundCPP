@@ -5,7 +5,7 @@
 
 namespace SBURB
 {
-    Sprite::Sprite(std::string name, int x, int y, int width, int height, int dx, int dy, int depthing, bool collidable)
+    Sprite::Sprite(std::string name, int x, int y, int width, int height, int dx, int dy, Depth depthing, bool collidable)
     {
         this->name = name;
         this->x = x;
