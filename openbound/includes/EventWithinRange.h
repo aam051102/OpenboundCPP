@@ -10,11 +10,10 @@ namespace SBURB
     class EventWithinRange : public Event
     {
     public:
-        EventWithinRange(std::string spriteName1, std::string spriteName2, int distance);
+        EventWithinRange(std::string spriteName1, std::string spriteName2, float distance);
         ~EventWithinRange();
 
         virtual void Reset() override;
-        virtual std::string Serialize() override;
         virtual bool CheckCompletion() override;
 
         bool canSerialize;
@@ -22,7 +21,7 @@ namespace SBURB
     protected:
         std::string spriteName1;
         std::string spriteName2;
-        int distance;
+        float distance;
 
     };
 }
