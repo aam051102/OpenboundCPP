@@ -27,13 +27,13 @@ namespace SBURB
         void BecomeNPC();
         void BecomePlayer();
 
-        void HandleInputs();
+        void HandleInputs(std::vector<int> order);
 
-        void TryToMove(int vx, int vy);
+        bool TryToMove(int vx, int vy);
         
-        void Follow(Sprite* sprite);
+        void Follow(std::shared_ptr<Character> sprite);
         void Unfollow();
-        void GetActionQueries();
+        std::vector<Vector2> GetActionQueries();
 
         bool IsNPC();
 

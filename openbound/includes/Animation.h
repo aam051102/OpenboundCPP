@@ -20,12 +20,24 @@ namespace SBURB
         bool IsVisuallyUnder(int x, int y);
 
         void SetColSize(int newSize);
+		int GetColSize() { return this->colSize; };
+
         void SetRowSize(int newSize);
+		int GetRowSize() { return this->rowSize; };
 
 		void SetX(int newX);
+		int GetX() { return this->x; };
+
 		void SetY(int newY);
+		int GetY() { return this->y; };
+
 		void SetFlipX(bool newFlipX);
 		void SetFlipY(bool newFlipY);
+
+		void SetFrameInterval(int frameInterval) { this->frameInterval = frameInterval; };
+		int GetFrameInterval() { return this->frameInterval; };
+
+		std::shared_ptr<AssetTexture> GetSheet() { return this->sheet; };
 
 		std::string GetFollowUp() { return this->followUp; };
 

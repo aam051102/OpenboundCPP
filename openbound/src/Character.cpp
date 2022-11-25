@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "Game.h"
 
 constexpr int FOLLOW_BUFFER_LENGTH = 6;
 
@@ -59,29 +60,31 @@ namespace SBURB {
 
 		this->Sprite::Update();
 	}
-	
+
 	void Character::HandleFollowing() {
-		if (this.following) {
-			if (this.following.isNPC() && !this.isNPC()) {
-				this.becomeNPC();
-				this.collidable = true;
-				this.walk();
+		if (this->following) {
+			if (this->following->IsNPC() && !this->IsNPC()) {
+				this->BecomeNPC();
+				this->collidable = true;
+				this->Walk();
 			}
-			else if (!this.following.isNPC() && this.isNPC()) {
-				this.becomePlayer();
-				this.collidable = false;
-			}
-
-			if (this.following.x != this.lastLeaderPos.x || this.following.y != this.lastLeaderPos.y) {
-				this.followBuffer.push({ x:this.following.x,y : this.following.y });
-				this.lastLeaderPos.x = this.following.x;
-				this.lastLeaderPos.y = this.following.y;
+			else if (!this->following->IsNPC() && this->IsNPC()) {
+				this->BecomePlayer();
+				this->collidable = false;
 			}
 
-			var destPos = null;
+			if (this->following->x != this->lastLeaderPos.x || this->following->y != this->lastLeaderPos.y) {
+				this->followBuffer.push_back(Vector2(this->following->x,  this->following->y));
+				this->lastLeaderPos.x = this->following->x;
+				this->lastLeaderPos.y = this->following->y;
+			}
+
+			bool didMove = false;
+			Vector2 destPos;
 
 			while (this->followBuffer.size() > FOLLOW_BUFFER_LENGTH) {
 				destPos = this->followBuffer[0];
+				didMove = true;
 
 				std::vector<std::string> keys = {};
 
@@ -116,11 +119,12 @@ namespace SBURB {
 				else {
 					this->HandleInputs(keys);
 				}
+
 				break;
 			}
 
-			if (this->followBuffer.size()  <= FOLLOW_BUFFER_LENGTH && !this->following->IsNPC()) {
-				if (destPos) {
+			if (this->followBuffer.size() <= FOLLOW_BUFFER_LENGTH && !this->following->IsNPC()) {
+				if (didMove) {
 					this->x = destPos.x;
 					this->y = destPos.y;
 				}
@@ -128,5 +132,329 @@ namespace SBURB {
 				this->MoveNone();
 			}
 		}
+	}
+
+	void Character::MoveUp(bool movingSideways) {
+		if (!movingSideways) {
+			this->facing = "Back";
+			this->Walk();
+			this->vx = 0;
+			this->vy = -this->speed;
+		}
+		else {
+			this->vx *= 2 / 3;
+			this->vy = -this->speed * 2 / 3;
+		}
+	}
+	
+	void Character::MoveDown(bool movingSideways) {
+		if (!movingSideways) {
+			this->facing = "Front";
+			this->Walk();
+			this->vx = 0;
+			this->vy = this->speed;
+		}
+		else {
+			this->vx *= 2 / 3;
+			this->vy = this->speed * 2 / 3;
+		}
+	}
+
+	void Character::MoveLeft() {
+		this->facing = "Left";
+		this->Walk();
+		this->vx = -this->speed;
+		this->vy = 0;
+	}
+
+	void Character::MoveRight() {
+		this->facing = "Right";
+		this->Walk();
+		this->vx = this->speed;
+		this->vy = 0;
+	}
+
+	void Character::MoveNone() {
+		if (this->animations["walkFront"]->GetFrameInterval()  == 4) {
+			this->Idle();
+			this->vx = 0;
+			this->vy = 0;
+		}
+	}
+
+	void Character::Walk() {
+		this->StartAnimation("walk" + this->facing);
+	}
+
+	void Character::Idle() {
+		this->StartAnimation("idle" + this->facing);
+	}
+	
+	void Character::BecomeNPC() {
+		this->animations["walkFront"]->SetFrameInterval(12);
+		this->animations["walkBack"]->SetFrameInterval(12);
+		this->animations["walkLeft"]->SetFrameInterval(12);
+		this->animations["walkRight"]->SetFrameInterval(12);
+	}
+
+	void Character::BecomePlayer() {
+		this->animations["walkFront"]->SetFrameInterval(4);
+		this->animations["walkBack"]->SetFrameInterval(4);
+		this->animations["walkLeft"]->SetFrameInterval(4);
+		this->animations["walkRight"]->SetFrameInterval(4);
+	}
+
+	void Character::HandleInputs(std::vector<int> order) {
+		float down = -1, up = -1, left = -1, right = -1, none = -0.5;
+		down = std::max(std::find(order.begin(), order.end(), Sburb.Keys.down), std::find(order.begin(), order.end(), Sburb.Keys.s));
+		up = std::max(std::find(order.begin(), order.end(), Sburb.Keys.up), std::find(order.begin(), order.end(), Sburb.Keys.w));
+		left = std::max(std::find(order.begin(), order.end(), Sburb.Keys.left), std::find(order.begin(), order.end(), Sburb.Keys.a));
+		right = std::max(std::find(order.begin(), order.end(), Sburb.Keys.right), std::find(order.begin(), order.end(), Sburb.Keys.d));
+		int most = std::max(std::max(left, right), none);
+		bool movingSideways = true;
+
+		if (left == most) {
+			this->MoveLeft();
+		}
+		else if (right == most) {
+			this->MoveRight();
+		}
+		else {
+			movingSideways = false;
+		}
+
+		int most = std::max(std::max(up, down), none);
+		bool movingVertical = true;
+
+		if (down == most) {
+			this->MoveDown(movingSideways);
+		}
+		else if (up == most) {
+			this->MoveUp(movingSideways);
+		}
+		else {
+			movingVertical = false;
+		}
+
+		if (!movingSideways && !movingVertical) {
+			this->MoveNone();
+		}
+
+		this->handledInput = 2;
+	}
+
+	bool Character::TryToMove(int vx, int vy) {
+		// NOTE: Got rid of moveMap.
+		//var moveMap = room.getMoveFunction(this);
+		bool wasShifted = false;
+		/*if (moveMap) { //our motion could be modified somehow
+			l = moveMap(vx, vy);
+			if (vx != l.x || vy != l.y) {
+				wasShifted = true;
+			}
+			vx = l.x;
+			vy = l.y;
+		}*/
+
+		if (vx != 0 || vy != 0) {
+			this->oldX = this->x;
+			this->oldY = this->y;
+		}
+
+		Room* room = Game::GetInstance()->GetRoom();
+
+		std::shared_ptr<Character> sharedThis = std::make_shared<Character>(this);
+
+		var minX = Sburb.Stage.scaleX;
+		var minY = Sburb.Stage.scaleY;
+		while (abs(vx) >= minX || abs(vy) >= minY) {
+			int dx = 0;
+			int dy = 0;
+
+			if (abs(vx) >= minX) {
+				dx = round((minX)*vx / abs(vx));
+				this->x += dx;
+				vx -= dx;
+			}
+			if (abs(vy) >= minY) {
+				dy = round((minY)*vy / abs(vy));
+				this->y += dy;
+				vy -= dy;
+			}
+
+			if (!this->following) {
+				std::shared_ptr<Sprite> collision = nullptr;
+				if (collision = room->Collides(sharedThis)) {
+					bool fixed = false;
+					if (dx != 0) {
+						if (!this->Collides(collision, 0, minY)) {
+							dy += minY;
+							this->y += minY;
+							fixed = true;
+						}
+						else if (!this->Collides(collision, 0, -minY)) {
+							dy -= minY;
+							this->y -= minY;
+							fixed = true;
+						}
+					}
+					if (!fixed && dy != 0) {
+						if (!this->Collides(collision, minX, 0)) {
+							dx += minX;
+							this->x += minX;
+							fixed = true;
+						}
+						else if (!this->Collides(collision, -minX, 0)) {
+							dx -= minX;
+							this->x -= minX;
+							fixed = true;
+						}
+					}
+					if (!fixed || room->Collides(sharedThis)) {
+						this->x -= dx;
+						this->y -= dy;
+
+						return false;
+					}
+				}
+
+				if (!room->IsInBounds(sharedThis)) {
+					bool fixed = false;
+					if (dx != 0) {
+						if (room->IsInBounds(sharedThis, 0, minY)) {
+							dy += minY;
+							this->y += minY;
+							fixed = true;
+						}
+						else if (room->IsInBounds(sharedThis, 0, -minY)) {
+							dy -= minY;
+							this->y -= minY;
+							fixed = true;
+						}
+					}
+					if (!fixed && dy != 0) {
+						if (room->IsInBounds(sharedThis, minX, 0)) {
+							dx += minX;
+							this->x += minX;
+							fixed = true;
+						}
+						else if (room->IsInBounds(sharedThis, -minX, 0)) {
+							dx -= minX;
+							this->x -= minX;
+							fixed = true;
+						}
+					}
+					if (!fixed || room->Collides(sharedThis)) {
+						this->x -= dx;
+						this->y -= dy;
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	void Character::Follow(std::shared_ptr<Character> sprite) {
+		while (sprite->follower != nullptr) {
+			sprite = sprite->follower;
+		}
+
+		this->following = sprite;
+		sprite->follower = std::make_shared<Character>(this);
+		this->followBuffer = {};
+		this->lastLeaderPos = Vector2();
+		this->collidable = false;
+	}
+
+	void Character::Unfollow() {
+		if (this->following) {
+			this->following->follower = this->follower;
+			if (this->follower) {
+				this->follower->following = this->following;
+				this->follower->followBuffer = {};
+			}
+			this->following = nullptr;
+			this->follower = nullptr;
+			this->lastLeaderPos = Vector2();
+			this->collidable = true;
+			this->BecomeNPC();
+		}
+	}
+
+	std::vector<Vector2> Character::GetActionQueries() {
+		std::vector<Vector2> queries = {};
+		queries.push_back(Vector2(this->x, this->y));
+
+		if (this->facing == "Front") {
+			queries.push_back(Vector2(this->x, this->y + (this->height / 2 + 15)));
+			queries.push_back(Vector2(this->x - this->width / 2, this->y + (this->height / 2 + 15)));
+			queries.push_back(Vector2(this->x + this->width / 2, this->y + (this->height / 2 + 15)));
+		}
+		else if (this->facing == "Back") {
+			queries.push_back(Vector2(this->x, this->y - (this->height / 2 + 15)));
+			queries.push_back(Vector2(this->x - this->width / 2, this->y - (this->height / 2 + 15)));
+			queries.push_back(Vector2(this->x + this->width / 2, this->y - (this->height / 2 + 15)));
+		}
+		else if (this->facing == "Right") {
+			queries.push_back(Vector2(this->x + (this->width / 2 + 15), this->y));
+			queries.push_back(Vector2(this->x + (this->width / 2 + 15), this->y + this->height / 2));
+			queries.push_back(Vector2(this->x + (this->width / 2 + 15), this->y - this->height / 2));
+		}
+		else if (this->facing == "Left") {
+			queries.push_back(Vector2(this->x - (this->width / 2 + 15), this->y));
+			queries.push_back(Vector2(this->x - (this->width / 2 + 15), this->y + this->height / 2));
+			queries.push_back(Vector2(this->x - (this->width / 2 + 15), this->y - this->height / 2));
+		}
+
+		return queries;
+	}
+
+	std::string Character::Serialize(std::string output) {
+		output = output + "\n<character name='" + this->name +
+			"' x='" + std::to_string(this->x) +
+			"' y='" + std::to_string(this->y) +
+			"' width='" + std::to_string(this->width) +
+			"' height='" + std::to_string(this->height) +
+			"' state='" + this->state +
+			"' facing='" + this->facing;
+
+		if (!this->bootstrap) {
+			output = output + "' sx='" + std::to_string(this->animations["walkFront"]->GetX()) +
+				"' sy='" + std::to_string(this->animations["walkFront"]->GetY()) +
+				"' sWidth='" + std::to_string(this->animations["walkFront"]->GetColSize()) +
+				"' sHeight='" + std::to_string(this->animations["walkFront"]->GetRowSize()) +
+				"' sheet='" + this->animations["walkFront"]->GetSheet()->GetName();
+		}
+		else {
+			output = output + "' bootstrap='true";
+		}
+		if (this->following) {
+			output = output + "' following='" + this->following->GetName() + "";
+		}
+		if (this->follower) {
+			output = output + "' follower='" + this->follower->GetName() + "";
+		}
+
+		output = output + "'>";
+
+		for (auto anim : this->animations) {
+			if (this->bootstrap || (anim.second->GetName().find("idle") == std::string::npos && anim.second->GetName().find("walk") == std::string::npos)) {
+				output = anim.second->Serialize(output);
+			}
+		}
+
+		for (auto action : this->actions) {
+			output = action.second->Serialize(output);
+		}
+
+		output = output + "\n</character>";
+
+		return output;
+	}
+
+	bool Character::IsNPC() {
+		return this->animations["walkFront"]->GetFrameInterval() == 12;
 	}
 }
