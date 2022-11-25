@@ -19,6 +19,10 @@ namespace SBURB
             {InputActions::Down, {sf::Keyboard::S, sf::Keyboard::Down}},
             {InputActions::Attack, {sf::Keyboard::Space, sf::Keyboard::Enter, sf::Keyboard::LControl}}};
 
+        mouseAliases = {
+           {MouseInputActions::Click, {sf::Mouse::Left}}
+        };
+
         gamepadAliases = {
             {InputActions::Confirm, {1, 1}},
             {InputActions::Back, {2, 2}},
@@ -174,6 +178,36 @@ namespace SBURB
                 }
             }
         }
+
+        for (auto mouseAction : this->mouseAliases) {
+            bool isPressed = false;
+
+            for (auto alias : mouseAction.second) {
+                if (sf::Mouse::isButtonPressed(alias)) {
+                    isPressed = true;
+                    break;
+                }
+            }
+
+            if (isPressed)
+            {
+                if (this->mouseButtonStates[mouseAction.first] != InputState::Pressed && this->mouseButtonStates[mouseAction.first] != InputState::Held)
+                {
+                    this->mouseButtonStates[mouseAction.first] = InputState::Pressed;
+                }
+            }
+            else
+            {
+                if (this->mouseButtonStates[mouseAction.first] == InputState::Released)
+                {
+                    this->mouseButtonStates[mouseAction.first] = InputState::None;
+                }
+                else
+                {
+                    this->mouseButtonStates[mouseAction.first] = InputState::Released;
+                }
+            }
+        }
     }
 
     bool InputHandler::IsInputPressed(InputActions input)
@@ -196,30 +230,27 @@ namespace SBURB
         return inputHandlerInstance->keyStates[input] == InputState::Released;
     }
 
-    void InputHandler::Reset(InputActions action, bool clear)
-    {
-        if (inputHandlerInstance->keyStates[action] == InputState::Held && !clear)
-        {
-            inputHandlerInstance->keyStates[action] = InputState::Pressed;
-        }
-        else if (clear)
-        {
-            inputHandlerInstance->keyStates[action] = InputState::None;
-        }
+    sf::Vector2i InputHandler::GetMousePosition() {
+        return sf::Mouse::getPosition();
     }
 
-    void InputHandler::Reset(bool clear)
+    bool InputHandler::IsMousePressed(MouseInputActions button)
     {
-        for (auto const &[key, val] : inputHandlerInstance->keyStates)
+        if (inputHandlerInstance->mouseButtonStates[button] == InputState::Pressed)
         {
-            Reset(key);
+            inputHandlerInstance->mouseButtonStates[button] = InputState::Held;
+            return true;
         }
+        return false;
     }
 
-    // TODO: Some way of unregistering a callback
-    // TODO: Check for duplicate callback
-    void InputHandler::RegisterCallback(InputState state, CallbackSignature func)
+    bool InputHandler::IsMouseHeld(MouseInputActions button)
     {
-        inputHandlerInstance->callbacks[state].push_back(func);
+        return inputHandlerInstance->mouseButtonStates[button] == InputState::Pressed || inputHandlerInstance->keyStates[button] == InputState::Held;
+    }
+
+    bool InputHandler::IsMouseReleased(MouseInputActions button)
+    {
+        return inputHandlerInstance->mouseButtonStates[button] == InputState::Released;
     }
 }

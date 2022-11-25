@@ -27,7 +27,6 @@ namespace SBURB
         this->room = nullptr;
         this->camera = nullptr;
 
-        this->globalObjects = {};
         this->assetManager = AssetManager();
 
         if (gameInstance == nullptr) {
@@ -73,13 +72,7 @@ namespace SBURB
 
             // Run main update method for all objects
             if (room != nullptr) {
-                std::vector<Object*> objects = room->GetObjects();
-                objects.reserve(objects.size() + globalObjects.size() + 1);
-                objects.insert(objects.end(), globalObjects.begin(), globalObjects.end());
-                for (int i = 0; i < objects.size(); i++)
-                {
-                    objects[i]->Update((float)delta);
-                }
+                room->Update();
             }
 
             if (camera != nullptr) {
@@ -101,45 +94,13 @@ namespace SBURB
 
         // Render all objects
         if (room != nullptr) {
-            std::vector<Object*> objects = room->GetObjects();
-            objects.reserve(objects.size() + globalObjects.size() + 1);
-            objects.insert(objects.end(), globalObjects.begin(), globalObjects.end());
-            std::sort(objects.begin(), objects.end(), [](const Object* x, const Object* y)
-                { return x->depth < y->depth; });
-
-            sf::View windowView = window->getView();
-            for (int i = 0; i < objects.size(); i++)
-            {
-                if (std::find(UIObjects.begin(), UIObjects.end(), objects[i]) != UIObjects.end())
-                {
-                    window->setView(window->getDefaultView());
-                    window->draw(*objects[i]);
-
-                    if (BatchHandler::getInstance().BatchExists())
-                        BatchHandler::getInstance().DrawBatch();
-                    window->setView(windowView);
-                }
-                else
-                {
-                    window->draw(*objects[i]);
-                }
-            }
+            window->draw(*room);
         }
 
         if (BatchHandler::getInstance().BatchExists())
             BatchHandler::getInstance().DrawBatch();
 
         window->display();
-    }
-
-    Room *Game::GetRoomInternal()
-    {
-        return room;
-    }
-
-    Room *Game::GetRoomStatic()
-    {
-        return gameInstance->GetRoomInternal();
     }
 
     bool Game::Start()
@@ -157,8 +118,6 @@ namespace SBURB
         window.CenterWindow();
 
         // Initialize room
-        if(room != nullptr) room->Initialize();
-
         if (!Serializer::LoadSerial("./levels/init.xml")) return false;
 
         // Start update loop
@@ -168,40 +127,6 @@ namespace SBURB
         }
 
         return true;
-    }
-
-    void Game::LoadRoomInternal(Room *room)
-    {
-        if (this->room == room)
-            return;
-        this->room = room;
-        if (!this->room->IsInitialized())
-        {
-            room->Initialize();
-        }
-    }
-
-    void Game::LoadRoomInternal(int roomId)
-    {
-        if (this->room == tempRoomList[roomId])
-            return;
-        if (roomId == -1)
-            return;
-        this->room = tempRoomList[roomId];
-        if (!this->room->IsInitialized())
-        {
-            room->Initialize();
-        }
-    }
-
-    void Game::LoadRoom(int roomId)
-    {
-        gameInstance->LoadRoomInternal(roomId);
-    }
-
-    void Game::LoadRoom(Room *room)
-    {
-        gameInstance->LoadRoomInternal(room);
     }
 
     // Getters

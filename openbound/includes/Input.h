@@ -39,6 +39,11 @@ namespace SBURB
         Attack
     };
 
+    enum class MouseInputActions
+    {
+        Click
+    };
+
     enum class InputState
     {
         None,
@@ -55,11 +60,11 @@ namespace SBURB
         static bool IsInputPressed(InputActions input);
         static bool IsInputHeld(InputActions input);
         static bool IsInputReleased(InputActions input);
-        
-        static void Reset(InputActions action, bool clear = false);
-        static void Reset(bool clear = false);
 
-        static void RegisterCallback(InputState state, std::function<void(sf::Event::KeyEvent)> func);
+        static sf::Vector2i GetMousePosition();
+        static bool IsMousePressed(MouseInputActions button);
+        static bool IsMouseHeld(MouseInputActions button);
+        static bool IsMouseReleased(MouseInputActions button);
 
         void Update(sf::Event event, bool focused);
 
@@ -69,6 +74,10 @@ namespace SBURB
         std::unordered_map<InputActions, std::vector<sf::Keyboard::Key>> keyboardAliases;
         std::unordered_map<InputActions, std::vector<unsigned int>> gamepadAliases;
         std::map<InputActions, InputState> keyStates;
+
+        std::unordered_map<MouseInputActions, std::vector<sf::Mouse::Button>> mouseAliases;
+        std::map<MouseInputActions, InputState> mouseButtonStates;
+
         std::map<InputState, std::vector<std::function<void(sf::Event::KeyEvent)>>> callbacks;
     };
 }

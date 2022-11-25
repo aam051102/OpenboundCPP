@@ -1,4 +1,5 @@
 #include "SpriteButton.h"
+#include "Game.h"
 #include <AssetHandler.h>
 
 namespace SBURB {
@@ -28,13 +29,13 @@ namespace SBURB {
     }
 
     void SpriteButton::UpdateMouse() {
-		int x = Sburb.Mouse.x;
-		int y = Sburb.Mouse.y;
-		int mouseDown = Sburb.Mouse.down;
+		int x = InputHandler::GetMousePosition().x;
+		int y = InputHandler::GetMousePosition().y;
+		int mouseDown = InputHandler::IsMousePressed(MouseInputActions::Click);
 
 		this->clicked = false;
 		if (this->HitsPoint(x - this->width / 2, y - this->height / 2)) {
-			Sburb.Stage.style.cursor = "pointer";
+			Game::GetInstance()->SetMouseCursor("pointer");
 		}
 		if (mouseDown) {
 			if (!this->mousePressed) {
@@ -64,7 +65,7 @@ namespace SBURB {
 		}
 
 		if (this->clicked && this->action) {
-			Sburb.performAction(this->action);
+			Game::GetInstance()->PerformAction(this->action);
 		}
     }
 

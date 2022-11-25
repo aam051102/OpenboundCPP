@@ -6,7 +6,6 @@
 #include "Window.h"
 #include "Input.h"
 #include "Room.h"
-#include "Asset.h"
 #include "AssetManager.h"
 
 #include <pugixml.hpp>
@@ -19,38 +18,22 @@ namespace SBURB
     public:
         Game();
         ~Game();
+        static Game *GetInstance();
 
         void Update();
         void Render();
 
-        Room *GetRoomInternal();
-        static Room *GetRoomStatic();
-
         bool Start();
-
-        void LoadRoomInternal(Room *room);
-
-        inline void AddGlobalObject(Object *object) { globalObjects.push_back(object); }
-        inline void AddUIObject(Object *object) { UIObjects.push_back(object); }
-
-        // TODO: Replace with a method to load the room
-        // from our binary file format.
-        void LoadRoomInternal(int roomId);
-
-        static void LoadRoom(int roomId);
-        static void LoadRoom(Room *room);
 
         double GetFPS();
         std::string GetName();
-        Room *GetRoom();
-
-        static Game *GetInstance();
+        Room* GetRoom();
 
         void AddSprite(std::string name, std::shared_ptr<Sprite> sprite);
 
-        // TODO: Replace this map into a map of memory locations
-        // in our binary file format.
-        std::map<unsigned int, Room *> tempRoomList;
+        void PerformAction(std::shared_ptr<Action> action);
+
+        void SetMouseCursor(std::string cursor);
 
         Window window;
         Camera *camera;
@@ -71,9 +54,6 @@ namespace SBURB
 
         sf::Int32 FPS;
         sf::Clock FPStimeObj;
-
-        std::vector<Object *> globalObjects;
-        std::vector<Object *> UIObjects;
 
         Room *room;
     };
