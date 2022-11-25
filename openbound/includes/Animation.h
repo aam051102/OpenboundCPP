@@ -3,6 +3,7 @@
 
 #include "Common.h"
 #include "Asset.h"
+#include "AssetTexture.h"
 
 namespace SBURB
 {
@@ -37,7 +38,7 @@ namespace SBURB
 
     protected:
 		std::string sheetName;
-		std::shared_ptr<sf::Texture> sheet;
+		std::shared_ptr<AssetTexture> sheet;
 		bool sliced;
 		int x;
 		int y;
@@ -55,7 +56,7 @@ namespace SBURB
 		bool flipY;
 		int numRows;
 		int numCols;
-		std::map<int, std::map<int, std::shared_ptr<sf::Texture>>> sheets;
+		std::map<int, std::map<int, std::shared_ptr<AssetTexture>>> sheets;
 		std::map<int, int> frameIntervals;
 		int frameInterval;
 

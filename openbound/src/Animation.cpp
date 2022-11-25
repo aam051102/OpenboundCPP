@@ -27,7 +27,7 @@ namespace SBURB {
 
 			for (int colNum = 0; colNum < this->numCols; colNum++) {
 				for (int rowNum = 0; rowNum < this->numRows; rowNum++) {
-					std::shared_ptr<sf::Texture> texture = AssetHandler::GetTextureByName(sheetName + "_" + std::to_string(colNum) + "_" + std::to_string(rowNum));
+					std::shared_ptr<AssetTexture> texture = AssetHandler::GetTextureByName(sheetName + "_" + std::to_string(colNum) + "_" + std::to_string(rowNum));
 
 					if (texture) {
 						if (this->sheets.find(colNum) == this->sheets.end()) {
@@ -116,7 +116,7 @@ namespace SBURB {
 			for (int colNum = 0; colNum <= this->numCols; colNum++) {
 				for (int rowNum = 0; rowNum <= this->numRows; rowNum++) {
 					if (this->sheets.at(colNum).at(rowNum)) {
-						std::shared_ptr<sf::Texture> sheet = this->sheets.at(colNum).at(rowNum);
+						std::shared_ptr<AssetTexture> sheet = this->sheets.at(colNum).at(rowNum);
 						int frameX = 0;
 						int frameY = 0;
 						int drawWidth = sheet->getSize().x;

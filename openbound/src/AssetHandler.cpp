@@ -2,22 +2,22 @@
 #include <vector>
 #include <unordered_map>
 
-static std::unordered_map<std::string, std::shared_ptr<sf::Texture>> textures;
-static std::unordered_map<std::string, std::shared_ptr<sf::SoundBuffer>> sounds;
-static std::unordered_map<std::string, std::shared_ptr<sf::Font>> fonts;
-static std::map<std::string, std::string_view> paths;
-
 namespace SBURB
 {
+    static std::unordered_map<std::string, std::shared_ptr<AssetTexture>> textures;
+    static std::unordered_map<std::string, std::shared_ptr<sf::SoundBuffer>> sounds;
+    static std::unordered_map<std::string, std::shared_ptr<sf::Font>> fonts;
+    static std::map<std::string, std::string_view> paths;
+
     // Texture handling
-    std::shared_ptr<sf::Texture> AssetHandler::GetTextureByName(const std::string& name)
+    std::shared_ptr<AssetTexture> AssetHandler::GetTextureByName(const std::string& name)
     {
         return textures[name];
     }
 
-    std::shared_ptr<sf::Texture> AssetHandler::LoadTextureFromFile(const std::string& name, const std::string &path)
+    std::shared_ptr<AssetTexture> AssetHandler::LoadTextureFromFile(const std::string& name, const std::string &path)
     {
-        std::shared_ptr<sf::Texture> texture = std::make_shared<sf::Texture>();
+        std::shared_ptr<AssetTexture> texture = std::make_shared<AssetTexture>();
         if (!texture->loadFromFile(path))
         {
             texture.reset();
@@ -28,9 +28,9 @@ namespace SBURB
         return texture;
     }
 
-    std::shared_ptr<sf::Texture> AssetHandler::LoadTextureFromMemory(const std::string& name, const void *data, size_t size)
+    std::shared_ptr<AssetTexture> AssetHandler::LoadTextureFromMemory(const std::string& name, const void *data, size_t size)
     {
-        std::shared_ptr<sf::Texture> texture = std::make_shared<sf::Texture>();
+        std::shared_ptr<AssetTexture> texture = std::make_shared<AssetTexture>();
         if (!texture->loadFromMemory(data, size))
         {
             texture.reset();

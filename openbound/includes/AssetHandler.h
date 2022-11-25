@@ -6,6 +6,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <memory>
+#include "AssetTexture.h"
 
 namespace SBURB
 {
@@ -13,9 +14,9 @@ namespace SBURB
     {
     public:
         // Texture handling
-        static std::shared_ptr<sf::Texture> GetTextureByName(const std::string& name);
-        static std::shared_ptr<sf::Texture> LoadTextureFromFile(const std::string& name, const std::string &path);
-        static std::shared_ptr<sf::Texture> LoadTextureFromMemory(const std::string& name, const void *data, size_t size);
+        static std::shared_ptr<AssetTexture> GetTextureByName(const std::string& name);
+        static std::shared_ptr<AssetTexture> LoadTextureFromFile(const std::string& name, const std::string &path);
+        static std::shared_ptr<AssetTexture> LoadTextureFromMemory(const std::string& name, const void *data, size_t size);
         static void ClearTextures();
 
         // Sound handling

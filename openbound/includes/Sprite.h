@@ -36,9 +36,6 @@ namespace SBURB
         std::string GetName() { return this->name; };
         bool GetCollidable() { return this->collidable; };
 
-        sf::IntRect textureRect;
-        int textureId;
-
     protected:
         std::string name;
         int x;

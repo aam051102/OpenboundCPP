@@ -17,9 +17,6 @@ namespace SBURB
         this->depthing = depthing;
         this->collidable = collidable;
         this->queries = {};
-
-        textureId = -1;
-        textureRect = sf::IntRect(0, 0, 0, 0);
     }
 
     void Sprite::AddAnimation(std::shared_ptr<Animation> anim) {

@@ -71,7 +71,7 @@ namespace SBURB
 		std::vector<std::shared_ptr<Path>> unwalkables;
 		std::vector<std::shared_ptr<MotionPath>> motionPaths;
 		std::vector<std::shared_ptr<Trigger>> triggers;
-		std::shared_ptr<sf::Texture> walkableMap;
+		std::shared_ptr<AssetTexture> walkableMap;
 		std::shared_ptr<sf::Image> mapData;
 		int mapScale;
 

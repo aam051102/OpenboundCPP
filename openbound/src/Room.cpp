@@ -237,7 +237,7 @@ namespace SBURB
 		output = output + "\n<room name='" + this->name +
 			"' width='" + std::to_string(this->width) +
 			"' height='" + std::to_string(this->height) +
-			(this->walkableMap ? ("' walkableMap='" + this->walkableMap->name) : "") +
+			(this->walkableMap ? ("' walkableMap='" + this->walkableMap->GetName()) : "") +
 			(this->mapScale != 4 ? ("' mapScale='" + std::to_string(this->mapScale)) : "") +
 			"' >";
 
