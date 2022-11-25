@@ -4,6 +4,7 @@ namespace SBURB {
     EventTime::EventTime(int time) {
         this->canSerialize = true;
         this->originalTime = time;
+        this->time = 0;
     }
 
     EventTime::~EventTime() {

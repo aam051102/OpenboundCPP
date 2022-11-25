@@ -1,7 +1,6 @@
 #include "EventFactory.h"
 #include "EventGameState.h"
 #include "EventInBox.h"
-#include "EventInBox2.h"
 #include "EventMovie.h"
 #include "EventNoActions.h"
 #include "EventNudge.h"
@@ -19,7 +18,7 @@ namespace SBURB {
 			params[i] = trim(params[i]);
 		}
 
-		// Create event
+		/// Create event
 		if (type == "gameState") {
 			return std::make_shared<EventGameState>(params[0]);
 		}
@@ -29,7 +28,14 @@ namespace SBURB {
 		}
 
 		if (type == "inBox2") {
-			return std::make_shared<EventInBox2>(params[0], stoi(params[1]), stoi(params[2]), stoi(params[3]), stoi(params[4]));
+			// Alternate method of creating inBox event
+			return std::make_shared<EventInBox>(
+				params[0],
+				std::min(stoi(params[1]), stoi(params[3])),
+				std::min(stoi(params[2]), stoi(params[4])),
+				abs(stoi(params[1]) - stoi(params[3])),
+				abs(stoi(params[2]) - stoi(params[4]))
+				);
 		}
 
 		if (type == "movie") {

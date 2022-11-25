@@ -4,7 +4,7 @@
 #include <pugixml.hpp>
 #include "Common.h"
 #include "Event.h"
-#include "AnimatedSprite.h"
+#include "Sprite.h"
 
 namespace SBURB
 {
@@ -20,7 +20,7 @@ namespace SBURB
         bool canSerialize;
 
     protected:
-        std::shared_ptr<AnimatedSprite> entity;
+        std::shared_ptr<Sprite> entity;
         std::string spriteName;
 
     };

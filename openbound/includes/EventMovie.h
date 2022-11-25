@@ -10,17 +10,17 @@ namespace SBURB
     class EventMovie: public Event
     {
     public:
-        EventMovie(std::string movieName);
+        EventMovie(std::string movieName, int threshold = 0);
         ~EventMovie();
 
         virtual void Reset() override;
-        virtual std::string Serialize() override;
         virtual bool CheckCompletion() override;
 
         bool canSerialize;
 
     protected:
         std::string movieName;
+        int threshold;
 
     };
 }

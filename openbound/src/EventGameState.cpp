@@ -1,4 +1,5 @@
 #include "EventGameState.h"
+#include "Game.h"
 
 // NOTE: This can obviously be optimized in the future.
 namespace SBURB {
@@ -28,19 +29,19 @@ namespace SBURB {
 
     bool EventGameState::CheckCompletion() {
         if (token == ">" || token == "GREATER") {
-            return std::stoi(Sburb.gameState[prop]) > std::stoi(target);
+            return std::stoi(Game::GetInstance()->GetGameState(this->prop)) > std::stoi(target);
         }
 
         if (token == "<" || token == "LESS") {
-            return std::stoi(Sburb.gameState[prop]) < std::stoi(target);
+            return std::stoi(Game::GetInstance()->GetGameState(this->prop)) < std::stoi(target);
         }
 
         if (token == "!=") {
-            return Sburb.gameState[prop] != target;
+            return Game::GetInstance()->GetGameState(this->prop) != target;
         }
 
         if (token == "=") {
-            return Sburb.gameState[prop] == target;
+            return Game::GetInstance()->GetGameState(this->prop) == target;
         }
     }
 }

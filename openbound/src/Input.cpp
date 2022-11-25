@@ -8,7 +8,7 @@ namespace SBURB
     InputHandler::InputHandler()
     {
         keyboardAliases = {
-            {InputActions::Confirm, {sf::Keyboard::Z, sf::Keyboard::Enter}},
+            {InputActions::Confirm, {sf::Keyboard::Space}},
             {InputActions::Back, {sf::Keyboard::X, sf::Keyboard::LShift}},
             {InputActions::Menu, {sf::Keyboard::C, sf::Keyboard::LControl}},
             {InputActions::Skip, {sf::Keyboard::X, sf::Keyboard::LShift}},
@@ -246,7 +246,7 @@ namespace SBURB
 
     bool InputHandler::IsMouseHeld(MouseInputActions button)
     {
-        return inputHandlerInstance->mouseButtonStates[button] == InputState::Pressed || inputHandlerInstance->keyStates[button] == InputState::Held;
+        return inputHandlerInstance->mouseButtonStates[button] == InputState::Pressed || inputHandlerInstance->mouseButtonStates[button] == InputState::Held;
     }
 
     bool InputHandler::IsMouseReleased(MouseInputActions button)

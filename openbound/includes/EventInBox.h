@@ -20,6 +20,7 @@ namespace SBURB
         bool canSerialize;
 
     protected:
+        std::shared_ptr<Sprite> entity;
         std::string spriteName;
         int x;
         int y;

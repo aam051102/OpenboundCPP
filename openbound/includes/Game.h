@@ -30,10 +30,13 @@ namespace SBURB
         Room* GetRoom();
 
         void AddSprite(std::string name, std::shared_ptr<Sprite> sprite);
+        std::shared_ptr<Sprite> GetSprite(std::string name) { return this->sprites[name]; };
 
         void PerformAction(std::shared_ptr<Action> action);
 
         void SetMouseCursor(std::string cursor);
+
+        std::string GetGameState(std::string prop) { return this->gameState[prop]; };
 
         Window window;
         Camera *camera;
@@ -46,6 +49,7 @@ namespace SBURB
         std::string resourcePath;
 
     private:
+        std::map<std::string, std::string> gameState;
         std::map<std::string, std::shared_ptr<Sprite>> sprites;
 
         InputHandler inputHandler;

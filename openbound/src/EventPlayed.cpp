@@ -1,10 +1,11 @@
 #include "EventPlayed.h"
+#include "Game.h"
 
 namespace SBURB {
     EventPlayed::EventPlayed(std::string spriteName) {
         this->canSerialize = false;
         this->spriteName = spriteName;
-        this->entity = NULL;
+        this->entity = nullptr;
     }
 
     EventPlayed::~EventPlayed() {
@@ -12,14 +13,21 @@ namespace SBURB {
     }
 
     void EventPlayed::Reset() {
-        this->entity = Sburb.sprites[spriteName];
+        if (this->spriteName == "char") {
+            this->entity = nullptr;
+        }
+        else {
+            this->entity = Game::GetInstance()->GetSprite(spriteName);
+        }
     }
 
     bool EventPlayed::CheckCompletion() {
         auto entity = this->entity;
-        if (this->entity == "char") {
-            entity = Sburb.character;
+
+        if (this->spriteName == "char") {
+            entity = Game::GetInstance()->GetCharacter();
         }
-        return entity.animation.hasPlayed();
+
+        return entity->GetAnimation()->HasPlayed();
     }
 }
