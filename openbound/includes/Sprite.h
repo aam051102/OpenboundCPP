@@ -41,6 +41,10 @@ namespace SBURB
 
         std::string GetName() { return this->name; };
         bool GetCollidable() { return this->collidable; };
+        int GetWidth() { return this->width; };
+        int GetHeight() { return this->height; };
+        int GetX() { return this->x; };
+        int GetY() { return this->y; };
 
     protected:
         std::string name;

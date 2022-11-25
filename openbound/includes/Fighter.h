@@ -29,11 +29,11 @@ namespace SBURB
         void BecomePlayer();
         void BecomeNPC();
         
-        void GetActionQueries();
+        std::vector<int> GetActionQueries();
         
-        bool Collides(std::shared_ptr<Sprite> sprite, int dx, int dy);
+        bool Collides(std::shared_ptr<Sprite> sprite, int dx = 0, int dy = 0);
         
-        std::map<std::string, Vector2> GetBoundaryQueries(int dx, int dy);
+        std::map<std::string, Vector2> GetBoundaryQueries(int dx = 0, int dy = 0);
         
         bool TryToMove();
 
@@ -45,8 +45,8 @@ namespace SBURB
         float accel;
         float decel;
         float friction;
-        int vx;
-        int vy;
+        float vx;
+        float vy;
         std::string facing;
 
     };
