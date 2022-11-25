@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "Room.h"
 #include "AssetManager.h"
+#include "Character.h"
 
 #include <pugixml.hpp>
 
@@ -38,6 +39,8 @@ namespace SBURB
 
         std::string GetGameState(std::string prop) { return this->gameState[prop]; };
 
+        std::shared_ptr<Character> GetCharacter() { return this->character; };
+
         Window window;
         Camera *camera;
         Shader shaderProgram;
@@ -60,6 +63,7 @@ namespace SBURB
         sf::Clock FPStimeObj;
 
         Room *room;
+        std::shared_ptr<Character> character;
     };
 }
 

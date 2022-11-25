@@ -47,6 +47,8 @@ namespace SBURB
         int GetX() { return this->x; };
         int GetY() { return this->y; };
 
+        std::string GetProp(std::string prop);
+
     protected:
         std::string name;
         int x;

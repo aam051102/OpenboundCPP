@@ -4,6 +4,7 @@
 #include <pugixml.hpp>
 #include "Common.h"
 #include "Event.h"
+#include "Sprite.h"
 
 namespace SBURB
 {
@@ -14,14 +15,18 @@ namespace SBURB
         ~EventSpriteProperty();
 
         virtual void Reset() override;
-        virtual std::string Serialize() override;
         virtual bool CheckCompletion() override;
 
         bool canSerialize;
 
     protected:
+        std::shared_ptr<Sprite> entity;
         std::string spriteName;
         std::string query;
+
+        std::string token;
+        std::string prop;
+        std::string target;
 
     };
 }

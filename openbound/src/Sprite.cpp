@@ -180,4 +180,19 @@ namespace SBURB
             target.draw(*this->animation, states);
         }
     }
+
+    std::string Sprite::GetProp(std::string prop) {
+        if (prop == "name") {
+            return this->name;
+        }
+        else if (prop == "x") {
+            return std::to_string(this->x);
+        }
+        else if (prop == "y") {
+            return std::to_string(this->y);
+        }
+        else if (prop == "state") {
+            return this->state;
+        }
+    }
 }
