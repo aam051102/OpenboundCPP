@@ -86,7 +86,7 @@ namespace SBURB {
 				destPos = this->followBuffer[0];
 				didMove = true;
 
-				std::vector<std::string> keys = {};
+				std::vector<InputActions> keys = {};
 
 				/*if (moveMap) {
 					delta = moveMap(destPos.x - this.x, destPos.y - this.y);
@@ -98,18 +98,18 @@ namespace SBURB {
 
 				if (abs(delta.x) >= this->speed / 1.9) {
 					if (delta.x > 0) {
-						keys.push_back(Sburb.Keys.right);
+						keys.push_back(InputActions::Right);
 					}
 					else {
-						keys.push_back(Sburb.Keys.left);
+						keys.push_back(InputActions::Left);
 					}
 				}
 				if (abs(delta.y) >= this->speed / 1.9) {
 					if (delta.y > 0) {
-						keys.push_back(Sburb.Keys.down);
+						keys.push_back(InputActions::Down);
 					}
 					else {
-						keys.push_back(Sburb.Keys.up);
+						keys.push_back(InputActions::Up);
 					}
 				}
 				if (keys.size()  == 0) {
@@ -204,13 +204,24 @@ namespace SBURB {
 		this->animations["walkRight"]->SetFrameInterval(4);
 	}
 
-	void Character::HandleInputs(std::vector<int> order) {
-		float down = -1, up = -1, left = -1, right = -1, none = -0.5;
-		down = std::max(std::find(order.begin(), order.end(), Sburb.Keys.down), std::find(order.begin(), order.end(), Sburb.Keys.s));
-		up = std::max(std::find(order.begin(), order.end(), Sburb.Keys.up), std::find(order.begin(), order.end(), Sburb.Keys.w));
-		left = std::max(std::find(order.begin(), order.end(), Sburb.Keys.left), std::find(order.begin(), order.end(), Sburb.Keys.a));
-		right = std::max(std::find(order.begin(), order.end(), Sburb.Keys.right), std::find(order.begin(), order.end(), Sburb.Keys.d));
-		int most = std::max(std::max(left, right), none);
+	void Character::HandleInputs(std::vector<InputActions> order) {
+		auto downIt = std::find(order.begin(), order.end(), InputActions::Down);
+		auto upIt = std::find(order.begin(), order.end(), InputActions::Up);
+		auto leftIt = std::find(order.begin(), order.end(), InputActions::Left);
+		auto rightIt = std::find(order.begin(), order.end(), InputActions::Right);
+
+		float down = -1;
+		float up = -1;
+		float left = -1;
+		float right = -1;
+
+		if (downIt != order.end()) down = downIt - order.begin();
+		if (upIt != order.end()) up = upIt - order.begin();
+		if (leftIt != order.end()) left = leftIt - order.begin();
+		if (rightIt != order.end()) right = rightIt - order.begin();
+
+		float none = -0.5;
+		float most = std::max(std::max(left, right), none);
 		bool movingSideways = true;
 
 		if (left == most) {
@@ -223,7 +234,7 @@ namespace SBURB {
 			movingSideways = false;
 		}
 
-		int most = std::max(std::max(up, down), none);
+		float most = std::max(std::max(up, down), none);
 		bool movingVertical = true;
 
 		if (down == most) {
@@ -265,8 +276,9 @@ namespace SBURB {
 
 		std::shared_ptr<Character> sharedThis = std::make_shared<Character>(this);
 
-		var minX = Sburb.Stage.scaleX;
-		var minY = Sburb.Stage.scaleY;
+		int minX = 1; // NOTE: originally Sburb.Stage.scaleX;
+		int minY = 1; // NOTE: originally Sburb.Stage.scaleY;
+
 		while (abs(vx) >= minX || abs(vy) >= minY) {
 			int dx = 0;
 			int dy = 0;

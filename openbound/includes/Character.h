@@ -4,6 +4,7 @@
 #include "Common.h"
 #include "Room.h"
 #include "Sprite.h"
+#include "Input.h"
 
 namespace SBURB
 {
@@ -27,7 +28,7 @@ namespace SBURB
         void BecomeNPC();
         void BecomePlayer();
 
-        void HandleInputs(std::vector<int> order);
+        void HandleInputs(std::vector<InputActions> order);
 
         bool TryToMove(int vx, int vy);
         
