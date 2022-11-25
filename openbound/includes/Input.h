@@ -35,7 +35,8 @@ namespace SBURB
         Up,
         Down,
         Left,
-        Right
+        Right,
+        Attack
     };
 
     enum class InputState
@@ -54,10 +55,7 @@ namespace SBURB
         static bool IsInputPressed(InputActions input);
         static bool IsInputHeld(InputActions input);
         static bool IsInputReleased(InputActions input);
-
-        static void Set(InputActions action, sf::Keyboard::Key key, bool alt = false);
-        static void Set(InputActions action, unsigned int button, bool alt = false);
-
+        
         static void Reset(InputActions action, bool clear = false);
         static void Reset(bool clear = false);
 
@@ -68,8 +66,8 @@ namespace SBURB
     private:
         InputHandler();
 
-        std::unordered_map<InputActions, std::array<sf::Keyboard::Key, 2>> keyboardAliases;
-        std::unordered_map<InputActions, std::array<unsigned int, 2>> gamepadAliases;
+        std::unordered_map<InputActions, std::vector<sf::Keyboard::Key>> keyboardAliases;
+        std::unordered_map<InputActions, std::vector<unsigned int>> gamepadAliases;
         std::map<InputActions, InputState> keyStates;
         std::map<InputState, std::vector<std::function<void(sf::Event::KeyEvent)>>> callbacks;
     };

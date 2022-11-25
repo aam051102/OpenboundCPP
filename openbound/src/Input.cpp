@@ -16,7 +16,8 @@ namespace SBURB
             {InputActions::Up, {sf::Keyboard::W, sf::Keyboard::Up}},
             {InputActions::Left, {sf::Keyboard::A, sf::Keyboard::Left}},
             {InputActions::Right, {sf::Keyboard::D, sf::Keyboard::Right}},
-            {InputActions::Down, {sf::Keyboard::S, sf::Keyboard::Down}}};
+            {InputActions::Down, {sf::Keyboard::S, sf::Keyboard::Down}},
+            {InputActions::Attack, {sf::Keyboard::Space, sf::Keyboard::Enter, sf::Keyboard::LControl}}};
 
         gamepadAliases = {
             {InputActions::Confirm, {1, 1}},
@@ -72,7 +73,17 @@ namespace SBURB
         {
             if (actionHandled[keyAlias.first])
                 continue;
-            if (sf::Keyboard::isKeyPressed(keyAlias.second[0]) || sf::Keyboard::isKeyPressed(keyAlias.second[1]))
+
+            bool isPressed = false;
+
+            for (auto alias : keyAlias.second) {
+                if (sf::Keyboard::isKeyPressed(alias)) {
+                    isPressed = true;
+                    break;
+                }
+            }
+
+            if (isPressed)
             {
                 if (keyStates[keyAlias.first] != InputState::Pressed && keyStates[keyAlias.first] != InputState::Held)
                 {
@@ -100,78 +111,48 @@ namespace SBURB
             {
                 if (actionHandled[gamepadAlias.first])
                     continue;
-                bool alias1 = false, alias2 = false;
-                if (gamepadAlias.second[0] >= LSAXIS_NEGX)
-                {
-                    switch (gamepadAlias.second[0])
+
+                bool isPressed = false;
+                for (auto alias : gamepadAlias.second) {
+                    if (alias >= LSAXIS_NEGX)
                     {
-                    case LSAXIS_NEGX:
-                        alias1 = sf::Joystick::getAxisPosition(0, sf::Joystick::X) < -10;
-                        break;
-                    case LSAXIS_POSX:
-                        alias1 = sf::Joystick::getAxisPosition(0, sf::Joystick::X) > 10;
-                        break;
-                    case LSAXIS_NEGY:
-                        alias1 = sf::Joystick::getAxisPosition(0, sf::Joystick::Y) < -10;
-                        break;
-                    case LSAXIS_POSY:
-                        alias1 = sf::Joystick::getAxisPosition(0, sf::Joystick::Y) > 10;
-                        break;
-                    case RSAXIS_NEGX:
-                        alias1 = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) < -10;
-                        break;
-                    case RSAXIS_POSX:
-                        alias1 = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) > 10;
-                        break;
-                    case RSAXIS_NEGY:
-                        alias1 = sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) < -10;
-                        break;
-                    case RSAXIS_POSY:
-                        alias1 = sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) > 10;
-                        break;
+                        switch (alias)
+                        {
+                        case LSAXIS_NEGX:
+                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::X) < -10;
+                            break;
+                        case LSAXIS_POSX:
+                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::X) > 10;
+                            break;
+                        case LSAXIS_NEGY:
+                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::Y) < -10;
+                            break;
+                        case LSAXIS_POSY:
+                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::Y) > 10;
+                            break;
+                        case RSAXIS_NEGX:
+                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) < -10;
+                            break;
+                        case RSAXIS_POSX:
+                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) > 10;
+                            break;
+                        case RSAXIS_NEGY:
+                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) < -10;
+                            break;
+                        case RSAXIS_POSY:
+                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) > 10;
+                            break;
+                        }
                     }
-                }
-                else
-                {
-                    alias1 = sf::Joystick::isButtonPressed(0, gamepadAlias.second[0]);
+                    else
+                    {
+                        isPressed = sf::Joystick::isButtonPressed(0, alias);
+                    }
+
+                    if (isPressed) break;
                 }
 
-                if (gamepadAlias.second[1] >= LSAXIS_NEGX)
-                {
-                    switch (gamepadAlias.second[1])
-                    {
-                    case LSAXIS_NEGX:
-                        alias2 = sf::Joystick::getAxisPosition(0, sf::Joystick::X) < -10;
-                        break;
-                    case LSAXIS_POSX:
-                        alias2 = sf::Joystick::getAxisPosition(0, sf::Joystick::X) > 10;
-                        break;
-                    case LSAXIS_NEGY:
-                        alias2 = sf::Joystick::getAxisPosition(0, sf::Joystick::Y) < -10;
-                        break;
-                    case LSAXIS_POSY:
-                        alias2 = sf::Joystick::getAxisPosition(0, sf::Joystick::Y) > 10;
-                        break;
-                    case RSAXIS_NEGX:
-                        alias2 = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) < -10;
-                        break;
-                    case RSAXIS_POSX:
-                        alias2 = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) > 10;
-                        break;
-                    case RSAXIS_NEGY:
-                        alias2 = sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) < -10;
-                        break;
-                    case RSAXIS_POSY:
-                        alias2 = sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) > 10;
-                        break;
-                    }
-                }
-                else
-                {
-                    alias2 = sf::Joystick::isButtonPressed(0, gamepadAlias.second[0]);
-                }
-
-                if (alias1 || alias2)
+                if (isPressed)
                 {
                     if (keyStates[gamepadAlias.first] != InputState::Pressed && keyStates[gamepadAlias.first] != InputState::Held)
                     {
@@ -213,30 +194,6 @@ namespace SBURB
     bool InputHandler::IsInputReleased(InputActions input)
     {
         return inputHandlerInstance->keyStates[input] == InputState::Released;
-    }
-
-    void InputHandler::Set(InputActions action, sf::Keyboard::Key key, bool alt)
-    {
-        if (alt)
-        {
-            inputHandlerInstance->keyboardAliases[action][1] = key;
-        }
-        else
-        {
-            inputHandlerInstance->keyboardAliases[action][0] = key;
-        }
-    }
-
-    void InputHandler::Set(InputActions action, unsigned int button, bool alt)
-    {
-        if (alt)
-        {
-            inputHandlerInstance->gamepadAliases[action][1] = button;
-        }
-        else
-        {
-            inputHandlerInstance->gamepadAliases[action][0] = button;
-        }
     }
 
     void InputHandler::Reset(InputActions action, bool clear)
