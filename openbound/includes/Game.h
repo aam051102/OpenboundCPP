@@ -33,14 +33,15 @@ namespace SBURB
         Room* GetRoom();
 
         void AddSprite(std::string name, std::shared_ptr<Sprite> sprite);
+
         std::shared_ptr<Sprite> GetSprite(std::string name) { return this->sprites[name]; };
         std::shared_ptr<SpriteButton> GetButton(std::string name) { return this->buttons[name]; };
+        std::shared_ptr<sf::Font> GetFont(std::string name) { return this->fonts[name]; };
+        std::string GetGameState(std::string prop) { return this->gameState[prop]; };
 
         void PerformAction(std::shared_ptr<Action> action);
 
         void SetMouseCursor(std::string cursor);
-
-        std::string GetGameState(std::string prop) { return this->gameState[prop]; };
 
         std::shared_ptr<Character> GetCharacter() { return this->character; };
         std::shared_ptr<Dialoger> GetDialoger() { return this->dialoger; };
@@ -58,6 +59,7 @@ namespace SBURB
         std::map<std::string, std::string> gameState;
         std::map<std::string, std::shared_ptr<Sprite>> sprites;
         std::map<std::string, std::shared_ptr<SpriteButton>> buttons;
+        std::map<std::string, std::shared_ptr<sf::Font>> fonts;
 
         InputHandler inputHandler;
 

@@ -5,27 +5,58 @@
 #include <SFML/Graphics/Drawable.hpp>
 
 namespace SBURB {
+    struct FormatRange {
+        int minIndex;
+        int maxIndex;
+        std::string type;
+        sf::Color extra;
+
+        FormatRange(int minIndex, int maxIndex, std::string type, sf::Color extra = sf::Color::Black) {
+            this->minIndex = minIndex;
+            this->maxIndex = maxIndex;
+            this->type = type;
+            this->extra = extra;
+        };
+    };
+
     class FontEngine : public sf::Drawable {
     public:
-        FontEngine();
+        FontEngine(std::string text = "");
+        ~FontEngine();
+
+        void ParseEverything();
+        void ParseText();
+        void ParseFormatting();
+        void ParseEscapes();
+        void ParsePrefixes();
+        void ParseUnderlines();
+        void ParseColors();
+        void ParsePrefix(std::string prefix);
+
+        sf::Color PrefixColouration(std::string prefix);
+
+        void AddToFormatQueue(FormatRange format);
+        void RealignFormatQueue(int startPos, int shiftSize);
 
         int GetStart() { return this->start; };
         int GetEnd() { return this->end; };
 
-        void SetText(std::string text) { this->text = text; };
+        void SetText(std::string text);
+        void SetAlign(std::string align) { this->align = align; };
 
         bool NextBatch();
         bool OnLastBatch();
+        int BatchLength();
 
         bool IsShowingAll();
-        void ShowSubText(int x, int y);
+        void ShowSubText(int start, int end);
         void ShowAll();
 
         void SetFormatted(bool formatted) { this->formatted = formatted;  };
 
         int GetWidth() { return this->width; };
         int GetHeight() { return this->height; };
-        void SetDimensions(int x, int y, int width, int height) { this->x = x; this->y = y; this->width = width; this->height = height; };
+        void SetDimensions(int x, int y, int width, int height);
 
         int GetX() { return this->x; };
         void SetX(int x) { this->x = x; };
@@ -34,6 +65,14 @@ namespace SBURB {
         void SetY(int y) { this->y = y; };
 
     private:
+        std::unordered_map<std::string, int32_t> prefixColours;
+
+        std::map<char, std::map<int, bool>> escaped;
+        sf::Text textWriter;
+        std::string fontName;
+        sf::Uint32 fontStyle;
+        int fontSize;
+        sf::Color color;
         int start;
         int end;
         std::string text;
@@ -42,6 +81,14 @@ namespace SBURB {
         int height;
         int x;
         int y;
+        int lineHeight;
+        int charWidth;
+        std::string align;
+        std::vector<std::string> lines;
+        std::vector<FormatRange> formatQueue;
+
+    private:
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     };
 }
