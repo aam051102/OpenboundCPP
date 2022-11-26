@@ -39,7 +39,11 @@ namespace SBURB {
         void RealignFormatQueue(int startPos, int shiftSize);
 
         int GetStart() { return this->start; };
+        void SetStart(int start) { this->start = start; };
+
         int GetEnd() { return this->end; };
+
+        void SetColor(sf::Color color) { this->color = color; };
 
         void SetText(std::string text);
         void SetAlign(std::string align) { this->align = align; };
@@ -58,14 +62,19 @@ namespace SBURB {
         int GetHeight() { return this->height; };
         void SetDimensions(int x, int y, int width, int height);
 
-        int GetX() { return this->x; };
+        int GetX() const { return this->x; };
         void SetX(int x) { this->x = x; };
 
-        int GetY() { return this->y; };
+        int GetY() const { return this->y; };
         void SetY(int y) { this->y = y; };
 
+        int GetLineHeight() const { return this->lineHeight; };
+        int GetCharWidth() const { return this->charWidth; };
+
+        const std::string GetLine(int index) const { return this->lines[index]; };
+
     private:
-        std::unordered_map<std::string, int32_t> prefixColours;
+        std::map<std::string, int32_t> prefixColours;
 
         std::map<char, std::map<int, bool>> escaped;
         sf::Text textWriter;
