@@ -109,13 +109,22 @@ namespace SBURB {
 
 			height = this->dialogs[0].GetLineHeight() * this->dialogs.size();
 
-			// TODO: Render
-			/*Sburb.stage.fillStyle = "#ff9900";
-			Sburb.stage.fillRect(x - 6, y - 6, width + 12, height + 13);
-			Sburb.stage.fillStyle = "#ffff00";
-			Sburb.stage.fillRect(x - 2, y - 2, width + 4, height + 5);
-			Sburb.stage.fillStyle = "#000000";
-			Sburb.stage.fillRect(x, y, width, height);*/
+			// NOTE: Not super efficient; may be optimized later.
+			sf::RectangleShape orangeRectShape(sf::Vector2f(width + 12, height + 13));
+			orangeRectShape.setPosition(sf::Vector2f(x - 6, y - 6));
+			orangeRectShape.setFillColor(sf::Color(0xff9900ff));
+
+			sf::RectangleShape yellowRectShape(sf::Vector2f(width + 4, height + 5));
+			yellowRectShape.setPosition(sf::Vector2f(x - 2, y - 2));
+			yellowRectShape.setFillColor(sf::Color(0xffff00ff));
+
+			sf::RectangleShape blackRectShape(sf::Vector2f(width, height));
+			blackRectShape.setPosition(sf::Vector2f(x, y));
+			blackRectShape.setFillColor(sf::Color(0x000000ff));
+
+			target.draw(orangeRectShape, states);
+			target.draw(yellowRectShape, states);
+			target.draw(blackRectShape, states);
 
 			for (i = 0; i < this->dialogs.size(); i++) {
 				target.draw(this->dialogs[i], states);
