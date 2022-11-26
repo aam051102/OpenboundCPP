@@ -3,7 +3,6 @@
 
 #include <pugixml.hpp>
 #include "Common.h"
-#include "Asset.h"
 #include "Sprite.h"
 
 namespace SBURB {
@@ -37,7 +36,7 @@ namespace SBURB {
         static void ParseState(pugi::xml_node node);
         static void ParseActionQueues(pugi::xml_node node);
 
-        static Asset ParseSerialAsset(pugi::xml_node node);
+        static AssetTexture ParseSerialAsset(pugi::xml_node node);
     };
 }
 

@@ -3,7 +3,7 @@
 
 #include <pugixml.hpp>
 #include "Common.h"
-#include "Asset.h"
+#include "Sprite.h"
 
 namespace SBURB
 {
@@ -14,7 +14,7 @@ namespace SBURB
         ~AssetManager();
 
         std::string GetAsset(std::string name);
-        void LoadAsset(Asset name);
+        void LoadAsset(AssetTexture name);
         bool CheckIsLoaded(std::string name);
         bool FinishedLoading();
         

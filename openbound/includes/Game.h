@@ -8,6 +8,8 @@
 #include "Room.h"
 #include "AssetManager.h"
 #include "Character.h"
+#include "Dialoger.h"
+#include "SpriteButton.h"
 
 #include <pugixml.hpp>
 
@@ -32,6 +34,7 @@ namespace SBURB
 
         void AddSprite(std::string name, std::shared_ptr<Sprite> sprite);
         std::shared_ptr<Sprite> GetSprite(std::string name) { return this->sprites[name]; };
+        std::shared_ptr<SpriteButton> GetButton(std::string name) { return this->buttons[name]; };
 
         void PerformAction(std::shared_ptr<Action> action);
 
@@ -40,9 +43,9 @@ namespace SBURB
         std::string GetGameState(std::string prop) { return this->gameState[prop]; };
 
         std::shared_ptr<Character> GetCharacter() { return this->character; };
+        std::shared_ptr<Dialoger> GetDialoger() { return this->dialoger; };
 
         Window window;
-        Camera *camera;
         Shader shaderProgram;
         AssetManager assetManager;
 
@@ -54,6 +57,7 @@ namespace SBURB
     private:
         std::map<std::string, std::string> gameState;
         std::map<std::string, std::shared_ptr<Sprite>> sprites;
+        std::map<std::string, std::shared_ptr<SpriteButton>> buttons;
 
         InputHandler inputHandler;
 
@@ -64,6 +68,7 @@ namespace SBURB
 
         Room *room;
         std::shared_ptr<Character> character;
+        std::shared_ptr<Dialoger> dialoger;
     };
 }
 

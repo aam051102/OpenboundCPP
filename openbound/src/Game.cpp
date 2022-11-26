@@ -25,7 +25,6 @@ namespace SBURB
         this->FPStimeObj = sf::Clock();
 
         this->room = nullptr;
-        this->camera = nullptr;
 
         this->assetManager = AssetManager();
 
@@ -75,10 +74,10 @@ namespace SBURB
                 room->Update();
             }
 
-            if (camera != nullptr) {
+            /*if (camera != nullptr) {
                 camera->Update();
                 window->setView(*camera->GetView());
-            }
+            }*/
 
             // Render
             Render();

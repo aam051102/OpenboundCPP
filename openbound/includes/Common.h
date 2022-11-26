@@ -187,6 +187,10 @@ namespace SBURB
         return newStr;
     }
 
+    static inline std::string replace(std::string s, std::string oldSubstr, std::string newSubstr) {
+        // TODO
+    }
+
 }
 
 uint16_t swapbits(uint16_t src);

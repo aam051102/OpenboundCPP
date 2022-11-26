@@ -21,7 +21,7 @@ namespace SBURB {
 
     }
 
-    void AssetManager::LoadAsset(Asset asset) {
+    void AssetManager::LoadAsset(AssetTexture asset) {
 
     }
 }

@@ -429,4 +429,25 @@ namespace SBURB {
     std::string Serializer::SerializeAttribute(std::string name, T value, T defaultValue) {
         return value != defaultValue ? " " + name + "='" + std::to_string(value) + "' " : "";
     }
+
+
+    template <>
+    std::string Serializer::SerializeAttribute(std::string name, Vector2 value, Vector2 defaultValue) {
+        std::string sub = " " + name + "='";
+        sub += value.x + ",";
+        sub += value.y;
+        sub += "' ";
+        return sub;
+    }
+    
+    template <>
+    std::string Serializer::SerializeAttribute(std::string name, Vector4 value, Vector4 defaultValue) {
+        std::string sub = " " + name + "='";
+        sub += value.x + ",";
+        sub += value.y + ",";
+        sub += value.z + ",";
+        sub += value.w;
+        sub += "' ";
+        return sub;
+    }
 }

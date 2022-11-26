@@ -2,7 +2,6 @@
 #define SBURB_WINDOW_H
 
 #include "Common.h"
-#include "Camera.h"
 
 #include <string>
 #include <vector>

@@ -44,7 +44,11 @@ namespace SBURB
         bool GetCollidable() { return this->collidable; };
         int GetWidth() { return this->width; };
         int GetHeight() { return this->height; };
+
+        void SetX(int x) { this->x = x; };
         int GetX() { return this->x; };
+
+        void SetY(int y) { this->y = y; };
         int GetY() { return this->y; };
 
         std::string GetProp(std::string prop);

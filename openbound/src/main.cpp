@@ -1,19 +1,7 @@
 // Engine
 #include <Common.h>
 #include <Game.h>
-#include <Window.h>
-#include <Object.h>
 #include <Logger.h>
-#include <Resources.h>
-#include <Camera.h>
-#include <Sprite.h>
-#include <TileMap.h>
-#include <AssetHandler.h>
-#include <Player.h>
-#include <CollisionHandler.h>
-#include <SaveHandler.h>
-#include <Collidable.h>
-#include <ViewZone.h>
 
 using namespace SBURB;
 
