@@ -16,12 +16,12 @@
 namespace SBURB
 {
     // Handles a running instance of the game.
-    class Game
+    class Sburb
     {
     public:
-        Game();
-        ~Game();
-        static Game *GetInstance();
+        Sburb();
+        ~Sburb();
+        static Sburb *GetInstance();
 
         void Update();
         void Render();

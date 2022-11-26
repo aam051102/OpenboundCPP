@@ -1,6 +1,6 @@
 #include "EventWithinRange.h"
 #include "Sprite.h"
-#include "Game.h"
+#include "Sburb.h"
 
 namespace SBURB {
     EventWithinRange::EventWithinRange(std::string spriteName1, std::string spriteName2, float distance) {
@@ -21,10 +21,10 @@ namespace SBURB {
     // TODO: Move to commands or something.
     std::shared_ptr<Sprite> ParseCharacterString(std::string spriteName) {
         if (spriteName == "char") {
-            return Game::GetInstance()->GetCharacter();
+            return Sburb::GetInstance()->GetCharacter();
         }
         else {
-            return Game::GetInstance()->GetSprite(spriteName);
+            return Sburb::GetInstance()->GetSprite(spriteName);
         }
     }
 

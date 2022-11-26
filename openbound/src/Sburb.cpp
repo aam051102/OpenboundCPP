@@ -1,6 +1,6 @@
 #include <sstream>
 #include <algorithm>
-#include "Game.h"
+#include "Sburb.h"
 #include "Logger.h"
 #include "Sprite.h"
 #include "AssetHandler.h"
@@ -13,9 +13,9 @@
 
 namespace SBURB
 {
-    static Game* gameInstance = nullptr;
+    static Sburb* gameInstance = nullptr;
 
-    Game::Game()
+    Sburb::Sburb()
     {
         this->name = "Jterniabound";
         this->version = "1.0";
@@ -33,12 +33,12 @@ namespace SBURB
         }
     }
 
-    Game::~Game()
+    Sburb::~Sburb()
     {
         AssetHandler::ClearTextures();
     }
 
-    void Game::Update()
+    void Sburb::Update()
     {
         sf::Int32 FPStime = FPStimeObj.getElapsedTime().asMilliseconds();
 
@@ -84,7 +84,7 @@ namespace SBURB
         }
     }
 
-    void Game::Render()
+    void Sburb::Render()
     {
         window->clear(sf::Color(0, 0, 0, 255));
         shaderProgram.Bind();
@@ -102,7 +102,7 @@ namespace SBURB
         window->display();
     }
 
-    bool Game::Start()
+    bool Sburb::Start()
     {
         // Create & initialize main window
         window.Init(name, { 650, 450 }, sf::Style::Close | sf::Style::Titlebar, icon); // Standard
@@ -129,27 +129,27 @@ namespace SBURB
     }
 
     // Getters
-    double Game::GetFPS()
+    double Sburb::GetFPS()
     {
         return this->FPS;
     }
 
-    std::string Game::GetName()
+    std::string Sburb::GetName()
     {
         return name;
     }
 
-    Room *Game::GetRoom()
+    Room *Sburb::GetRoom()
     {
         return this->room;
     }
 
-    Game *Game::GetInstance()
+    Sburb *Sburb::GetInstance()
     {
         return gameInstance;
     }
 
-    void Game::AddSprite(std::string name, std::shared_ptr<Sprite> sprite)
+    void Sburb::AddSprite(std::string name, std::shared_ptr<Sprite> sprite)
     {
         this->sprites[name] = sprite;
     }

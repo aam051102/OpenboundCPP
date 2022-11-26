@@ -1,5 +1,5 @@
 #include "Character.h"
-#include "Game.h"
+#include "Sburb.h"
 
 constexpr int FOLLOW_BUFFER_LENGTH = 6;
 
@@ -272,7 +272,7 @@ namespace SBURB {
 			this->oldY = this->y;
 		}
 
-		Room* room = Game::GetInstance()->GetRoom();
+		Room* room = Sburb::GetInstance()->GetRoom();
 
 		std::shared_ptr<Character> sharedThis = std::make_shared<Character>(this);
 

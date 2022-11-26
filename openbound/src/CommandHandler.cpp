@@ -1,5 +1,5 @@
 #include "CommandHandler.h"
-#include "Game.h"
+#include "Sburb.h"
 
 namespace SBURB {
     CommandHandler::CommandHandler() {

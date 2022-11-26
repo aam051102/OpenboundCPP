@@ -1,5 +1,5 @@
 #include "FontEngine.h"
-#include "Game.h"
+#include "Sburb.h"
 
 namespace SBURB {
     FontEngine::FontEngine(std::string text) {
@@ -46,7 +46,7 @@ namespace SBURB {
             { "latula", 0x008282 },
         };
 
-		this->textWriter.setFont(*Game::GetInstance()->GetFont(this->fontName));
+		this->textWriter.setFont(*Sburb::GetInstance()->GetFont(this->fontName));
 		this->textWriter.setFillColor(this->color);
 		this->textWriter.setCharacterSize(this->fontSize);
 		this->textWriter.setStyle(this->fontStyle);

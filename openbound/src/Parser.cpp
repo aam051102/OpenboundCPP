@@ -1,13 +1,13 @@
 #include "Parser.h"
 #include "AssetHandler.h"
 #include "AssetManager.h"
-#include "Game.h"
+#include "Sburb.h"
 
 namespace SBURB {
 	std::string GetActionNodeText(pugi::xml_node node) {
 		if (!node) return "";
 
-		AssetManager* assetManager = &Game::GetInstance()->assetManager;
+		AssetManager* assetManager = &Sburb::GetInstance()->assetManager;
 
 		std::ostringstream serializeStream;
 
@@ -199,7 +199,7 @@ namespace SBURB {
 		std::string tmpFollowing = node.attribute("following").as_string();
 
 		if (tmpFollowing != "") {
-			std::shared_ptr<Sprite> following = Game::GetInstance()->GetSprite(tmpFollowing);
+			std::shared_ptr<Sprite> following = Sburb::GetInstance()->GetSprite(tmpFollowing);
 			// TODO: Assert Character
 			if (following) {
 				newChar.Follow(following);
@@ -208,7 +208,7 @@ namespace SBURB {
 
 		std::string tmpFollower = node.attribute("follower").as_string();
 		if (tmpFollower != "") {
-			std::shared_ptr<Sprite> follower = Game::GetInstance()->GetSprite(tmpFollower);
+			std::shared_ptr<Sprite> follower = Sburb::GetInstance()->GetSprite(tmpFollower);
 			if (follower) {
 				follower->Follow(std::make_shared<Character>(newChar));
 			}

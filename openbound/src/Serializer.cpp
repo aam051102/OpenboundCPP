@@ -1,5 +1,5 @@
 #include "Serializer.h"
-#include "Game.h"
+#include "Sburb.h"
 #include "Logger.h"
 #include "Parser.h"
 
@@ -19,32 +19,32 @@ namespace SBURB {
         std::string levelPath = rootNode.attribute("levelPath").value();
         if (levelPath != "") {
             if (levelPath[levelPath.length() - 1] == '/') {
-                Game::GetInstance()->levelPath = levelPath;
+                Sburb::GetInstance()->levelPath = levelPath;
             }
             else {
-                Game::GetInstance()->levelPath = levelPath + "/";
+                Sburb::GetInstance()->levelPath = levelPath + "/";
             }
         }
 
         std::string resourcePath = rootNode.attribute("resourcePath").value();
         if (resourcePath != "") {
-            Game::GetInstance()->resourcePath = resourcePath;
+            Sburb::GetInstance()->resourcePath = resourcePath;
         }
 
         std::string name = rootNode.attribute("name").value();
-        if (name != "") Game::GetInstance()->name = name;
+        if (name != "") Sburb::GetInstance()->name = name;
 
         std::string version = rootNode.attribute("version").value();
-        if (version != "") Game::GetInstance()->version = version;
+        if (version != "") Sburb::GetInstance()->version = version;
 
         std::string width = rootNode.attribute("width").value();
         if (width != "") {
-            Game::GetInstance()->window.SetSize({stoi(width), Game::GetInstance()->window.GetSize().y});
+            Sburb::GetInstance()->window.SetSize({stoi(width), Sburb::GetInstance()->window.GetSize().y});
         }
 
         std::string height = rootNode.attribute("height").value();
         if (height != "") {
-            Game::GetInstance()->window.SetSize({Game::GetInstance()->window.GetSize().y, stoi(height)});
+            Sburb::GetInstance()->window.SetSize({Sburb::GetInstance()->window.GetSize().y, stoi(height)});
         }
 
         LoadDependencies(rootNode);
@@ -63,7 +63,7 @@ namespace SBURB {
             for (pugi::xml_node dependencyNode : dependencyNodes) {
                 auto dependencyPath = dependencyNode.text().as_string();
 
-                LoadSerial(Game::GetInstance()->levelPath + trim(dependencyPath));
+                LoadSerial(Sburb::GetInstance()->levelPath + trim(dependencyPath));
             }
         }
 
@@ -73,10 +73,10 @@ namespace SBURB {
     bool Serializer::LoadSerialAssets(pugi::xml_node node) {
         std::string description = node.attribute("description").value();
         if (description != "") {
-            Game::GetInstance()->assetManager.SetDescription(description);
+            Sburb::GetInstance()->assetManager.SetDescription(description);
         }
         else {
-            Game::GetInstance()->assetManager.SetDescription("assets");
+            Sburb::GetInstance()->assetManager.SetDescription("assets");
         }
 
         pugi::xml_node assetsNode = node.child("assets");
@@ -85,7 +85,7 @@ namespace SBURB {
             auto assetNodes = assetsNode.children("asset");
 
             for (pugi::xml_node assetNode : assetNodes) {
-                if (!Game::GetInstance()->assetManager.CheckIsLoaded(assetNode.attribute("name").value())) {
+                if (!Sburb::GetInstance()->assetManager.CheckIsLoaded(assetNode.attribute("name").value())) {
                     LoadSerialAsset(assetNode);
                 }
             }
@@ -96,7 +96,7 @@ namespace SBURB {
 
     bool Serializer::LoadSerialAsset(pugi::xml_node node) {
         auto newAsset = ParseSerialAsset(node);
-        Game::GetInstance()->assetManager.LoadAsset(newAsset);
+        Sburb::GetInstance()->assetManager.LoadAsset(newAsset);
         return true;
     }
 
@@ -149,7 +149,7 @@ namespace SBURB {
             clearTimeout(updateLoop);
             updateLoop = null;
         }
-        if (!Game::GetInstance()->assetManager.FinishedLoading()) {
+        if (!Sburb::GetInstance()->assetManager.FinishedLoading()) {
             updateLoop = setTimeout(function() { loadSerialState(); }, 500);
             return;
         }

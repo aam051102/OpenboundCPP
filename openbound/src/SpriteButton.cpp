@@ -1,5 +1,5 @@
 #include "SpriteButton.h"
-#include "Game.h"
+#include "Sburb.h"
 #include <AssetHandler.h>
 
 namespace SBURB {
@@ -35,7 +35,7 @@ namespace SBURB {
 
 		this->clicked = false;
 		if (this->HitsPoint(x - this->width / 2, y - this->height / 2)) {
-			Game::GetInstance()->SetMouseCursor("pointer");
+			Sburb::GetInstance()->SetMouseCursor("pointer");
 		}
 		if (mouseDown) {
 			if (!this->mousePressed) {
@@ -65,7 +65,7 @@ namespace SBURB {
 		}
 
 		if (this->clicked && this->action) {
-			Game::GetInstance()->PerformAction(this->action);
+			Sburb::GetInstance()->PerformAction(this->action);
 		}
     }
 

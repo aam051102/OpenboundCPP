@@ -1,5 +1,5 @@
 #include "EventPlayed.h"
-#include "Game.h"
+#include "Sburb.h"
 
 namespace SBURB {
     EventPlayed::EventPlayed(std::string spriteName) {
@@ -17,7 +17,7 @@ namespace SBURB {
             this->entity = nullptr;
         }
         else {
-            this->entity = Game::GetInstance()->GetSprite(spriteName);
+            this->entity = Sburb::GetInstance()->GetSprite(spriteName);
         }
     }
 
@@ -25,7 +25,7 @@ namespace SBURB {
         auto entity = this->entity;
 
         if (this->spriteName == "char") {
-            entity = Game::GetInstance()->GetCharacter();
+            entity = Sburb::GetInstance()->GetCharacter();
         }
 
         return entity->GetAnimation()->HasPlayed();

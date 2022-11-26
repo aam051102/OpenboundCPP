@@ -1,5 +1,5 @@
 #include "EventNoActions.h"
-#include "Game.h"
+#include "Sburb.h"
 #include "ActionQueue.h"
 
 namespace SBURB {
@@ -18,10 +18,10 @@ namespace SBURB {
 
     bool EventNoActions::CheckCompletion() {
         if (this->queue == "") {
-            return Game::GetInstance()->GetCurAction() == nullptr;
+            return Sburb::GetInstance()->GetCurAction() == nullptr;
         }
 
-        std::shared_ptr<ActionQueue> queue = Game::GetInstance()->GetActionQueueById(this->queue);
+        std::shared_ptr<ActionQueue> queue = Sburb::GetInstance()->GetActionQueueById(this->queue);
         return queue->GetCurAction() == nullptr;
     }
 }

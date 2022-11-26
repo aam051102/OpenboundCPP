@@ -1,5 +1,5 @@
 #include "Chooser.h"
-#include "Game.h"
+#include "Sburb.h"
 
 constexpr int MIN_WIDTH = 160;
 
@@ -69,7 +69,7 @@ namespace SBURB {
     {
 		if (this->choosing) {
 			this->time++;
-			int fps = Game::GetInstance()->GetFPS();
+			int fps = Sburb::GetInstance()->GetFPS();
 
 			for (int i = 0; i < this->dialogs.size(); i++) {
 				FontEngine* curDialog = &this->dialogs[i];

@@ -1,5 +1,5 @@
 #include "EventSpriteProperty.h"
-#include "Game.h"
+#include "Sburb.h"
 
 namespace SBURB {
     EventSpriteProperty::EventSpriteProperty(std::string spriteName, std::string query) {
@@ -28,7 +28,7 @@ namespace SBURB {
             this->entity = nullptr;
         }
         else {
-            this->entity = Game::GetInstance()->GetSprite(this->spriteName);
+            this->entity = Sburb::GetInstance()->GetSprite(this->spriteName);
         }
     }
 
@@ -36,7 +36,7 @@ namespace SBURB {
         auto entity = this->entity;
 
         if (this->spriteName == "char") {
-            entity = Game::GetInstance()->GetCharacter();
+            entity = Sburb::GetInstance()->GetCharacter();
         }
 
         if (token == ">" || token == "GREATER") {

@@ -1,13 +1,12 @@
-// Engine
 #include <Common.h>
-#include <Game.h>
+#include <Sburb.h>
 #include <Logger.h>
 
 using namespace SBURB;
 
 int main()
 {
-    Game mainGame = Game();
+    Sburb mainGame = Sburb();
   
     if (!mainGame.Start())
     {

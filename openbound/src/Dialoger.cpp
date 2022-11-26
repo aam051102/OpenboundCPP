@@ -112,18 +112,18 @@ namespace SBURB {
 		this->NextDialog();
 
 		if (this->type == "social") {
-			Game::GetInstance()->GetButton("spadeButton")->StartAnimation("state0");
-			Game::GetInstance()->GetButton("heartButton")->StartAnimation("state0");
+			Sburb::GetInstance()->GetButton("spadeButton")->StartAnimation("state0");
+			Sburb::GetInstance()->GetButton("heartButton")->StartAnimation("state0");
 
 			if (this->actor != "" && !this->choices[this->currentDialog]) {
 				this->choices[this->currentDialog] = 0;
 			}
 			else {
 				if (this->choices[this->currentDialog] == 1) {
-					Game::GetInstance()->GetButton("heartButton")->StartAnimation("state1");
+					Sburb::GetInstance()->GetButton("heartButton")->StartAnimation("state1");
 				}
 				else {
-					Game::GetInstance()->GetButton("spadeButton")->StartAnimation("state1");
+					Sburb::GetInstance()->GetButton("spadeButton")->StartAnimation("state1");
 				}
 			}
 		}
@@ -156,7 +156,7 @@ namespace SBURB {
 			std::string resource = prefix.substr(firstIndex + 1, lastIndex - (firstIndex + 1));
 			prefix = prefix.substr(0, firstIndex) + prefix.substr(lastIndex);
 
-			this->graphic = Game::GetInstance()->GetSprite(resource);
+			this->graphic = Sburb::GetInstance()->GetSprite(resource);
 
 			if (!this->graphic) {
 				std::shared_ptr<AssetTexture> img = AssetHandler::GetTextureByName(resource);
@@ -328,11 +328,11 @@ namespace SBURB {
 		std::shared_ptr<SpriteButton> hashTagBar;
 
 		if (this->type == "social") {
-			closeButton = Game::GetInstance()->GetButton("closeButton");
-			spadeButton = Game::GetInstance()->GetButton("spadeButton");
-			heartButton = Game::GetInstance()->GetButton("heartButton");
-			bubbleButton = Game::GetInstance()->GetButton("bubbleButton");
-			hashTagBar = Game::GetInstance()->GetButton("hashTagBar");
+			closeButton = Sburb::GetInstance()->GetButton("closeButton");
+			spadeButton = Sburb::GetInstance()->GetButton("spadeButton");
+			heartButton = Sburb::GetInstance()->GetButton("heartButton");
+			bubbleButton = Sburb::GetInstance()->GetButton("bubbleButton");
+			hashTagBar = Sburb::GetInstance()->GetButton("hashTagBar");
 		}
 
 		bool init = false;
@@ -487,11 +487,11 @@ namespace SBURB {
 
 	void Dialoger::SetBox(std::string box)
 	{
-		std::shared_ptr<Sprite> dialogBox = Game::GetInstance()->GetSprite(box);
+		std::shared_ptr<Sprite> dialogBox = Sburb::GetInstance()->GetSprite(box);
 		if (!dialogBox) {
 			std::shared_ptr<AssetTexture> boxAsset = AssetHandler::GetTextureByName(box);
 
-			dialogBox = std::make_shared<Sprite>("dialogBox", Game::GetInstance()->window->getSize().x + 1, 1000, boxAsset->getSize().x, boxAsset->getSize().y, 0, 0, 0);
+			dialogBox = std::make_shared<Sprite>("dialogBox", Sburb::GetInstance()->window->getSize().x + 1, 1000, boxAsset->getSize().x, boxAsset->getSize().y, 0, 0, 0);
 			dialogBox->AddAnimation(std::make_shared<Animation>("image", boxAsset, 0, 0, boxAsset->getSize().x, boxAsset->getSize().y, 0, 1, 1));
 			dialogBox->StartAnimation("image");
 		}
@@ -531,7 +531,7 @@ namespace SBURB {
 	void Dialoger::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		if (this->type == "social") {
-			target.draw(*Game::GetInstance()->GetSprite("hashTagBar"), states);
+			target.draw(*Sburb::GetInstance()->GetSprite("hashTagBar"), states);
 		}
 
 		target.draw(*this->box, states);
@@ -545,16 +545,16 @@ namespace SBURB {
 
 			if (this->type == "social") {
 				if (this->queue.size() > 0) {
-					target.draw(*Game::GetInstance()->GetButton("closeButton"), states);
+					target.draw(*Sburb::GetInstance()->GetButton("closeButton"), states);
 				}
 
 				if (this->dialog->GetStart() != this->dialog->GetEnd()) {
 					target.draw(*this->hashes, states);
 
 					if (this->queue.size()  == 0 && this->actor != "") {
-						target.draw(*Game::GetInstance()->GetButton("spadeButton"), states);
-						target.draw(*Game::GetInstance()->GetButton("heartButton"), states);
-						target.draw(*Game::GetInstance()->GetButton("bubbleButton"), states);
+						target.draw(*Sburb::GetInstance()->GetButton("spadeButton"), states);
+						target.draw(*Sburb::GetInstance()->GetButton("heartButton"), states);
+						target.draw(*Sburb::GetInstance()->GetButton("bubbleButton"), states);
 					}
 				}
 			}

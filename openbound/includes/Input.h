@@ -54,7 +54,7 @@ namespace SBURB
 
     class InputHandler
     {
-        friend class Game;
+        friend class Sburb;
 
     public:
         static bool IsInputPressed(InputActions input);
