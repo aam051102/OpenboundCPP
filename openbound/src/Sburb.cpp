@@ -87,7 +87,6 @@ namespace SBURB
     void Sburb::Render()
     {
         window->clear(sf::Color(0, 0, 0, 255));
-        shaderProgram.Bind();
 
         BatchHandler::getInstance().Reset();
 

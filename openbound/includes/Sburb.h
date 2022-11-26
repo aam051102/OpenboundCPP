@@ -2,7 +2,6 @@
 #define SBURB_GAME_H
 
 #include "Common.h"
-#include "Shader.h"
 #include "Window.h"
 #include "Input.h"
 #include "Room.h"
@@ -47,7 +46,6 @@ namespace SBURB
         std::shared_ptr<Dialoger> GetDialoger() { return this->dialoger; };
 
         Window window;
-        Shader shaderProgram;
         AssetManager assetManager;
 
         std::string name;
