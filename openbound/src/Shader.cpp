@@ -1,6 +1,5 @@
 #include "Shader.h"
 
-#include "Resources.h"
 #include "Common.h"
 
 namespace SBURB

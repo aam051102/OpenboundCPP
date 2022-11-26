@@ -1,4 +1,5 @@
 #include "Parser.h"
+#include "AssetHandler.h"
 #include "AssetManager.h"
 #include "Game.h"
 
@@ -7,6 +8,8 @@ namespace SBURB {
 		if (!node) return "";
 
 		AssetManager* assetManager = &Game::GetInstance()->assetManager;
+
+		std::ostringstream serializeStream;
 
 		for (pugi::xml_node child : node.children()) {
 			if (child.name() == "args") {
@@ -18,11 +21,12 @@ namespace SBURB {
 
 				for (pugi::xml_node subChild : child.children()) {
 					if (subChild.first_child()) {
-						serializer = new XMLSerializer();
-
 						std::string output = "";
+							
 						for (pugi::xml_node subSubChild : child.children()) {
-							output += serializer.serializeToString(subSubChild);
+							serializeStream.clear();
+							subSubChild.print(serializeStream, "", pugi::format_raw);
+							output += serializeStream.str();
 						}
 
 						return output;
@@ -146,13 +150,11 @@ namespace SBURB {
 
 		std::string name = node.attribute("name").as_string("image");
 
-		Asset sheet;
+		std::shared_ptr<AssetTexture> sheet;
 		std::string tmpSheet = node.attribute("sheet").as_string();
+
 		if (!sliced) {
-			sheet = assets[tmpSheet];
-		}
-		else {
-			sheet = tmpSheet;
+			sheet = AssetHandler::GetTextureByName(tmpSheet);
 		}
 
 		int x = node.attribute("x").as_int();
@@ -164,11 +166,11 @@ namespace SBURB {
 
 		int tmpColSize = node.attribute("colSize").as_int();
 		if (tmpColSize) colSize = tmpColSize;
-		else colSize = round(sheet.width / length);
+		else if(sheet) colSize = round(sheet->getSize().x / length);
 
 		int tmpRowSize = node.attribute("rowSize").as_int();
 		if (tmpRowSize) rowSize = tmpRowSize;
-		else rowSize = sheet.height;
+		else if (sheet) rowSize = sheet->getSize().y;
 
 		int startPos = node.attribute("startPos").as_int();
 
@@ -179,7 +181,7 @@ namespace SBURB {
 		bool flipX = node.attribute("flipX").as_bool();
 		bool flipY = node.attribute("flipY").as_bool();
 
-		return Animation(name, sheet, x, y, colSize, rowSize, startPos, length, frameInterval, loopNum, followUp, flipX, flipY, sliced, numCols, numRows);
+		return Animation(name, tmpSheet, x, y, colSize, rowSize, startPos, length, std::to_string(frameInterval), loopNum, followUp, flipX, flipY, sliced, numCols, numRows);
     }
 
     Character Parser::ParseCharacter(pugi::xml_node node) {
@@ -192,11 +194,13 @@ namespace SBURB {
 			node.attribute("sy").as_int(),
 			node.attribute("sWidth").as_int(),
 			node.attribute("sHeight").as_int(),
-			assets[node.attribute("sheet").as_string()]);
+			node.attribute("sheet").as_string());
 
 		std::string tmpFollowing = node.attribute("following").as_string();
+
 		if (tmpFollowing != "") {
-			std::shared_ptr<Character> following = sprites[tmpFollowing];
+			std::shared_ptr<Sprite> following = Game::GetInstance()->GetSprite(tmpFollowing);
+			// TODO: Assert Character
 			if (following) {
 				newChar.Follow(following);
 			}
@@ -204,16 +208,16 @@ namespace SBURB {
 
 		std::string tmpFollower = node.attribute("follower").as_string();
 		if (tmpFollower != "") {
-			std::shared_ptr<Character> follower = sprites[tmpFollower];
+			std::shared_ptr<Sprite> follower = Game::GetInstance()->GetSprite(tmpFollower);
 			if (follower) {
-				follower->Follow(&newChar);
+				follower->Follow(std::make_shared<Character>(newChar));
 			}
 		}
 
 		auto anims = node.children("animation");
 		for (auto anim : anims) {
 			Animation newAnim = ParseAnimation(anim);
-			newChar.AddAnimation(newAnim);
+			newChar.AddAnimation(std::make_shared<Animation>(newAnim));
 		}
 		newChar.StartAnimation(node.attribute("state").as_string());
 		newChar.SetFacing(node.attribute("facing").as_string());
@@ -282,7 +286,7 @@ namespace SBURB {
 		auto anims = node.children("animation");
 		for (pugi::xml_node anim : anims) {
 			Animation newAnim = ParseAnimation(anim);
-			newSprite.AddAnimation(newAnim);
+			newSprite.AddAnimation(std::make_shared<Animation>(newAnim));
 
 			if (newState == "") {
 				newState = newAnim.GetName();
@@ -312,7 +316,7 @@ namespace SBURB {
 			}
 
 			if (!newRoom.GetHeight()) {
-				newRoom.SetHEight(newRoom.GetWalkableMap().GetHeight() * newRoom.GetMapScale());
+				newRoom.SetHeight(newRoom.GetWalkableMap().GetHeight() * newRoom.GetMapScale());
 			}
 		}
 
@@ -353,7 +357,7 @@ namespace SBURB {
 
 		for (pugi::xml_node anim : anims) {
 			Animation newAnim = ParseAnimation(anim);
-			newSprite.AddAnimation(newAnim);
+			newSprite.AddAnimation(std::make_shared<Animation>(newAnim));
 
 			if (state == "") {
 				state = newAnim.GetName();
@@ -361,10 +365,10 @@ namespace SBURB {
 		}
 
 		if (anims.empty()) {
-			Asset asset = assets[name];
+			std::shared_ptr<AssetTexture> asset = AssetHandler::GetTextureByName(name);
 
-			if (asset && asset.GetType() == "graphic") {
-				newSprite.AddAnimation(Animation("image", asset));
+			if (asset && asset->GetType() == "graphic") {
+				newSprite.AddAnimation(std::make_shared<Animation>("image", name));
 				state = "image";
 			}
 		}
@@ -375,13 +379,14 @@ namespace SBURB {
     }
 
     SpriteButton Parser::ParseSpriteButton(pugi::xml_node node) {
-		Asset sheet = assets[node.attribute("sheet").as_string()];
+		std::shared_ptr<AssetTexture> sheet = AssetHandler::GetTextureByName(node.attribute("sheet").as_string());
 		SpriteButton newButton = SpriteButton(node.attribute("name").as_string(),
 			node.attribute("x").as_int(),
 			node.attribute("y").as_int(),
-			node.attribute("width").as_int(sheet.width),
-			node.attribute("height").as_int(sheet.height),
-			sheet);
+			node.attribute("width").as_int(sheet->getSize().x),
+			node.attribute("height").as_int(sheet->getSize().y),
+			node.attribute("sheet").as_string(),
+			nullptr);
 
 		auto action = node.child("action");
 		if (action) {
@@ -395,15 +400,17 @@ namespace SBURB {
 	std::vector<std::string> GetTriggerNodeText(pugi::xml_node node) {
 		std::vector<std::string> outputs = {};
 
+		std::ostringstream serializeStream;
+
 		for (pugi::xml_node child : node.children()) {
 			if (child.name() == "args") {
 				for (pugi::xml_node subChild : child.children()) {
 					if (subChild.first_child()) {
-						serializer = new XMLSerializer();
-
-						std::string output = "";
+												std::string output = "";
 						for (pugi::xml_node subSubChild : subChild.children()) {
-							output += serializer.serializeToString(subSubChild);
+							serializeStream.clear();
+							subSubChild.print(serializeStream, "", pugi::format_raw);
+							output += serializeStream.str();
 						}
 
 						outputs.push_back(output);

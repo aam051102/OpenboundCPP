@@ -2,7 +2,6 @@
 #define SBURB_ROOM_H
 
 #include "Common.h"
-#include "Zone.h"
 #include "Animation.h"
 #include "Path.h"
 #include "Trigger.h"

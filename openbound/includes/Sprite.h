@@ -10,7 +10,7 @@
 
 namespace SBURB
 {
-    enum class Depth {
+    enum class Depth : int {
         BG_DEPTHING = 0,
         MG_DEPTHING = 1,
         FG_DEPTHING = 2
@@ -19,7 +19,7 @@ namespace SBURB
     class Sprite : public sf::Drawable, public sf::Transformable
     {
     public:
-        Sprite(std::string name, int x, int y, int width, int height, int dx = 0, int dy = 0, Depth depthing = Depth::BG_DEPTHING, bool collidable = false);
+        Sprite(std::string name, int x, int y, int width, int height, int dx = 0, int dy = 0, int depthing = static_cast<int>(Depth::BG_DEPTHING), bool collidable = false);
 
         void AddAnimation(std::shared_ptr<Animation> anim);
         void StartAnimation(std::string name);
@@ -61,7 +61,7 @@ namespace SBURB
         int height;
         int dx;
         int dy;
-        Depth depthing;
+        int depthing;
         bool collidable;
         std::map<std::string, std::shared_ptr<Animation>> animations;
         std::shared_ptr<Animation> animation;
