@@ -5,7 +5,7 @@ constexpr int FOLLOW_BUFFER_LENGTH = 6;
 
 namespace SBURB {
     Character::Character(std::string name, int x, int y, int width, int height, int sx, int sy, int sWidth, int sHeight, std::string sheetName, bool bootstrap):
-		Sprite(name, x, y, width, height, 0, 0, Depth::MG_DEPTHING, true) {
+		Sprite(name, x, y, width, height, 0, 0, static_cast<int>(Depth::MG_DEPTHING), true) {
 		this->speed = 12;
 		this->vx = 0;
 		this->vy = 0;
@@ -234,7 +234,7 @@ namespace SBURB {
 			movingSideways = false;
 		}
 
-		float most = std::max(std::max(up, down), none);
+		most = std::max(std::max(up, down), none);
 		bool movingVertical = true;
 
 		if (down == most) {

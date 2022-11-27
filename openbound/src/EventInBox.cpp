@@ -8,7 +8,7 @@ namespace SBURB {
         this->y = y;
         this->width = width;
         this->height = height;
-        this->canSerialize = true;
+        this->canSerialize = false;
     }
 
     EventInBox::~EventInBox() {
@@ -32,9 +32,5 @@ namespace SBURB {
         }
 
         return entity->GetX() >= x && entity->GetY() >= y && entity->GetX() <= x + width && entity->GetY() <= y + height;
-    }
-
-    std::string EventInBox::Serialize() {
-
     }
 }

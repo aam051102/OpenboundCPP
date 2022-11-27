@@ -10,6 +10,9 @@
 #include "Dialoger.h"
 #include "SpriteButton.h"
 #include "Chooser.h"
+#include "AssetMusic.h"
+#include "AssetSound.h"
+#include "ActionQueue.h"
 
 #include <pugixml.hpp>
 
@@ -45,6 +48,8 @@ namespace SBURB
 
         std::shared_ptr<ActionQueue> GetActionQueueById(std::string id);
         void RemoveActionQueueById(std::string id);
+        void RemoveActionQueuesByGroup(std::string group);
+        void ForEachActionQueueInGroup(std::string group, void(*func)(std::shared_ptr<ActionQueue>));
 
         // TODO: Use std::variant instead??????
         std::shared_ptr<ActionQueue> PerformAction(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue = nullptr);
@@ -53,11 +58,16 @@ namespace SBURB
 
         void ChangeRoom(std::shared_ptr<Room> room, int newCharacterX, int newCharacterY);
         void PlayEffect(std::shared_ptr<Animation> effect, int x, int y);
-        void PlaySound();
+        void PlaySound(std::shared_ptr<AssetSound> sound);
         void PlayMovie();
+        void SetCurRoomOf(std::shared_ptr<Character> character);
+
+        std::shared_ptr<AssetMusic> GetBGM();
+        void ChangeBGM(std::shared_ptr<AssetMusic> music);
 
         void SetPlayingMovie(bool playingMovie) { this->playingMovie = playingMovie; };
         void SetInputDisabled(bool inputDisabled) { this->inputDisabled = inputDisabled; };
+        void SetInputDisabledTrigger(std::shared_ptr<Trigger> trigger) { this->inputDisabledTrigger = trigger; };
         void SetLoadingRoom(bool loadingRoom) { this->loadingRoom = loadingRoom; };
         bool GetLoadingRoom() { return this->loadingRoom; };
 
@@ -105,6 +115,8 @@ namespace SBURB
         bool playingMovie;
         bool loadingRoom;
         bool inputDisabled;
+
+        std::shared_ptr<Trigger> inputDisabledTrigger;
 
         std::map<std::string, std::string> gameState;
         std::map<std::string, std::shared_ptr<Room>> rooms;

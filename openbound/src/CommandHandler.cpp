@@ -13,10 +13,6 @@
 #undef PlaySound
 
 namespace SBURB {
-    CommandHandler::CommandHandler() {
-        
-    }
-
     void CommandHandler::PerformActionSilent(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue)
     {
         action->SetTimes(action->GetTimes() - 1);
@@ -158,7 +154,7 @@ namespace SBURB {
 
         CommandHandler::ChangeRoom(info);
         Sburb::GetInstance()->PlayEffect(Sburb::GetInstance()->GetEffect("teleportEffect"), Sburb::GetInstance()->GetCharacter()->GetX(), Sburb::GetInstance()->GetCharacter()->GetY());
-        Sburb::GetInstance()->GetCurrentAction()->SetFollowUp(Action("playEffect", "teleportEffect," + params[1] + "," + params[2], "", "", Sburb::GetInstance()->GetCurrentAction()->GetFollowUp()));
+        Sburb::GetInstance()->GetCurrentAction()->SetFollowUp(std::make_shared<Action>("playEffect", "teleportEffect," + params[1] + "," + params[2], "", "", Sburb::GetInstance()->GetCurrentAction()->GetFollowUp()));
     }
 
     void CommandHandler::ChangeChar(std::string info)
@@ -180,7 +176,7 @@ namespace SBURB {
     {
         auto params = ParseParams(info);
 
-        Sburb::GetInstance()->ChangeBGM(BGM(AssetHandler::GetSoundByName(params[0]), stof(params[1])));
+        Sburb::GetInstance()->ChangeBGM(std::make_shared<AssetMusic>(params[0], stof(params[1])));
     }
 
     void CommandHandler::BecomeNPC(std::string info)
@@ -195,7 +191,7 @@ namespace SBURB {
 
     void CommandHandler::PlaySound(std::string info)
     {
-        Sburb::GetInstance()->PlaySound(Sound(AssetHandler::GetSoundByName(trim(info))));
+        Sburb::GetInstance()->PlaySound(std::make_shared<AssetSound>(trim(info)));
     }
 
     void CommandHandler::PlayEffect(std::string info)
@@ -376,7 +372,13 @@ namespace SBURB {
     }
 
     void CommandHandler::DisableControl(std::string info) {
-        Sburb::GetInstance()->SetInputDisabled(trim(info).size() > 0 ? Trigger({ info }) : true);
+        if (trim(info).size() > 0) {
+            Sburb::GetInstance()->SetInputDisabledTrigger(std::make_shared<Trigger>(std::vector({ info })));
+            Sburb::GetInstance()->SetInputDisabled(false);
+        }
+        else {
+            Sburb::GetInstance()->SetInputDisabled(true);
+        }
     }
 
     void CommandHandler::EnableControl(std::string info)
@@ -642,7 +644,7 @@ namespace SBURB {
         Sburb::GetInstance()->PlayEffect(Sburb::GetInstance()->GetEffect("teleportEffect"), Sburb::GetInstance()->GetCharacter()->GetX(), Sburb::GetInstance()->GetCharacter()->GetY());
 
         auto params = ParseParams(info);
-        Sburb::GetInstance()->GetCurrentAction()->GetFollowUp()->GetFollowUp()->SetFollowUp(std::make_shared<Action>("playEffect", "teleportEffect," + params[2] + "," + params[3], "", "", Sburb::GetInstance()->GetCurrentAction()->GetFollowUp()->GetFollowUp()->GetFollowUp());
+        Sburb::GetInstance()->GetCurrentAction()->GetFollowUp()->GetFollowUp()->SetFollowUp(std::make_shared<Action>("playEffect", "teleportEffect," + params[2] + "," + params[3], "", "", Sburb::GetInstance()->GetCurrentAction()->GetFollowUp()->GetFollowUp()->GetFollowUp()));
     }
 
     void CommandHandler::SetButtonState(std::string info)

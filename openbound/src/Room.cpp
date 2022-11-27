@@ -127,7 +127,7 @@ namespace SBURB
 
 	void Room::SortDepths() {
 		// Could probably be replaced with an existing sort method.
-		for (int i = 1, int j = 1; i < this->sprites.size(); i++, j = i) {
+		for (int i = 1, j = 1; i < this->sprites.size(); i++, j = i) {
 			std::shared_ptr<Sprite> temp = this->sprites[j];
 			
 			while (j > 0 && temp->IsBehind(this->sprites[j - 1])) {

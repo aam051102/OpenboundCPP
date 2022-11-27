@@ -1,6 +1,7 @@
 #ifndef SBURB_BATCH_HANDLER_H
 #define SBURB_BATCH_HANDLER_H
 
+#include "Common.h"
 #include <SFML/Graphics/VertexArray.hpp>
 
 namespace SBURB
@@ -23,8 +24,8 @@ namespace SBURB
         void DrawSpriteRect(std::string textureName, const sf::VertexArray &coords, sf::RenderTarget &target);
         void DrawPrimitive(const sf::VertexArray &coords, sf::RenderTarget &target);
         void DrawBatch();
-        inline bool BatchExists() const { return verticesSize != 0; }
-        inline void Reset() { currentTexName = ""; }
+        inline bool BatchExists() const { return this->verticesSize != 0; }
+        inline void Reset() { this->currentTexName = ""; }
 
     private:
         BatchHandler();

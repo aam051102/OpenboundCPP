@@ -6,7 +6,7 @@ constexpr float PI = 3.14;
 
 namespace SBURB {
     Fighter::Fighter(std::string name, int x, int y, int width, int height) : 
-		Sprite(name, x, y, width, height, 0, 0, Depth::MG_DEPTHING, true)
+		Sprite(name, x, y, width, height, 0, 0, static_cast<int>(Depth::MG_DEPTHING), true)
 	{
 		this->accel = 1.5;
 		this->decel = 1;
@@ -190,7 +190,7 @@ namespace SBURB {
 			dx += tx;
 			dy += ty;
 
-			float theta = atan2(this->y - collides->GetY(), this->x - collides->GetX());
+			theta = atan2(this->y - collides->GetY(), this->x - collides->GetX());
 			this->vx += tx;
 			this->vy += ty;
 			this->vx *= 0.9;

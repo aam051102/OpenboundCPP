@@ -49,7 +49,7 @@ namespace SBURB
         {
             if (currentTexName != "")
                 DrawBatch();
-            currentTexName = textureName;
+            this->currentTexName = textureName;
         }
 
         if (this->target == nullptr)

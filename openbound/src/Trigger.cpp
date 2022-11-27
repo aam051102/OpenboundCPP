@@ -1,4 +1,5 @@
 #include "Trigger.h"
+#include "Sburb.h"
 #include "EventFactory.h"
 
 namespace SBURB {
@@ -42,27 +43,32 @@ namespace SBURB {
                 this->waitFor = NULL;
             }
             else {
-                return;
+                return false;
             }
         }
+
         if (this->CheckCompletion()) {
             if (this->action) {
-                bool result = Sburb.PerformAction(this->action); // TODO: Not actually bool. figure out type?
+                std::shared_ptr<ActionQueue> result = Sburb::GetInstance()->PerformAction(this->action);
+
                 if (result) {
-                    this->waitFor = Sburb.Trigger("noActions," + result.id);
+                    this->waitFor = std::make_shared<Trigger>("noActions," + result->GetId());
                 }
                 else {
-                    this->waitFor = Sburb.Trigger("noActions");
+                    this->waitFor = std::make_shared<Trigger>("noActions");
                 }
             }
+
             if (this->followUp) {
                 if (this->followUp->TryToTrigger()) {
                     this->followUp = NULL;
                 }
             }
+
             if (this->shouldRestart) {
                 this->Reset();
             }
+
             return this->shouldDetonate;
         }
     }

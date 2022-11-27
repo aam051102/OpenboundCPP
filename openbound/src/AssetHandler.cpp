@@ -75,7 +75,7 @@ namespace SBURB
     {
         return sounds[name];
     }
-
+    
     std::shared_ptr<sf::SoundBuffer> AssetHandler::LoadSoundFromFile(const std::string& name, const std::string &path)
     {
         if (sounds[name]) return sounds[name];

@@ -37,6 +37,8 @@ namespace SBURB
 
         void SetQueue(std::vector<std::string> queue) { this->queue = queue; };
         std::vector<std::string> GetQueue() { return this->queue; };
+        
+        std::string GetQueueItem(int index) { return this->queue[index]; };
 
     protected:
         std::string name;

@@ -124,7 +124,7 @@ namespace SBURB {
 						int offsetX = colNum * this->colSize;
 						int offsetY = rowNum * this->rowSize;
 
-						sf::FloatRect transformRect({ offsetX, offsetY }, sf::Vector2f(drawWidth, drawHeight));
+						sf::FloatRect transformRect(offsetX, offsetY, drawWidth, drawHeight);
 						transformRect = states.transform.transformRect(transformRect);
 						sf::VertexArray arr(sf::Quads, 4);
 						arr[0].position = sf::Vector2f(transformRect.left, transformRect.top);

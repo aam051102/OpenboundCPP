@@ -17,6 +17,8 @@ namespace SBURB
         bool HasGroup(std::string group);
         std::string Serialize(std::string output);
 
+        std::shared_ptr<Action> GetCurrentAction() { return this->curAction; };
+
         std::string GetId() { return this->id; };
 
         void SetPaused(bool isPaused) { this->isPaused = isPaused; };
