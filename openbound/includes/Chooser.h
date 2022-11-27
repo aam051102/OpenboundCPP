@@ -12,6 +12,8 @@ namespace SBURB {
         Chooser();
         ~Chooser();
 
+        void SetChoices(std::vector<Action> choices) { this->choices = choices; };
+
         void NextChoice();
         void PrevChoice();
         void BeginChoosing(int x, int y);

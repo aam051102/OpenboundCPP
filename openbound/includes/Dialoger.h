@@ -35,6 +35,9 @@ namespace SBURB
         void SetBox(std::string box);
         std::string Serialize(std::string output);
 
+        void SetQueue(std::vector<std::string> queue) { this->queue = queue; };
+        std::vector<std::string> GetQueue() { return this->queue; };
+
     protected:
         std::string name;
         std::string currentDialog;

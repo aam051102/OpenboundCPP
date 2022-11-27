@@ -43,7 +43,7 @@ namespace SBURB {
 		return triggers;
 	}
 	
-	std::string parseURLstring(std::string str) {
+	std::string Parser::ParseURLString(std::string str) {
 		if (str.find("/") == 0) {
 			return str.substr(1);
 		}

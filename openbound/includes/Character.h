@@ -40,6 +40,9 @@ namespace SBURB
 
         std::string Serialize(std::string output);
 
+        int GetOldX() { return this->oldX; };
+        int GetOldY() { return this->oldY; };
+
     protected:
         int speed;
         int vx;

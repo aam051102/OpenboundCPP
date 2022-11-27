@@ -19,6 +19,7 @@ namespace SBURB {
 
         void SetFollowUp(std::shared_ptr<Trigger> followUp) { this->followUp = followUp; };
 
+        void SetDetonate(bool shouldDetonate) { this->shouldDetonate = shouldDetonate; };
         
     protected:
         std::vector<std::string> info;

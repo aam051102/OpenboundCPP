@@ -7,12 +7,18 @@
 #include <SFML/Graphics/Font.hpp>
 #include <memory>
 #include "AssetTexture.h"
+#include "Path.h"
 
 namespace SBURB
 {
     class AssetHandler
     {
     public:
+        // Path handling
+        static std::shared_ptr<Path> GetPathByName(const std::string& name);
+        static std::shared_ptr<Path> LoadPath(const std::string& name, Path path);
+        static void ClearPaths();
+
         // Texture handling
         static std::shared_ptr<AssetTexture> GetTextureByName(const std::string& name);
         static std::shared_ptr<AssetTexture> LoadTextureFromFile(const std::string& name, const std::string &path);

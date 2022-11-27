@@ -22,6 +22,8 @@ namespace SBURB
         static std::shared_ptr<Sprite> ParseCharacterString(std::string spriteName);
         static std::vector<Action> ParseActionString(std::string str);
         static std::vector<Trigger> ParseTriggerString(std::string str);
+        static std::string ParseURLString(std::string str);
+
 
         static Action ParseAction(pugi::xml_node node);
         static ActionQueue ParseActionQueue(pugi::xml_node node);

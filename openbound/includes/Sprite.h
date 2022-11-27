@@ -46,6 +46,8 @@ namespace SBURB
         int GetWidth() { return this->width; };
         int GetHeight() { return this->height; };
 
+        void SetDepthing(int depthing) { this->depthing = depthing; };
+
         void SetX(int x) { this->x = x; };
         int GetX() { return this->x; };
 

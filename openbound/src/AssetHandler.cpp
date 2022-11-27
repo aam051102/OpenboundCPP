@@ -7,7 +7,27 @@ namespace SBURB
     static std::unordered_map<std::string, std::shared_ptr<AssetTexture>> textures;
     static std::unordered_map<std::string, std::shared_ptr<sf::SoundBuffer>> sounds;
     static std::unordered_map<std::string, std::shared_ptr<sf::Font>> fonts;
-    static std::map<std::string, std::string_view> paths;
+    static std::unordered_map<std::string, std::shared_ptr<Path>> paths;
+
+    std::shared_ptr<Path> AssetHandler::GetPathByName(const std::string& name)
+    {
+        return paths[name];
+    }
+
+    std::shared_ptr<Path> AssetHandler::LoadPath(const std::string& name, Path path)
+    {
+
+        return paths[name];
+    }
+
+    void AssetHandler::ClearPaths()
+    {
+        for (auto path : paths) {
+            path.second.reset();
+        }
+
+        paths.clear();
+    }
 
     // Texture handling
     std::shared_ptr<AssetTexture> AssetHandler::GetTextureByName(const std::string& name)

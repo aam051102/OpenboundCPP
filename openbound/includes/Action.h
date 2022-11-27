@@ -28,6 +28,8 @@ namespace SBURB
         void SetIsSilent(bool isSilent) { this->isSilent = isSilent; };
         bool GetIsSilent() { return this->isSilent; };
 
+        std::shared_ptr<Action> GetFollowUp() { return this->followUp; };
+
         std::string info;
 
     protected:

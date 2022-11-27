@@ -19,6 +19,7 @@ namespace SBURB
 
         std::string GetId() { return this->id; };
 
+        void SetPaused(bool isPaused) { this->isPaused = isPaused; };
 
     protected:
         std::shared_ptr<Action> curAction;

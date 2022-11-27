@@ -60,6 +60,8 @@ namespace SBURB
 
 		std::string Serialize(std::string output);
 
+		std::string GetName() { return this->name; };
+
     private:
 		std::string name;
 		int width;

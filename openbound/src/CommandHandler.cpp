@@ -168,7 +168,7 @@ namespace SBURB {
         oldCharacter->MoveNone();
         oldCharacter->Walk();
 
-        Sburb::GetInstance()->SetCharacter(Sburb::GetInstance()->GetSprite(info));
+        Sburb::GetInstance()->SetCharacter(std::static_pointer_cast<Character>(Sburb::GetInstance()->GetSprite(info)));
         auto newCharacter = Sburb::GetInstance()->GetCharacter();
 
         Sburb::GetInstance()->SetDestFocus(newCharacter);
@@ -224,7 +224,7 @@ namespace SBURB {
         auto sprite = Parser::ParseCharacterString(params[0]);
         std::string actionString = info.substr(firstComma + 1, info.size());
 
-        std::vector<Action> actions = ParseActionString(actionString);
+        std::vector<Action> actions = Parser::ParseActionString(actionString);
 
         for (int i = 0; i < actions.size(); i++) {
             Action action = actions[i];
@@ -254,7 +254,7 @@ namespace SBURB {
 
     void CommandHandler::PresentAction(std::string info)
     {
-        auto actions = ParseActionString(info);
+        auto actions = Parser::ParseActionString(info);
         Sburb::GetInstance()->GetChooser()->SetChoices(actions);
         Sburb::GetInstance()->GetChooser()->BeginChoosing(Sburb::GetInstance()->GetCamera()->GetX() + 20, Sburb::GetInstance()->GetCamera()->GetY() + 50);
     }
@@ -385,7 +385,7 @@ namespace SBURB {
     }
 
     Trigger CommandHandler::Macro(std::string info) {
-        std::vector<Action> actions = ParseActionString(info);
+        std::vector<Action> actions = Parser::ParseActionString(info);
         Action action = actions[0];
         if (!action.GetIsSilent()) {
             action.SetIsSilent(true);
@@ -487,7 +487,7 @@ namespace SBURB {
     void CommandHandler::CancelActionQueueGroup(std::string info)
     {
         auto params = ParseParams(info);
-        for (int i = 0; i < params.length; i++) {
+        for (int i = 0; i < params.size(); i++) {
             Sburb::GetInstance()->RemoveActionQueuesByGroup(params[i]);
         }
     }
@@ -639,7 +639,7 @@ namespace SBURB {
         Sburb::GetInstance()->SetLoadingRoom(true); //Only load one room at a time
         CommandHandler::ChangeRoomRemote(info);
 
-        Sburb::GetInstance()->PlayEffect(Sburb::GetEffect("teleportEffect"), Sburb::GetInstance()->GetCharacter()->GetX(), Sburb::GetInstance()->GetCharacter()->GetY());
+        Sburb::GetInstance()->PlayEffect(Sburb::GetInstance()->GetEffect("teleportEffect"), Sburb::GetInstance()->GetCharacter()->GetX(), Sburb::GetInstance()->GetCharacter()->GetY());
 
         auto params = ParseParams(info);
         Sburb::GetInstance()->GetCurrentAction()->GetFollowUp()->GetFollowUp()->SetFollowUp(std::make_shared<Action>("playEffect", "teleportEffect," + params[2] + "," + params[3], "", "", Sburb::GetInstance()->GetCurrentAction()->GetFollowUp()->GetFollowUp()->GetFollowUp());
@@ -695,7 +695,7 @@ namespace SBURB {
         bool automatic = params.size() > 0 && params[0] == "true";
         bool local = params.size() > 1 && params[1] == "true";
 
-        Sburb::GetInstance()->SaveStateToStorage(Sburb::GetInstance()->GetCharacter()->GetName() + ", " + Sburb::GetInstance()->GetRoom()->GetName(), automatic, local);
+        Sburb::GetInstance()->SaveStateToStorage(Sburb::GetInstance()->GetCharacter()->GetName() + ", " + Sburb::GetInstance()->GetCurrentRoom()->GetName(), automatic, local);
     }
 
     void CommandHandler::Load(std::string info)
@@ -721,10 +721,7 @@ namespace SBURB {
             actions.push_back(Action("load", "true, " + local, "Load " + Sburb::GetInstance()->GetStateDescription(true)));
         }
 
-        if (Sburb::GetInstance()->tests.storage) {
-            actions.push_back(Action("save", "false," + local, "Save"));
-        }
-
+        actions.push_back(Action("save", "false," + local, "Save"));
         actions.push_back(Action("cancel", "", "Cancel"));
 
         Sburb::GetInstance()->GetChooser()->SetChoices(actions);
@@ -805,13 +802,13 @@ namespace SBURB {
     void CommandHandler::OpenDirect(std::string info)
     {
         auto params = ParseParams(info);
-        std::string url = Parser::ParseURLstring(params[0]);
+        std::string url = Parser::ParseURLString(params[0]);
         std::string text = params[1];
 
 #if defined(_WIN32) || defined(WIN32)
         ShellExecute(0, 0, std::wstring(url.begin(), url.end()).c_str(), 0, 0, SW_SHOW);
 #endif
-        // TODO: Add support for opening on other OS's.
+        // TODO: Add support for opening URL on other OS's.
     }
 
     void CommandHandler::Cancel(std::string info)
