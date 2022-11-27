@@ -13,6 +13,47 @@ namespace SBURB {
 		}
 	}
 
+	std::vector<Action> Parser::ParseActionString(std::string str) {
+		std::vector<Action> actions = {};
+		str = "<sburb>" + str + "</sburb>";
+
+		pugi::xml_node input = Parser::ParseXML(str);
+		
+		for (pugi::xml_node tmp : input.children()) {
+			if (tmp.name()  == "action") {
+				actions.push_back(Parser::ParseAction(tmp));
+			}
+		}
+
+		return actions;
+	}
+
+	std::vector<Trigger> Parser::ParseTriggerString(std::string str) {
+		std::vector<Trigger> triggers = {};
+		str = "<triggers>" + str + "</triggers>";
+
+		pugi::xml_node input = Parser::ParseXML(str);
+
+		for (pugi::xml_node tmp : input.children()) {
+			if (tmp.name() == "trigger") {
+				triggers.push_back(Parser::ParseTrigger(tmp));
+			}
+		}
+
+		return triggers;
+	}
+	
+	std::string parseURLstring(std::string str) {
+		if (str.find("/") == 0) {
+			return str.substr(1);
+		}
+		else if (str.find("://") == std::string::npos) {
+			return "http://" + str;
+		}
+
+		return str;
+	}
+
 	std::string GetActionNodeText(pugi::xml_node node) {
 		if (!node) return "";
 
@@ -208,8 +249,7 @@ namespace SBURB {
 		std::string tmpFollowing = node.attribute("following").as_string();
 
 		if (tmpFollowing != "") {
-			std::shared_ptr<Sprite> following = Sburb::GetInstance()->GetSprite(tmpFollowing);
-			// TODO: Assert Character
+			std::shared_ptr<Character> following = std::static_pointer_cast<Character>(Sburb::GetInstance()->GetSprite(tmpFollowing));
 			if (following) {
 				newChar.Follow(following);
 			}
@@ -217,7 +257,7 @@ namespace SBURB {
 
 		std::string tmpFollower = node.attribute("follower").as_string();
 		if (tmpFollower != "") {
-			std::shared_ptr<Sprite> follower = Sburb::GetInstance()->GetSprite(tmpFollower);
+			std::shared_ptr<Character> follower = std::static_pointer_cast<Character>(Sburb::GetInstance()->GetSprite(tmpFollower));
 			if (follower) {
 				follower->Follow(std::make_shared<Character>(newChar));
 			}
