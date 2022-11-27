@@ -9,7 +9,7 @@ namespace SBURB
     class Action
     {
     public:
-        Action(std::string command, std::string info, std::string nam, std::string sprite, std::shared_ptr<Action> followUp = NULL, bool noWait = false, bool noDelay = false, uint16_t times = 1, bool isSoft = false, bool isSilent = false);
+        Action(std::string command, std::string info, std::string name = "", std::string sprite = "", std::shared_ptr<Action> followUp = NULL, bool noWait = false, bool noDelay = false, uint16_t times = 1, bool isSoft = false, bool isSilent = false);
         ~Action();
 
         Action Clone();

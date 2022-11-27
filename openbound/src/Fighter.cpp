@@ -166,7 +166,7 @@ namespace SBURB {
 		this->x += vx;
 		this->y += vy;
 
-		Room* room = Sburb::GetInstance()->GetRoom();
+		Room* room = Sburb::GetInstance()->GetCurrentRoom();
 		std::shared_ptr<Fighter> sharedThis = std::make_shared<Fighter>(this);
 
 		std::shared_ptr<Sprite> collides = room->Collides(std::make_shared<Fighter>(this));

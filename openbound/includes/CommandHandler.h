@@ -38,6 +38,9 @@ namespace SBURB {
         static void RemoveMovie(std::string info);
         static void DisableControl(std::string info);
         static void EnableControl(std::string info);
+        /*
+        DEPRECATED: DO NOT USE
+        */
         static Trigger WaitFor(std::string info);
         static Trigger Macro(std::string info);
         static Trigger Sleep(std::string info);

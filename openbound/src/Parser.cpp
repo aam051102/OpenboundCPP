@@ -4,6 +4,15 @@
 #include "Sburb.h"
 
 namespace SBURB {
+	std::shared_ptr<Sprite> Parser::ParseCharacterString(std::string spriteName) {
+		if (spriteName == "char") {
+			return Sburb::GetInstance()->GetCharacter();
+		}
+		else {
+			return Sburb::GetInstance()->GetSprite(spriteName);
+		}
+	}
+
 	std::string GetActionNodeText(pugi::xml_node node) {
 		if (!node) return "";
 

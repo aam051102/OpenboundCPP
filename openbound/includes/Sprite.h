@@ -24,6 +24,7 @@ namespace SBURB
         void AddAnimation(std::shared_ptr<Animation> anim);
         void StartAnimation(std::string name);
         std::shared_ptr<Animation> GetAnimation() { return this->animation; };
+        std::shared_ptr<Animation> GetAnimation(std::string name) { return this->animations[name]; };
         void Update();
         
         bool IsBehind(std::shared_ptr<Sprite> other);

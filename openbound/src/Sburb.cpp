@@ -138,7 +138,7 @@ namespace SBURB
         return name;
     }
 
-    Room *Sburb::GetRoom()
+    Room *Sburb::GetCurrentRoom()
     {
         return this->room;
     }

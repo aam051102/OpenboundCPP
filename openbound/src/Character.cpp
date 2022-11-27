@@ -272,7 +272,7 @@ namespace SBURB {
 			this->oldY = this->y;
 		}
 
-		Room* room = Sburb::GetInstance()->GetRoom();
+		Room* room = Sburb::GetInstance()->GetCurrentRoom();
 
 		std::shared_ptr<Character> sharedThis = std::make_shared<Character>(this);
 

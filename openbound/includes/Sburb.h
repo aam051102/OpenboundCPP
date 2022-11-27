@@ -29,16 +29,18 @@ namespace SBURB
 
         double GetFPS();
         std::string GetName();
-        Room* GetRoom();
+        Room* GetCurrentRoom();
 
         void AddSprite(std::string name, std::shared_ptr<Sprite> sprite);
 
+        std::shared_ptr<Room> GetRoom(std::string name) { return this->rooms[name]; };
         std::shared_ptr<Sprite> GetSprite(std::string name) { return this->sprites[name]; };
         std::shared_ptr<SpriteButton> GetButton(std::string name) { return this->buttons[name]; };
         std::shared_ptr<sf::Font> GetFont(std::string name) { return this->fonts[name]; };
         std::string GetGameState(std::string prop) { return this->gameState[prop]; };
 
-        void PerformAction(std::shared_ptr<Action> action);
+        // TODO: Use std::variant instead??????
+        std::shared_ptr<ActionQueue> PerformAction(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue = nullptr);
 
         void SetMouseCursor(std::string cursor);
 
@@ -55,6 +57,7 @@ namespace SBURB
 
     private:
         std::map<std::string, std::string> gameState;
+        std::map<std::string, std::shared_ptr<Room>> rooms;
         std::map<std::string, std::shared_ptr<Sprite>> sprites;
         std::map<std::string, std::shared_ptr<SpriteButton>> buttons;
         std::map<std::string, std::shared_ptr<sf::Font>> fonts;
