@@ -10,6 +10,8 @@
 #include <windows.h>
 #endif
 
+#undef PlaySound
+
 namespace SBURB {
     CommandHandler::CommandHandler() {
         
@@ -26,6 +28,78 @@ namespace SBURB {
 
         std::string command = trim(action->GetCommand());
 
+        if(command == "talk") CommandHandler::Talk(info);
+        else if(command == "randomTalk") CommandHandler::RandomTalk(info);
+        else if(command == "changeRoom") CommandHandler::ChangeRoom(info);
+        else if(command == "changeFocus") CommandHandler::ChangeFocus(info);
+        else if(command == "teleport") CommandHandler::Teleport(info);
+        else if(command == "changeChar") CommandHandler::ChangeChar(info);
+        else if(command == "playSong") CommandHandler::PlaySong(info);
+        else if(command == "becomeNPC") CommandHandler::BecomeNPC(info);
+        else if(command == "becomePlayer") CommandHandler::BecomePlayer(info);
+        else if(command == "playSound") CommandHandler::PlaySound(info);
+        else if(command == "playEffect") CommandHandler::PlayEffect(info);
+        else if(command == "playAnimation") CommandHandler::PlayAnimation(info);
+        else if(command == "starAnimation") CommandHandler::StartAnimation(info);
+        else if(command == "addAction") CommandHandler::AddAction(info);
+        else if(command == "addActions") CommandHandler::AddActions(info);
+        else if(command == "removeAction") CommandHandler::RemoveAction(info);
+        else if(command == "removeActions") CommandHandler::RemoveActions(info);
+        else if(command == "presentAction") CommandHandler::PresentAction(info);
+        else if(command == "presentActions") CommandHandler::PresentActions(info);
+        else if(command == "openChest") CommandHandler::OpenChest(info);
+        else if(command == "deltaSprite") CommandHandler::DeltaSprite(info);
+        else if(command == "moveSprite") CommandHandler::MoveSprite(info);
+        else if(command == "depthSprite") CommandHandler::DepthSprite(info);
+        else if(command == "playMovie") CommandHandler::PlayMovie(info);
+        else if(command == "removeMovie") CommandHandler::RemoveMovie(info);
+        else if(command == "disableControl") CommandHandler::DisableControl(info);
+        else if(command == "enableControl") CommandHandler::EnableControl(info);
+        else if(command == "waitFor") CommandHandler::WaitFor(info);
+        else if(command == "macro") CommandHandler::Macro(info);
+        else if(command == "sleep") CommandHandler::Sleep(info);
+        else if(command == "pauseActionQueue") CommandHandler::PauseActionQueue(info);
+        else if(command == "pauseActionQueues") CommandHandler::PauseActionQueues(info);
+        else if(command == "resumeActionQueue") CommandHandler::ResumeActionQueue(info);
+        else if(command == "resumeActionQueues") CommandHandler::ResumeActionQueues(info);
+        else if(command == "cancelActionQueue") CommandHandler::CancelActionQueue(info);
+        else if(command == "cancelActionQueues") CommandHandler::CancelActionQueues(info);
+        else if(command == "pauseActionQueueGroup") CommandHandler::PauseActionQueueGroup(info);
+        else if(command == "pauseActionQueueGroups") CommandHandler::PauseActionQueueGroups(info);
+        else if(command == "resumeActionQueueGroup") CommandHandler::ResumeActionQueueGroup(info);
+        else if(command == "resumeActionQueueGroups") CommandHandler::ResumeActionQueueGroups(info);
+        else if(command == "cancelActionQueueGroup") CommandHandler::CancelActionQueueGroup(info);
+        else if(command == "cancelActionQueueGroups") CommandHandler::CancelActionQueueGroups(info);
+        else if(command == "addSprite") CommandHandler::AddSprite(info);
+        else if(command == "removeSprite") CommandHandler::RemoveSprite(info);
+        else if(command == "cloneSprite") CommandHandler::CloneSprite(info);
+        else if(command == "addWalkable") CommandHandler::AddWalkable(info);
+        else if(command == "addUnwalkable") CommandHandler::AddUnwalkable(info);
+        else if(command == "addMotionPath") CommandHandler::AddMotionPath(info);
+        else if(command == "removeWalkable") CommandHandler::RemoveWalkable(info);
+        else if(command == "removeUnwalkable") CommandHandler::RemoveUnwalkable(info);
+        else if(command == "toggleVolume") CommandHandler::ToggleVolume();
+        else if(command == "changeMode") CommandHandler::ChangeMode(info);
+        else if(command == "loadStateFile") CommandHandler::LoadStateFile(info);
+        else if(command == "fadeOut") CommandHandler::FadeOut();
+        else if(command == "changeRoomRemote") CommandHandler::ChangeRoomRemote(info);
+        else if(command == "teleportRemote") CommandHandler::TeleportRemote(info);
+        else if(command == "setButtonState") CommandHandler::SetButtonState(info);
+        else if(command == "skipDialog") CommandHandler::SkipDialog();
+        else if(command == "follow") CommandHandler::Follow(info);
+        else if(command == "unfollow") CommandHandler::Unfollow(info);
+        else if(command == "addOverlay") CommandHandler::AddOverlay(info);
+        else if(command == "removeOverlay") CommandHandler::RemoveOverlay(info);
+        else if(command == "save") CommandHandler::Save(info);
+        else if(command == "load") CommandHandler::Load(info);
+        else if(command == "saveOrLoad") CommandHandler::SaveOrLoad(info);
+        else if(command == "setgameState") CommandHandler::SetGameState(info);
+        else if(command == "goBack") CommandHandler::GoBack(info);
+        else if(command == "try") CommandHandler::Try(info);
+        else if(command == "walk") CommandHandler::Walk(info);
+        else if(command == "openLink") CommandHandler::OpenLink(info);
+        else if(command == "openDirect") CommandHandler::OpenDirect(info);
+        else if(command == "cancel") CommandHandler::Cancel(info);
     }
 
     void CommandHandler::Talk(std::string info)
