@@ -20,6 +20,14 @@ namespace SBURB
         std::string GetSprite() { return this->sprite; };
         std::string GetName() { return this->name; };
 
+        void SetTimes(int times) { this->times = times; };
+        int GetTimes() { return this->times; };
+
+        std::string GetCommand() { return this->command; };
+
+        void SetIsSilent(bool isSilent) { this->isSilent = isSilent; };
+        bool GetIsSilent() { return this->isSilent; };
+
         std::string info;
 
     protected:
