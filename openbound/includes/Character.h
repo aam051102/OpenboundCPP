@@ -17,8 +17,8 @@ namespace SBURB
         void Update();
         void HandleFollowing();
 
-        void MoveUp(bool movingSideways);
-        void MoveDown(bool movingSideways);
+        void MoveUp(bool movingSideways = false);
+        void MoveDown(bool movingSideways = false);
         void MoveLeft();
         void MoveRight();
         void MoveNone();
