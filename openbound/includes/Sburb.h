@@ -37,12 +37,17 @@ namespace SBURB
         void SetCurrentRoom(std::shared_ptr<Room> room) { this->room = room; };
         std::shared_ptr<Room> GetCurrentRoom();
 
-        void AddSprite(std::string name, std::shared_ptr<Sprite> sprite);
+        void SetSprite(std::string name, std::shared_ptr<Sprite> sprite);
+        std::shared_ptr<Sprite> GetSprite(std::string name) { return this->sprites[name]; };
 
         std::map<std::string, std::shared_ptr<Room>> GetRooms() { return this->rooms; };
+
+        void SetRoom(std::string name, std::shared_ptr<Room> room) { this->rooms[name] = room; };
         std::shared_ptr<Room> GetRoom(std::string name) { return this->rooms[name]; };
-        std::shared_ptr<Sprite> GetSprite(std::string name) { return this->sprites[name]; };
+
+        void SetButton(std::string name, std::shared_ptr<SpriteButton> button) { this->buttons[name] = button; }
         std::shared_ptr<SpriteButton> GetButton(std::string name) { return this->buttons[name]; };
+
         std::shared_ptr<sf::Font> GetFont(std::string name) { return this->fonts[name]; };
 
         void SetEffect(std::string, std::shared_ptr<Animation> anim) { this->effects[name] = anim; };
@@ -55,6 +60,7 @@ namespace SBURB
         void RemoveActionQueueById(std::string id);
         void RemoveActionQueuesByGroup(std::string group);
         void ForEachActionQueueInGroup(std::string group, void(*func)(std::shared_ptr<ActionQueue>));
+        void AddActionQueue(std::shared_ptr<ActionQueue> queue) { this->actionQueues.push_back(queue); };
 
         // TODO: Use std::variant instead??????
         std::shared_ptr<ActionQueue> PerformAction(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue = nullptr);
@@ -105,6 +111,8 @@ namespace SBURB
         void SetNextQueueId(int nextQueueId) { this->nextQueueId = nextQueueId; };
         int GetNextQueueId() { return this->nextQueueId;};
 
+        void SetHud(std::string name, std::shared_ptr<Sprite> sprite) { this->hud[name] = sprite; };
+
         Window window;
         AssetManager assetManager;
 
@@ -136,6 +144,8 @@ namespace SBURB
         std::map<std::string, std::shared_ptr<SpriteButton>> buttons;
         std::map<std::string, std::shared_ptr<sf::Font>> fonts;
         std::map<std::string, std::shared_ptr<Animation>> effects;
+        std::map<std::string, std::shared_ptr<Sprite>> hud;
+        std::vector<std::shared_ptr<ActionQueue>> actionQueues;
 
         InputHandler inputHandler;
 

@@ -21,6 +21,7 @@ namespace SBURB {
         static void ParseTemplateClasses(pugi::xml_node node);
         static void ApplyTemplateClasses(pugi::xml_node node);
         static void TryToApplyTemplate(pugi::xml_node templateNode, pugi::xml_node candidateNode);
+        static void ApplyTemplate(pugi::xml_node templateNode, pugi::xml_node candidateNode);
 
         static void ParseButtons(pugi::xml_node node);
         static void ParseSprites(pugi::xml_node node);

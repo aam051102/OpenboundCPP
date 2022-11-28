@@ -5,6 +5,8 @@
 #include "AssetHandler.h"
 
 namespace SBURB {
+    static std::map<std::string, pugi::xml_node> templateClasses;
+
     bool Serializer::LoadSerial(std::string path) {
         pugi::xml_document doc;
         pugi::xml_parse_result initDocRes = doc.load_file(path.c_str());
@@ -192,7 +194,7 @@ namespace SBURB {
                 if (templateNode.name() != "#text" && templateNode.name() != "#comment") {
                     ApplyTemplateClasses(templateNode);
 
-                    templateClasses[templateNode.attribute("class").as_string()] = templateNode.cloneNode(true);
+                    templateClasses[templateNode.attribute("class").as_string()] = templateNode;
                 }
             }
 
@@ -201,17 +203,36 @@ namespace SBURB {
     }
 
     void Serializer::ApplyTemplateClasses(pugi::xml_node node) {
-        for (pugi::xml_node templateNode : templateClasses) {
-            auto candidates = node.children(templateNode.name());
+        for (auto templateNode : templateClasses) {
+            auto candidates = node.children(templateNode.second.name());
 
             for (pugi::xml_node candidate : candidates) {
-                TryToApplyTemplate(templateNode, candidate);
+                TryToApplyTemplate(templateNode.second, candidate);
             }
         }
     }
 
     void Serializer::TryToApplyTemplate(pugi::xml_node templateNode, pugi::xml_node candidateNode) {
+        std::string templateClass = templateNode.attribute("class").as_string();
+        std::string candClass = candidateNode.attribute("class").as_string();
+        if (candClass != "" && candClass == templateClass) {
+            Serializer::ApplyTemplate(templateNode, candidateNode);
+        }
+    }
 
+    void Serializer::ApplyTemplate(pugi::xml_node templateNode, pugi::xml_node candidateNode) {
+        auto tempChildren = templateNode.children();
+        auto candChildren = candidateNode.children();
+
+        for (auto tempAttribute : templateNode.attributes()) {
+            if (!candidateNode.attribute(tempAttribute.name())) {
+                candidateNode.attribute(tempAttribute.name()).set_value(tempAttribute.as_string());
+            }
+        }
+
+        for (auto tempChild : tempChildren) {
+            candidateNode.append_copy(tempChild);
+        }
     }
 
     void Serializer::ParseButtons(pugi::xml_node node) {
@@ -219,7 +240,7 @@ namespace SBURB {
         
         for (pugi::xml_node curButton : newButtons) {
             SpriteButton newButton = Parser::ParseSpriteButton(curButton);
-            Sburb::GetInstance()->SetButton(newButton.GetName(), newButton);
+            Sburb::GetInstance()->SetButton(newButton.GetName(), std::make_shared<SpriteButton>(newButton));
         }
     }
 
@@ -228,7 +249,7 @@ namespace SBURB {
 
         for (pugi::xml_node curSprite : newSprites) {
             Sprite newSprite = Parser::ParseSprite(curSprite);
-            Sburb::GetInstance()->SetSprite(newSprite.GetName(), newSprite);
+            Sburb::GetInstance()->SetSprite(newSprite.GetName(), std::make_shared<Sprite>(newSprite));
             ParseActions(curSprite, newSprite);
         }
     }
@@ -252,7 +273,7 @@ namespace SBURB {
 
         for (pugi::xml_node curChar : newChars) {
             Character newChar = Parser::ParseCharacter(curChar);
-            Sburb::GetInstance()->SetSprite(newChar.GetName(), newChar);
+            Sburb::GetInstance()->SetSprite(newChar.GetName(), std::make_shared<Sprite>(newChar));
             ParseActions(curChar, newChar);
         }
     }
@@ -262,7 +283,7 @@ namespace SBURB {
 
         for (pugi::xml_node curFighter : newFighters) {
             Fighter newFighter = Parser::ParseFighter(curFighter);
-            Sburb::GetInstance()->SetSprite(newFighter.GetName(), newFighter);
+            Sburb::GetInstance()->SetSprite(newFighter.GetName(), std::make_shared<Sprite>(newFighter));
             ParseActions(curFighter, newFighter);
         }
     }
@@ -272,7 +293,7 @@ namespace SBURB {
 
         for (pugi::xml_node curRoom : newRooms) {
             Room newRoom = Parser::ParseRoom(curRoom);
-            Sburb::GetInstance()->SetRoom(newRoom.GetName(), newRoom);
+            Sburb::GetInstance()->SetRoom(newRoom.GetName(), std::make_shared<Room>(newRoom));
         }
     }
 
@@ -302,7 +323,7 @@ namespace SBURB {
             for (pugi::xml_node child : children) {
                 if (child.name()  == "spritebutton") {
                     std::string name = child.attribute("name").as_string();
-                    hud[name] = Sburb::GetInstance()->GetButton(name);
+                    Sburb::GetInstance()->SetHud(name, Sburb::GetInstance()->GetButton(name));
                 }
             }
         }
@@ -425,7 +446,7 @@ namespace SBURB {
             }
 
             ActionQueue actionQueue = Parser::ParseActionQueue(curActionQueues);
-            actionQueues.push_back(actionQueue);
+            Sburb::GetInstance()->AddActionQueue(std::make_shared<ActionQueue>(actionQueue));
         }
     }
 
