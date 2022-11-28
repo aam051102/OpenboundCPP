@@ -9,7 +9,18 @@ namespace SBURB {
     static int loadingDepth = 0;
     static std::vector<pugi::xml_node> loadQueue;
 
-    bool Serializer::LoadSerial(std::string path) {
+    bool Serializer::LoadSerialFromXML(std::string path, bool keepOld) {
+        Sburb::GetInstance()->HaltUpdateProcess();
+        path = Sburb::GetInstance()->levelPath + path;
+
+        if (keepOld && Sburb::GetInstance()->loadedFiles[path]) {
+            Sburb::GetInstance()->StartUpdateProcess();
+            return;
+        }
+        else {
+            Sburb::GetInstance()->loadedFiles[path] = true;
+        }
+
         pugi::xml_document doc;
         pugi::xml_parse_result initDocRes = doc.load_file(path.c_str());
 
@@ -19,7 +30,64 @@ namespace SBURB {
             return false;
         }
 
-        pugi::xml_node rootNode = doc.child("sburb");
+        Serializer::LoadSerial(&doc, keepOld);
+    }
+
+    void PurgeAssets() {
+        AssetHandler::ClearFonts();
+        AssetHandler::ClearPaths();
+        AssetHandler::ClearSounds();
+        AssetHandler::ClearTextures();
+    }
+
+    void PurgeState() {
+        if (Sburb.rooms) {
+            delete Sburb.rooms;
+        }
+
+        if (Sburb.sprites) {
+            delete Sburb.sprites;
+        }
+
+        Sburb.rooms = {};
+
+        if (Sburb.bgm) {
+            Sburb.bgm.stop();
+            Sburb.bgm = null;
+        }
+
+        for (var bin in Sburb.Bins) {
+            if (!Sburb.Bins.hasOwnProperty(bin)) continue;
+            Sburb.Bins[bin].innerHTML = "";
+        }
+
+        Sburb.gameState = {};
+        Sburb.globalVolume = 1;
+        Sburb.hud = {};
+        Sburb.sprites = {};
+        Sburb.buttons = {};
+        Sburb.effects = {};
+        Sburb.curAction = nullptr;
+        Sburb.actionQueues = {};
+        Sburb.nextQueueId = 0;
+        Sburb.pressed = {};
+        Sburb.pressedOrder = {};
+        Sburb.chooser = Chooser();
+        Sburb.dialoger = nullptr;
+        Sburb.curRoom = nullptr;
+        Sburb.character = nullptr;
+        Sburb.resourcePath = "";
+        Sburb.levelPath = "";
+        Sburb.loadedFiles = {};
+    }
+
+    bool Serializer::LoadSerial(pugi::xml_document* doc, bool keepOld) {
+        pugi::xml_node rootNode = doc->child("sburb");
+
+        if (!keepOld) {
+            PurgeAssets();
+            PurgeState();
+        }
 
         std::string levelPath = rootNode.attribute("levelPath").value();
         if (levelPath != "") {
@@ -71,7 +139,7 @@ namespace SBURB {
             for (pugi::xml_node dependencyNode : dependencyNodes) {
                 auto dependencyPath = dependencyNode.text().as_string();
 
-                LoadSerial(Sburb::GetInstance()->levelPath + trim(dependencyPath));
+                LoadSerialFromXML(Sburb::GetInstance()->levelPath + trim(dependencyPath));
             }
         }
 

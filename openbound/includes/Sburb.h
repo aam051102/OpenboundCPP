@@ -112,6 +112,9 @@ namespace SBURB
 
         void SetHud(std::string name, std::shared_ptr<Sprite> sprite) { this->hud[name] = sprite; };
 
+        void HaltUpdateProcess();
+        void StartUpdateProcess();
+
         Window window;
 
         std::string name;

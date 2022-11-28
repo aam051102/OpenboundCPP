@@ -11,7 +11,8 @@ namespace SBURB {
         template <typename T>
         static std::string SerializeAttribute(std::string name, T value, T defaultValue = T());
 
-        static bool LoadSerial(std::string path);
+        static bool LoadSerialFromXML(std::string path, bool keepOld = false);
+        static bool LoadSerial(pugi::xml_document* doc, bool keepOld = false);
         static bool LoadDependencies(pugi::xml_node node);
         static bool LoadSerialAssets(pugi::xml_node node);
         static bool LoadSerialAsset(pugi::xml_node node);
