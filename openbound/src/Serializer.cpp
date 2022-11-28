@@ -178,7 +178,7 @@ namespace SBURB {
         }
 
         if (loadQueue.length == 0 && loadingDepth == 0) {
-            Sburb.startUpdateProcess();
+            Sburb::GetInstance()->StartUpdateProcess();
         }
     }
 
@@ -218,7 +218,7 @@ namespace SBURB {
         
         for (pugi::xml_node curButton : newButtons) {
             SpriteButton newButton = Parser::ParseSpriteButton(curButton);
-            buttons[newButton.name] = newButton;
+            Sburb::GetInstance()->SetButton(newButton.GetName(), newButton);
         }
     }
 
@@ -227,7 +227,7 @@ namespace SBURB {
 
         for (pugi::xml_node curSprite : newSprites) {
             Sprite newSprite = Parser::ParseSprite(curSprite);
-            sprites[newSprite.name] = newSprite;
+            Sburb::GetInstance()->SetSprite(newSprite.GetName(), newSprite);
             ParseActions(curSprite, newSprite);
         }
     }
@@ -241,7 +241,7 @@ namespace SBURB {
             }
             if (curAction.name() == "action") {
                 Action newAction = Parser::ParseAction(curAction);
-                sprite.AddAction(newAction);
+                sprite.AddAction(std::make_shared<Action>(newAction));
             }
         }
     }
@@ -251,7 +251,7 @@ namespace SBURB {
 
         for (pugi::xml_node curChar : newChars) {
             Character newChar = Parser::ParseCharacter(curChar);
-            sprites[newChar.name] = newChar;
+            Sburb::GetInstance()->SetSprite(newChar.GetName(), newChar);
             ParseActions(curChar, newChar);
         }
     }
@@ -261,7 +261,7 @@ namespace SBURB {
 
         for (pugi::xml_node curFighter : newFighters) {
             Fighter newFighter = Parser::ParseFighter(curFighter);
-            sprites[newFighter.name] = newFighter;
+            Sburb::GetInstance()->SetSprite(newFighter.GetName(), newFighter);
             ParseActions(curFighter, newFighter);
         }
     }
@@ -271,7 +271,7 @@ namespace SBURB {
 
         for (pugi::xml_node curRoom : newRooms) {
             Room newRoom = Parser::ParseRoom(curRoom);
-            rooms[newRoom.name] = newRoom;
+            Sburb::GetInstance()->SetRoom(newRoom.GetName(), newRoom);
         }
     }
 
@@ -287,7 +287,7 @@ namespace SBURB {
 
                 std::string key = node.name();
                 std::string value = node.first_child().value();
-                gameState[key] = value;
+                Sburb::GetInstance()->SetGameState(key, value);
             }
         }
     }
@@ -301,7 +301,7 @@ namespace SBURB {
             for (pugi::xml_node child : children) {
                 if (child.name()  == "spritebutton") {
                     std::string name = child.attribute("name").as_string();
-                    hud[name] = buttons[name];
+                    hud[name] = Sburb::GetInstance()->GetButton(name);
                 }
             }
         }
@@ -335,7 +335,7 @@ namespace SBURB {
             auto dialogSprites = hudNode.child("dialogsprites");
 
             if (dialogSprites) {
-                SerialLoadDialogSprites(dialogSprites);
+                Serializer::SerialLoadDialogSprites(dialogSprites);
             }
         }
     }
@@ -344,20 +344,21 @@ namespace SBURB {
         auto effects = node.child("effects");
 
         if (effects) {
-            SerialLoadEffects(effects);
+            Serializer::SerialLoadEffects(effects);
         }
     }
 
     void Serializer::ParseState(pugi::xml_node node) {
         std::string character = node.attribute("char").as_string();
         if (character != "") {
-            Sburb.focus = Sburb.character = Sburb.sprites[character];
-            Sburb.character.BecomePlayer();
+            Sburb::GetInstance()->SetCharacter(std::static_pointer_cast<Character>(Sburb::GetInstance()->GetSprite(character)));
+            Sburb::GetInstance()->SetFocus(Sburb::GetInstance()->GetCharacter());
+            Sburb::GetInstance()->GetCharacter()->BecomePlayer();
         }
 
         std::string mode = node.attribute("mode").as_string();
         if (mode != "") {
-            Sburb.engineMode = mode;
+            Sburb::GetInstance()->SetEngineMode(mode);
         }
 
         int scale = node.attribute("scale").as_int();
@@ -367,19 +368,19 @@ namespace SBURB {
 
         int nextQueueId = node.attribute("nextQueueId").as_int();
         if (nextQueueId) {
-            Sburb.nextQueueId = nextQueueId;
+            Sburb::GetInstance()->SetNextQueueId(nextQueueId);
         }
 
         std::string curRoom = node.attribute("curRoom").as_string();
         if (curRoom != "") {
-            Sburb.curRoom = Sburb.rooms[curRoom];
-            Sburb.curRoom.enter();
+            Sburb::GetInstance()->SetCurrentRoom(Sburb::GetInstance()->GetRoom(curRoom));
+            Sburb::GetInstance()->GetCurrentRoom()->Enter();
         }
-        else if (Sburb.curRoom == nullptr && Sburb.character != nullptr) {
-            for (auto room : Sburb.rooms) {
-                if (room.Contains(Sburb.character)) {
-                    Sburb.curRoom = room;
-                    Sburb.curRoom.Enter();
+        else if (Sburb::GetInstance()->GetCurrentRoom() == nullptr && Sburb::GetInstance()->GetCharacter() != nullptr) {
+            for (auto room : Sburb::GetInstance()->GetRooms()) {
+                if (room.Contains(Sburb::GetInstance()->GetCharacter()) {
+                    Sburb::GetInstance()->SetCurrentRoom(room);
+                    Sburb::GetInstance()->GetCurrentRoom()->Enter();
                     break;
                 }
             }
@@ -388,7 +389,7 @@ namespace SBURB {
         std::string bgm = node.attribute("bgm").as_string();
         if (bgm != "") {
             std::vector<std::string> params = split(bgm, ",");
-            Sburb.changeBGM(BGM(Sburb.assets[params[0]], std::stof(params.size() > 1 ? params[1] : "0")));
+            Sburb::GetInstance()->ChangeBGM(BGM(AssetHandler::GetSoundByName(params[0]), std::stof(params.size() > 1 ? params[1] : "0")));
         }
 
         std::shared_ptr<Action> initAction;
@@ -403,7 +404,7 @@ namespace SBURB {
             }
 
             if (initAction) {
-                Sburb.PerformAction(initAction);
+                Sburb::GetInstance()->PerformAction(initAction);
             }
         }
     }

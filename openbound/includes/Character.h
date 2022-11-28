@@ -43,6 +43,8 @@ namespace SBURB
         int GetOldX() { return this->oldX; };
         int GetOldY() { return this->oldY; };
 
+        void SetFacing(bool facing) { this->facing = facing; };
+
     protected:
         int speed;
         int vx;

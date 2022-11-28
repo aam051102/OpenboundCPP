@@ -18,6 +18,8 @@ namespace SBURB
 
         void SetState(std::string state);
 
+        void SetAction(std::shared_ptr<Action> action) { this->action = action; };
+
         std::string Serialize(std::string output);
 
     protected:

@@ -359,13 +359,13 @@ namespace SBURB {
 
 		std::string walkableMap = node.attribute("walkableMap").as_string();
 		if (walkableMap != "") {
-			newRoom.SetWalkableMap(assets[walkableMap]);
+			newRoom.SetWalkableMap(AssetHandler::GetTextureByName(walkableMap));
 			if (!newRoom.GetWidth()) {
-				newRoom.SetWidth(newRoom.GetWalkableMap().GetWidth() * newRoom.GetMapScale());
+				newRoom.SetWidth(newRoom.GetWalkableMap()->getSize().x * newRoom.GetMapScale());
 			}
 
 			if (!newRoom.GetHeight()) {
-				newRoom.SetHeight(newRoom.GetWalkableMap().GetHeight() * newRoom.GetMapScale());
+				newRoom.SetHeight(newRoom.GetWalkableMap()->getSize().y * newRoom.GetMapScale());
 			}
 		}
 
@@ -440,7 +440,7 @@ namespace SBURB {
 		auto action = node.child("action");
 		if (action) {
 			Action newAction = ParseAction(action);
-			newButton.SetAction(newAction);
+			newButton.SetAction(std::make_shared<Action>(newAction));
 		}
 
 		return newButton;

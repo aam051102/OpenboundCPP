@@ -62,6 +62,18 @@ namespace SBURB
 
 		std::string GetName() { return this->name; };
 
+		void SetMapScale(int mapScale) { this->mapScale = mapScale; };
+		int GetMapScale() { return this->mapScale; };
+
+		void SetWalkableMap(std::shared_ptr<AssetTexture> walkableMap) { this->walkableMap = walkableMap; };
+		std::shared_ptr<AssetTexture> GetWalkableMap() { return this->walkableMap; };
+
+		void SetWidth(int width) { this->width = width; };
+		int GetWidth() { return this->width; };
+
+		void SetHeight(int height) { this->height = height; };
+		int GetHeight() { return this->height; };
+
     private:
 		std::string name;
 		int width;
