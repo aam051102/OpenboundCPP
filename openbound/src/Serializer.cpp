@@ -30,6 +30,7 @@ namespace SBURB {
             return false;
         }
 
+        // NOTE: DOC NEEDS TO BE KEPT ALIVE!!
         Serializer::LoadSerial(&doc, keepOld);
     }
 
@@ -56,28 +57,23 @@ namespace SBURB {
             Sburb.bgm = null;
         }
 
-        for (var bin in Sburb.Bins) {
-            if (!Sburb.Bins.hasOwnProperty(bin)) continue;
-            Sburb.Bins[bin].innerHTML = "";
-        }
-
         Sburb.gameState = {};
-        Sburb.globalVolume = 1;
+        Sburb::GetInstance()->SetGlobalVolume(1);
         Sburb.hud = {};
         Sburb.sprites = {};
         Sburb.buttons = {};
         Sburb.effects = {};
-        Sburb.curAction = nullptr;
+        Sburb::GetInstance()->SetCurrentAction(nullptr);
         Sburb.actionQueues = {};
         Sburb.nextQueueId = 0;
         Sburb.pressed = {};
         Sburb.pressedOrder = {};
-        Sburb.chooser = Chooser();
-        Sburb.dialoger = nullptr;
-        Sburb.curRoom = nullptr;
-        Sburb.character = nullptr;
-        Sburb.resourcePath = "";
-        Sburb.levelPath = "";
+        Sburb::GetInstance()->SetChooser(std::make_shared<Chooser>());
+        Sburb::GetInstance()->SetDialoger(nullptr);
+        Sburb::GetInstance()->SetCurrentRoom(nullptr);
+        Sburb::GetInstance()->SetCharacter(nullptr);
+        Sburb::GetInstance()->resourcePath = "";
+        Sburb::GetInstance()->levelPath = "";
         Sburb.loadedFiles = {};
     }
 
