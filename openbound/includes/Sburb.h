@@ -5,7 +5,6 @@
 #include "Window.h"
 #include "Input.h"
 #include "Room.h"
-#include "AssetManager.h"
 #include "Character.h"
 #include "Dialoger.h"
 #include "SpriteButton.h"
@@ -37,7 +36,7 @@ namespace SBURB
         void SetCurrentRoom(std::shared_ptr<Room> room) { this->room = room; };
         std::shared_ptr<Room> GetCurrentRoom();
 
-        void SetSprite(std::string name, std::shared_ptr<Sprite> sprite);
+        void SetSprite(std::string name, std::shared_ptr<Sprite> sprite) { this->sprites[name] = sprite; };
         std::shared_ptr<Sprite> GetSprite(std::string name) { return this->sprites[name]; };
 
         std::map<std::string, std::shared_ptr<Room>> GetRooms() { return this->rooms; };
@@ -114,7 +113,6 @@ namespace SBURB
         void SetHud(std::string name, std::shared_ptr<Sprite> sprite) { this->hud[name] = sprite; };
 
         Window window;
-        AssetManager assetManager;
 
         std::string name;
         std::string levelPath;

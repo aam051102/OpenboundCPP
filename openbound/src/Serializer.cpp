@@ -6,6 +6,8 @@
 
 namespace SBURB {
     static std::map<std::string, pugi::xml_node> templateClasses;
+    static int loadingDepth = 0;
+    static std::vector<pugi::xml_node> loadQueue;
 
     bool Serializer::LoadSerial(std::string path) {
         pugi::xml_document doc;
@@ -50,9 +52,12 @@ namespace SBURB {
             Sburb::GetInstance()->window.SetSize({Sburb::GetInstance()->window.GetSize().y, stoi(height)});
         }
 
+        loadingDepth++;
         LoadDependencies(rootNode);
+        loadingDepth--;
         LoadSerialAssets(rootNode);
-        LoadSerialState(rootNode);
+        loadQueue.push_back(rootNode);
+        LoadSerialState();
 
         return true;
     }
@@ -146,7 +151,7 @@ namespace SBURB {
         return asset;
     }
 
-    void Serializer::LoadSerialState(pugi::xml_node node) {
+    void Serializer::LoadSerialState() {
         // Don't load state until assets are all loaded
         if (updateLoop) {
             clearTimeout(updateLoop);
@@ -157,9 +162,9 @@ namespace SBURB {
             return;
         }
 
-        while (loadQueue.length > 0) {
-            var input = loadQueue[0];
-            loadQueue.splice(0, 1);
+        while (loadQueue.size() > 0) {
+            pugi::xml_node input = loadQueue[0];
+            loadQueue.erase(loadQueue.begin() + 0);
             //These two have to be first
             ParseTemplateClasses(input);
             ApplyTemplateClasses(input);
@@ -180,7 +185,7 @@ namespace SBURB {
             ParseActionQueues(input);
         }
 
-        if (loadQueue.length == 0 && loadingDepth == 0) {
+        if (loadQueue.size() == 0 && loadingDepth == 0) {
             Sburb::GetInstance()->StartUpdateProcess();
         }
     }

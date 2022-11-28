@@ -168,7 +168,7 @@ namespace SBURB
             newSprite.StartAnimation(this->animation->GetName());
         }
         
-        Sburb::GetInstance()->AddSprite(newName, std::make_shared<Sprite>(newSprite));
+        Sburb::GetInstance()->SetSprite(newName, std::make_shared<Sprite>(newSprite));
 
         return newSprite;
     }

@@ -26,8 +26,6 @@ namespace SBURB
 
         this->room = nullptr;
 
-        this->assetManager = AssetManager();
-
         if (gameInstance == nullptr) {
             gameInstance = this;
         }
@@ -146,10 +144,5 @@ namespace SBURB
     Sburb *Sburb::GetInstance()
     {
         return gameInstance;
-    }
-
-    void Sburb::AddSprite(std::string name, std::shared_ptr<Sprite> sprite)
-    {
-        this->sprites[name] = sprite;
     }
 }

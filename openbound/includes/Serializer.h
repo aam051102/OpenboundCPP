@@ -16,7 +16,7 @@ namespace SBURB {
         static bool LoadSerialAssets(pugi::xml_node node);
         static bool LoadSerialAsset(pugi::xml_node node);
 
-        static void LoadSerialState(pugi::xml_node node);
+        static void LoadSerialState();
 
         static void ParseTemplateClasses(pugi::xml_node node);
         static void ApplyTemplateClasses(pugi::xml_node node);
