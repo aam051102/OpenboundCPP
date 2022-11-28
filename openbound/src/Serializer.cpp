@@ -2,6 +2,7 @@
 #include "Sburb.h"
 #include "Logger.h"
 #include "Parser.h"
+#include "AssetHandler.h"
 
 namespace SBURB {
     bool Serializer::LoadSerial(std::string path) {
@@ -306,25 +307,27 @@ namespace SBURB {
             }
         }
 
-        ParseDialoger(node);
-        ParseDialogSprites(node);
+        Serializer::ParseDialoger(node);
+        Serializer::ParseDialogSprites(node);
     }
 
     void Serializer::ParseDialoger(pugi::xml_node node) {
-        pugi::xml_node dialogerNode = node.child("dialoger");
+        auto dialogerNode = node.child("dialoger");
 
         if (dialogerNode) {
-            var dialogSpriteLeft = null;
-            var dialogSpriteRight = null;
-            
-            if (dialoger) {
-                dialogSpriteLeft = dialoger.dialogSpriteLeft;
-                dialogSpriteRight = dialoger.dialogSpriteRight;
+            std::shared_ptr<Sprite> dialogSpriteLeft = nullptr;
+            std::shared_ptr<Sprite> dialogSpriteRight = nullptr;
+
+            std::shared_ptr<Dialoger> oldDialoger = Sburb::GetInstance()->GetDialoger();
+
+            if (oldDialoger) {
+                dialogSpriteLeft = oldDialoger->GetDialogSpriteLeft();
+                dialogSpriteRight = oldDialoger->GetDialogSpriteRight();
             }
 
-            dialoger = Parser::ParseDialoger(dialogerNode);
-            dialoger.dialogSpriteLeft = dialogSpriteLeft;
-            dialoger.dialogSpriteRight = dialogSpriteRight;
+            Sburb::GetInstance()->SetDialoger(std::make_shared<Dialoger>(Parser::ParseDialoger(dialogerNode)));
+            Sburb::GetInstance()->GetDialoger()->SetDialogSpriteLeft(dialogSpriteLeft);
+            Sburb::GetInstance()->GetDialoger()->SetDialogSpriteRight(dialogSpriteRight);
         }
     }
 
@@ -378,8 +381,8 @@ namespace SBURB {
         }
         else if (Sburb::GetInstance()->GetCurrentRoom() == nullptr && Sburb::GetInstance()->GetCharacter() != nullptr) {
             for (auto room : Sburb::GetInstance()->GetRooms()) {
-                if (room.Contains(Sburb::GetInstance()->GetCharacter()) {
-                    Sburb::GetInstance()->SetCurrentRoom(room);
+                if (room.second->Contains(Sburb::GetInstance()->GetCharacter())) {
+                    Sburb::GetInstance()->SetCurrentRoom(room.second);
                     Sburb::GetInstance()->GetCurrentRoom()->Enter();
                     break;
                 }
@@ -423,6 +426,72 @@ namespace SBURB {
 
             ActionQueue actionQueue = Parser::ParseActionQueue(curActionQueues);
             actionQueues.push_back(actionQueue);
+        }
+    }
+
+    void Serializer::SerialLoadDialogSprites(pugi::xml_node dialogSprites) {
+        auto dialoger = Sburb::GetInstance()->GetDialoger();
+        if (!dialoger) {
+            Sburb::GetInstance()->SetDialoger(std::make_shared<Dialoger>());
+        }
+
+        if (!dialoger->GetDialogSpriteLeft()) {
+            dialoger->SetDialogSpriteLeft(std::make_shared<Sprite>("dialogSprite", -1000, Sburb.Stage.height, 0, 0));
+            dialoger->SetDialogSpriteRight(std::make_shared<Sprite>("dialogSprite", Sburb.Stage.width + 1000, Sburb.Stage.height, 0, 0));
+        }
+
+        auto animations = dialogSprites.children("animation");
+        for (pugi::xml_node anim : animations) {
+            dialoger->GetDialogSpriteLeft()->AddAnimation(std::make_shared<Animation>(Parser::ParseAnimation(anim)));
+            dialoger->GetDialogSpriteRight()->AddAnimation(std::make_shared<Animation>(Parser::ParseAnimation(anim)));
+        }
+    }
+
+    void Serializer::SerialLoadEffects(pugi::xml_node effectsNode) {
+        auto animations = effectsNode.children("animation");
+        for (pugi::xml_node anim : animations) {
+            Animation newEffect = Parser::ParseAnimation(anim);
+            Sburb::GetInstance()->SetEffect(newEffect.GetName(), std::make_shared<Animation>(newEffect));
+        }
+    }
+
+    void Serializer::SerialLoadRoomSprites(std::shared_ptr<Room> newRoom, pugi::xml_object_range<pugi::xml_named_node_iterator> roomSprites) {
+        for (pugi::xml_node curSprite : roomSprites) {
+            std::shared_ptr<Sprite> actualSprite = Sburb::GetInstance()->GetSprite(curSprite.attribute("name").as_string());
+            newRoom->AddSprite(actualSprite);
+        }
+    }
+
+    void Serializer::SerialLoadRoomPaths(std::shared_ptr<Room> newRoom, pugi::xml_node pathsNode) {
+        auto walkables = pathsNode.children("walkable");
+        for (pugi::xml_node node : walkables) {
+            newRoom->AddWalkable(AssetHandler::GetPathByName(node.attribute("path").as_string()));
+        }
+
+        auto unwalkables = pathsNode.children("unwalkable");
+        for (pugi::xml_node node : unwalkables) {
+            newRoom->AddUnwalkable(AssetHandler::GetPathByName(node.attribute("path").as_string()));
+        }
+
+        auto motionPaths = pathsNode.children("motionpath");
+        for (pugi::xml_node node : motionPaths) {
+            newRoom->AddMotionPath(
+                AssetHandler::GetPathByName(node.attribute("path").as_string()),
+                node.attribute("xtox").as_float(1),
+                node.attribute("xtoy").as_float(),
+                node.attribute("ytox").as_float(),
+                node.attribute("ytoy").as_float(1),
+                node.attribute("dx").as_float(),
+                node.attribute("dy").as_float());
+        }
+    }
+
+    void Serializer::SerialLoadRoomTriggers(std::shared_ptr<Room> newRoom, pugi::xml_node triggersNode) {
+        auto candidates = triggersNode.children();
+        for (pugi::xml_node candidate : candidates) {
+            if (candidate.name()  == "trigger") {
+                newRoom->AddTrigger(std::make_shared<Trigger>(Parser::ParseTrigger(candidate)));
+            }
         }
     }
 

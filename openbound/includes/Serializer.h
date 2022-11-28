@@ -37,6 +37,12 @@ namespace SBURB {
         static void ParseActionQueues(pugi::xml_node node);
 
         static AssetTexture ParseSerialAsset(pugi::xml_node node);
+
+        static void SerialLoadDialogSprites(pugi::xml_node dialogSprites);
+        static void SerialLoadEffects(pugi::xml_node effectsNode);
+        static void SerialLoadRoomSprites(std::shared_ptr<Room> newRoom, pugi::xml_object_range<pugi::xml_named_node_iterator> roomSprites);
+        static void SerialLoadRoomPaths(std::shared_ptr<Room> newRoom, pugi::xml_node pathsNode);
+        static void SerialLoadRoomTriggers(std::shared_ptr<Room> newRoom, pugi::xml_node triggersNode);
     };
 }
 

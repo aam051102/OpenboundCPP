@@ -2,6 +2,7 @@
 #include "AssetHandler.h"
 #include "AssetManager.h"
 #include "Sburb.h"
+#include "Serializer.h"
 
 namespace SBURB {
 	std::shared_ptr<Sprite> Parser::ParseCharacterString(std::string spriteName) {
@@ -369,18 +370,18 @@ namespace SBURB {
 			}
 		}
 
-		SerialLoadRoomSprites(newRoom, node.children("sprite"));
-		SerialLoadRoomSprites(newRoom, node.children("character"));
-		SerialLoadRoomSprites(newRoom, node.children("fighter"));
+		Serializer::SerialLoadRoomSprites(newRoom, node.children("sprite"));
+		Serializer::SerialLoadRoomSprites(newRoom, node.children("character"));
+		Serializer::SerialLoadRoomSprites(newRoom, node.children("fighter"));
 
 		auto paths = node.children("paths");
 		if (!paths.empty()) {
-			SerialLoadRoomPaths(newRoom, paths);
+			Serializer::SerialLoadRoomPaths(newRoom, paths);
 		}
 
 		auto triggers = node.children("triggers");
 		if (!triggers.empty()) {
-			SerialLoadRoomTriggers(newRoom, triggers);
+			Serializer::SerialLoadRoomTriggers(newRoom, triggers);
 		}
 
 		return newRoom;

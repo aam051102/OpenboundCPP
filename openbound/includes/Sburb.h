@@ -33,14 +33,19 @@ namespace SBURB
 
         double GetFPS();
         std::string GetName();
-        Room* GetCurrentRoom();
+
+        void SetCurrentRoom(std::shared_ptr<Room> room) { this->room = room; };
+        std::shared_ptr<Room> GetCurrentRoom();
 
         void AddSprite(std::string name, std::shared_ptr<Sprite> sprite);
 
+        std::map<std::string, std::shared_ptr<Room>> GetRooms() { return this->rooms; };
         std::shared_ptr<Room> GetRoom(std::string name) { return this->rooms[name]; };
         std::shared_ptr<Sprite> GetSprite(std::string name) { return this->sprites[name]; };
         std::shared_ptr<SpriteButton> GetButton(std::string name) { return this->buttons[name]; };
         std::shared_ptr<sf::Font> GetFont(std::string name) { return this->fonts[name]; };
+
+        void SetEffect(std::string, std::shared_ptr<Animation> anim) { this->effects[name] = anim; };
         std::shared_ptr<Animation> GetEffect(std::string name) { return this->effects[name]; };
 
         void SetGameState(std::string prop, std::string value) { this->gameState[prop] = value; };
@@ -75,6 +80,8 @@ namespace SBURB
         std::shared_ptr<Character> GetCharacter() { return this->character; };
 
         std::shared_ptr<Chooser> GetChooser() { return this->chooser; };
+
+        void SetDialoger(std::shared_ptr<Dialoger> dialoger) { this->dialoger = dialoger; };
         std::shared_ptr<Dialoger> GetDialoger() { return this->dialoger; };
 
         void SetFocus(std::shared_ptr<Sprite> focus) { this->focus = focus; };
@@ -95,6 +102,9 @@ namespace SBURB
         bool IsStateInStorage(bool automatic, bool local);
         std::string GetStateDescription(bool automatic);
 
+        void SetNextQueueId(int nextQueueId) { this->nextQueueId = nextQueueId; };
+        int GetNextQueueId() { return this->nextQueueId;};
+
         Window window;
         AssetManager assetManager;
 
@@ -104,6 +114,8 @@ namespace SBURB
         std::string resourcePath;
 
     private:
+        int nextQueueId;
+
         std::shared_ptr<Action> curAction;
         std::shared_ptr<Sprite> focus;
         std::shared_ptr<Sprite> destFocus;
@@ -132,7 +144,7 @@ namespace SBURB
         sf::Int32 FPS;
         sf::Clock FPStimeObj;
 
-        Room *room;
+        std::shared_ptr<Room> room;
         std::shared_ptr<Character> character;
         std::shared_ptr<Dialoger> dialoger;
         std::shared_ptr<Chooser> chooser;

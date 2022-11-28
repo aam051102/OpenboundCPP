@@ -138,7 +138,7 @@ namespace SBURB
         return name;
     }
 
-    Room *Sburb::GetCurrentRoom()
+    std::shared_ptr<Room> Sburb::GetCurrentRoom()
     {
         return this->room;
     }

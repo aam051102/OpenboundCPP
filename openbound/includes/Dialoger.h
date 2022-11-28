@@ -40,6 +40,12 @@ namespace SBURB
         
         std::string GetQueueItem(int index) { return this->queue[index]; };
 
+        void SetDialogSpriteLeft(std::shared_ptr<Sprite> dialogSpriteLeft) { this->dialogSpriteLeft = dialogSpriteLeft;  };
+        std::shared_ptr<Sprite> GetDialogSpriteLeft() { return this->dialogSpriteLeft; };
+
+        void SetDialogSpriteRight(std::shared_ptr<Sprite> dialogSpriteRigght) { this->dialogSpriteRight = dialogSpriteRight; };
+        std::shared_ptr<Sprite> GetDialogSpriteRight() { return this->dialogSpriteRight; };
+
     protected:
         std::string name;
         std::string currentDialog;
