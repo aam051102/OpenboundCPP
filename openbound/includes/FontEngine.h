@@ -77,7 +77,6 @@ namespace SBURB {
         std::map<std::string, int32_t> prefixColours;
 
         std::map<char, std::map<int, bool>> escaped;
-        sf::Text textWriter;
         std::string fontName;
         sf::Uint32 fontStyle;
         int fontSize;

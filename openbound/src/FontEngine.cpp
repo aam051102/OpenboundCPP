@@ -45,11 +45,6 @@ namespace SBURB {
             { "porrum", 0x008141 },
             { "latula", 0x008282 },
         };
-
-		this->textWriter.setFont(*Sburb::GetInstance()->GetFont(this->fontName));
-		this->textWriter.setFillColor(this->color);
-		this->textWriter.setCharacterSize(this->fontSize);
-		this->textWriter.setStyle(this->fontStyle);
     }
 
 	FontEngine::~FontEngine() {
@@ -85,6 +80,11 @@ namespace SBURB {
 		int lastSpace = 0;
 		int lineStart = 0;
 
+		sf::Text textMeasurer;
+		textMeasurer.setFont(*Sburb::GetInstance()->GetFont(this->fontName));
+		textMeasurer.setCharacterSize(this->fontSize);
+		textMeasurer.setStyle(this->fontStyle);
+
 		for (i = 0; i < this->text.size(); i++) {
 			if (this->text[i] == ' ') {
 				lastSpace = i;
@@ -96,7 +96,8 @@ namespace SBURB {
 				continue;
 			}
 
-			if (Sburb.stage.measureText(this->text.substr(lineStart, i + 1 - lineStart)).width > this->width) {
+			textMeasurer.setString(this->text.substr(lineStart, i + 1 - lineStart));
+			if (textMeasurer.getGlobalBounds().width > this->width) {
 				if (lineStart == lastSpace) {
 					this->lines.push_back(this->text.substr(lineStart, i - lineStart));
 					lineStart = i;
@@ -352,6 +353,129 @@ namespace SBURB {
 	}
 
 	void FontEngine::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-		// TODO
+		int i;
+		int lenCount;
+		int linePos = 0;
+		int strStart, strEnd;
+		int currentFormat = 0;
+		std::vector<FormatRange> currentFormats = {};
+		int nextStop;
+		std::string curLine;
+
+		i = 0;
+		lenCount = 0;
+		int offsetX = 0;
+
+		while (i < floor(this->height / this->lineHeight) && i < this->lines.size()) {
+			sf::Text textWriter;
+			textWriter.setFont(*Sburb::GetInstance()->GetFont(this->fontName));
+			textWriter.setFillColor(this->color);
+			textWriter.setCharacterSize(this->fontSize);
+			textWriter.setStyle(this->fontStyle);
+
+			//Sburb.stage.textAlign = this->align;
+			
+			curLine = this->lines[i];
+
+			auto curColor = this->color;
+			bool underlining = false;
+
+			nextStop = curLine.size();
+
+			if (currentFormat < this->formatQueue.size() && this->formatQueue[currentFormat].minIndex <= lenCount + linePos) {
+				currentFormats.push_back(this->formatQueue[currentFormat]);
+				currentFormat++;
+			}
+			
+			for (int k = currentFormats.size() - 1; k >= 0; k--) {
+				if (currentFormats[k].maxIndex <= lenCount + linePos) {
+					currentFormats.erase(currentFormats.begin() + k);
+				}
+			}
+
+			for (int k = 0; k < currentFormats.size(); k++) {
+				if (currentFormats[k].type == "colour") {
+					curColor = currentFormats[k].extra;
+
+				}
+				else if (currentFormats[k].type == "underline") {
+					underlining = true;
+				}
+				else if (currentFormats[k].type == "italic") {
+					textWriter.setStyle(sf::Text::Italic | this->fontStyle);
+				}
+			}
+
+			if (currentFormat < this->formatQueue.size()  && this->formatQueue[currentFormat].minIndex < lenCount + curLine.size()) {
+				if (this->formatQueue[currentFormat].minIndex < this->end) {
+					nextStop = std::min(nextStop, this->formatQueue[currentFormat].minIndex - lenCount);
+				}
+			}
+
+			for (int k = 0; k < currentFormats.size(); k++) {
+				if (currentFormats[k].maxIndex < this->end) {
+					nextStop = std::min(nextStop, currentFormats[k].maxIndex - lenCount);
+				}
+			}
+
+			if (nextStop != curLine.size()) {
+				strStart = linePos;
+				strEnd = nextStop;
+				linePos += strEnd - strStart;
+			}
+			else {
+				if (lenCount + curLine.size() <= this->end) { //if the line wouldn't take me past the displayed length
+					strEnd = curLine.size(); //do the whole line
+				}
+				else { //otherwise, if the line would take me past the displayed length
+					strEnd = this->end - lenCount; //only show up to the limit
+				}
+
+				if (lenCount + linePos >= this->start) { //if the start of the line is within the bounds of the displayed length
+					strStart = linePos; //display from the start of the line
+				}
+				else if (lenCount + curLine.size() >= this->start) { //otherwise, if any part of the line should be displayed
+					strStart = this->start - (lenCount)+linePos; //display from where we should start
+
+					sf::Text textMeasurer(textWriter);
+					textMeasurer.setString(curLine.substr(linePos, strStart - linePos));
+					offsetX += textMeasurer.getGlobalBounds().width;
+				}
+				else { //otherwise, don't show this line at all
+					strStart = linePos;
+					strEnd = linePos;
+				}
+
+				linePos = -1;
+			}
+
+			int numChars = strEnd - strStart;
+
+			if (numChars > 0) {
+				int startX = this->x + offsetX;
+				int startY = this->y + i * this->lineHeight;
+
+				textWriter.setColor(curColor);
+				textWriter.setPosition(startX, startY);
+				textWriter.setString(curLine.substr(strStart, strEnd - strStart));
+				target.draw(textWriter, states);
+
+				offsetX += textWriter.getGlobalBounds().width;
+
+				if (underlining && strStart < strEnd) {
+					sf::RectangleShape underlineShape(sf::Vector2f(numChars * this->charWidth, this->lineHeight - 3 + 0.6));
+					underlineShape.setPosition(startX, startY + this->lineHeight - 3);
+					underlineShape.setFillColor(curColor);
+					target.draw(underlineShape, states);
+				}
+			}
+
+			if (linePos == -1) {
+				lenCount += this->lines[i].size() + 1;
+				linePos = 0;
+				offsetX = 0;
+				i++;
+			}
+		}
 	}
 }
