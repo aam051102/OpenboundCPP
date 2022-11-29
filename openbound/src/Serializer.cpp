@@ -34,6 +34,13 @@ namespace SBURB {
         Serializer::LoadSerial(&doc, keepOld);
     }
 
+    // IS THIS DOC KEPT ALIVE? I DON'T KNOW.
+    pugi::xml_document Serializer::ParseXML(std::string inText) {
+        pugi::xml_document doc;
+        doc.load_string(inText.c_str());
+        return doc;
+    }
+
     void PurgeAssets() {
         AssetHandler::ClearFonts();
         AssetHandler::ClearPaths();

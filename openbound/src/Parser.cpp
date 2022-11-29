@@ -18,7 +18,7 @@ namespace SBURB {
 		std::vector<Action> actions = {};
 		str = "<sburb>" + str + "</sburb>";
 
-		pugi::xml_node input = Parser::ParseXML(str);
+		pugi::xml_document input = Serializer::ParseXML(str);
 		
 		for (pugi::xml_node tmp : input.children()) {
 			if (tmp.name()  == "action") {
@@ -33,7 +33,7 @@ namespace SBURB {
 		std::vector<Trigger> triggers = {};
 		str = "<triggers>" + str + "</triggers>";
 
-		pugi::xml_node input = Parser::ParseXML(str);
+		pugi::xml_document input = Serializer::ParseXML(str);
 
 		for (pugi::xml_node tmp : input.children()) {
 			if (tmp.name() == "trigger") {
@@ -370,18 +370,19 @@ namespace SBURB {
 			}
 		}
 
-		Serializer::SerialLoadRoomSprites(newRoom, node.children("sprite"));
-		Serializer::SerialLoadRoomSprites(newRoom, node.children("character"));
-		Serializer::SerialLoadRoomSprites(newRoom, node.children("fighter"));
+		std::shared_ptr<Room> sharedNewRoom = std::make_shared<Room>(newRoom);
+		Serializer::SerialLoadRoomSprites(sharedNewRoom, node.children("sprite"));
+		Serializer::SerialLoadRoomSprites(sharedNewRoom, node.children("character"));
+		Serializer::SerialLoadRoomSprites(sharedNewRoom, node.children("fighter"));
 
-		auto paths = node.children("paths");
-		if (!paths.empty()) {
-			Serializer::SerialLoadRoomPaths(newRoom, paths);
+		auto paths = node.child("paths");
+		if (!paths) {
+			Serializer::SerialLoadRoomPaths(sharedNewRoom, paths);
 		}
 
-		auto triggers = node.children("triggers");
-		if (!triggers.empty()) {
-			Serializer::SerialLoadRoomTriggers(newRoom, triggers);
+		auto triggers = node.child("triggers");
+		if (!triggers) {
+			Serializer::SerialLoadRoomTriggers(sharedNewRoom, triggers);
 		}
 
 		return newRoom;
