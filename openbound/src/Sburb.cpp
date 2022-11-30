@@ -28,7 +28,7 @@ namespace SBURB
         this->FPStimeObj = sf::Clock();
 
         this->curRoom = nullptr;
-        this->queue = std::make_shared<ActionQueue>();
+        this->queue = std::make_shared<ActionQueue>(nullptr, "__SBURB__");
 
         if (gameInstance == nullptr) {
             gameInstance = this;

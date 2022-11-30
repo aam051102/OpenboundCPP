@@ -38,8 +38,6 @@ namespace SBURB
         bool isPaused;
         std::shared_ptr<Trigger> trigger;
 
-        static int nextQueueId;
-
     };
 }
 #endif

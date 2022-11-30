@@ -1,10 +1,20 @@
 #include "ActionQueue.h"
 #include <format>
+#include "Sburb.h"
 
 namespace SBURB {
     ActionQueue::ActionQueue(std::shared_ptr<Action> action, std::string id, std::vector<std::string> groups, bool noWait, bool isPaused, std::shared_ptr<Trigger> trigger) {
         this->curAction = action;
-		this->id = id == "" ? std::to_string(nextQueueId++) : id;
+
+		if (id == "") {
+			this->id = std::to_string(Sburb::GetInstance()->GetNextQueueId() + 1);
+			Sburb::GetInstance()->SetNextQueueId(Sburb::GetInstance()->GetNextQueueId() + 1);
+
+		}
+		else {
+			this->id = id;
+		}
+
         this->groups = groups;
         this->noWait = noWait;
         this->isPaused = isPaused;
