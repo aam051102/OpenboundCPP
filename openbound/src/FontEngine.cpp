@@ -366,14 +366,13 @@ namespace SBURB {
 		lenCount = 0;
 		int offsetX = 0;
 
-		while (i < floor(this->height / this->lineHeight) && i < this->lines.size()) {
-			sf::Text textWriter;
-			textWriter.setFont(*Sburb::GetInstance()->GetFont(this->fontName));
-			textWriter.setFillColor(this->color);
-			textWriter.setCharacterSize(this->fontSize);
-			textWriter.setStyle(this->fontStyle);
+		sf::Text textWriter;
+		textWriter.setFont(*Sburb::GetInstance()->GetFont(this->fontName));
+		textWriter.setCharacterSize(this->fontSize);
 
-			//Sburb.stage.textAlign = this->align;
+		while (i < floor(this->height / this->lineHeight) && i < this->lines.size()) {
+			textWriter.setFillColor(this->color);
+			textWriter.setStyle(this->fontStyle);
 			
 			curLine = this->lines[i];
 
@@ -458,6 +457,17 @@ namespace SBURB {
 				textWriter.setColor(curColor);
 				textWriter.setPosition(startX, startY);
 				textWriter.setString(curLine.substr(strStart, strEnd - strStart));
+				
+				if (this->align == "center") {
+					textWriter.setOrigin(sf::Vector2f(textWriter.getLocalBounds().width / 2, 0));
+				}
+				else if (this->align == "right") {
+					textWriter.setOrigin(sf::Vector2f(textWriter.getLocalBounds().width, 0));
+				}
+				else {
+					textWriter.setOrigin(sf::Vector2f(0, 0));
+				}
+
 				target.draw(textWriter, states);
 
 				offsetX += textWriter.getGlobalBounds().width;

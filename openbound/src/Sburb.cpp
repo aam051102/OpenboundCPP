@@ -68,35 +68,61 @@ namespace SBURB
             }
 
             // Run main update method for all objects
-            if (room != nullptr) {
-                room->Update();
+            if (this->shouldUpdate) {
+                this->HandleAudio();
+                // NOTE: Inputs were previously handled here, but are kept in the InputHandler in this port.
+                this->HandleHud();
+
+                if (this->room && !this->loadingRoom) room->Update();
+
+                this->FocusCamera();
+                this->HandleRoomChange();
+
+                this->chooser->Update();
+                this->dialoger->Update();
+
+                this->ChainAction();
+                this->UpdateWait();
             }
 
-            /*if (camera != nullptr) {
-                camera->Update();
-                window->setView(*camera->GetView());
-            }*/
-
             // Render
-            Render();
+            if (this->shouldDraw) {
+                Render();
+            }
         }
     }
 
     void Sburb::Render()
     {
-        window->clear(sf::Color(0, 0, 0, 255));
+        if (!playingMovie) {
+            window->clear(sf::Color(0, 0, 0, 255));
 
-        BatchHandler::getInstance().Reset();
+            BatchHandler::getInstance().Reset();
 
-        // Render all objects
-        if (room != nullptr) {
-            window->draw(*room);
+            // NOTE: Some sort of translation is usually done between these renders. It may be necessary to add them back later.
+
+            // Render all objects
+            if (room) window->draw(*room);
+
+            if (this->fade > 0.1) {
+                window->draw(fadeShape);
+            }
+
+            if (dialoger) window->draw(*dialoger);
+
+            for (auto hudElement : hud) {
+                window->draw(*hudElement.second);
+            }
+
+            if (chooser) window->draw(*chooser);
+
+            // Debugger is usually drawn here, but I don't have one.
+
+            if (BatchHandler::getInstance().BatchExists())
+                BatchHandler::getInstance().DrawBatch();
+
+            window->display();
         }
-
-        if (BatchHandler::getInstance().BatchExists())
-            BatchHandler::getInstance().DrawBatch();
-
-        window->display();
     }
 
     bool Sburb::Start()
@@ -114,7 +140,7 @@ namespace SBURB
         window.CenterWindow();
 
         // Initialize room
-        if (!Serializer::LoadSerial("./levels/init.xml")) return false;
+        if (!Serializer::LoadSerialFromXML("./levels/init.xml")) return false;
 
         // Start update loop
         while (window->isOpen())
@@ -144,5 +170,17 @@ namespace SBURB
     Sburb *Sburb::GetInstance()
     {
         return gameInstance;
+    }
+
+    void Sburb::HaltUpdateProcess()
+    {
+        shouldUpdate = false;
+        shouldDraw = false;
+    }
+
+    void Sburb::StartUpdateProcess()
+    {
+        shouldUpdate = true;
+        shouldDraw = true;
     }
 }

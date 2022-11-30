@@ -123,6 +123,9 @@ namespace SBURB
         std::string resourcePath;
 
     private:
+        bool shouldUpdate;
+        bool shouldDraw;
+
         int nextQueueId;
 
         std::shared_ptr<Action> curAction;
@@ -132,6 +135,8 @@ namespace SBURB
         float globalVolume;
         std::string engineMode;
 
+        sf::RectangleShape fadeShape;
+        float fade;
         bool fading;
         bool playingMovie;
         bool loadingRoom;

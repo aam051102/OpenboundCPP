@@ -1,6 +1,5 @@
 #include "Parser.h"
 #include "AssetHandler.h"
-#include "AssetManager.h"
 #include "Sburb.h"
 #include "Serializer.h"
 
@@ -58,16 +57,14 @@ namespace SBURB {
 	std::string GetActionNodeText(pugi::xml_node node) {
 		if (!node) return "";
 
-		AssetManager* assetManager = &Sburb::GetInstance()->assetManager;
-
 		std::ostringstream serializeStream;
 
 		for (pugi::xml_node child : node.children()) {
 			if (child.name() == "args") {
 
 				std::string asset = child.attribute("body").as_string();
-				if (asset != "" && assetManager->CheckIsLoaded(asset)) {
-					return assetManager->GetAsset(asset);
+				if (asset != "" && AssetHandler::GetTextByName(asset)) {
+					return AssetHandler::GetTextByName(asset);
 				}
 
 				for (pugi::xml_node subChild : child.children()) {

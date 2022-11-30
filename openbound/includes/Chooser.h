@@ -7,7 +7,7 @@
 #include <SFML/Graphics/Drawable.hpp>
 
 namespace SBURB {
-    class Chooser : sf::Drawable {
+    class Chooser : public sf::Drawable {
     public:
         Chooser();
         ~Chooser();

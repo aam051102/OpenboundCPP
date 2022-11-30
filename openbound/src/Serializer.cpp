@@ -9,6 +9,53 @@ namespace SBURB {
     static int loadingDepth = 0;
     static std::vector<pugi::xml_node> loadQueue;
 
+    std::string Serializer::Serialize() {
+        Sburb* sburbInst = Sburb::GetInstance();
+
+        auto assets = sburbInst->GetAssets();
+        auto effects = sburbInst->GetEffects();
+        auto rooms = sburbInst->GetRooms();
+        auto sprites = sburbInst->GetSprites();
+        auto hud = sburbInst->GetHud();
+        auto dialoger = sburbInst->GetDialoger();
+        auto curRoom = sburbInst->GetCurrentRoom();
+        auto gameState = sburbInst->GetGameState();
+        auto actionQueues = sburbInst->GetActionQueues();
+        auto character = sburbInst->GetCharacter();
+
+        std::string loadedFiles = "";
+        bool loadedFilesExist = false;
+
+        for (auto key : sburbInst->loadedFiles) // Not sburbInst.loadedFiles ?
+        {
+            if (!Sburb.loadedFiles.hasOwnProperty(key)) continue;
+            loadedFiles = loadedFiles + (loadedFilesExist ? "," : "") + key;
+            loadedFilesExist = true;
+        }
+
+
+        std::string output = "<sburb" +
+            " char='" + character->GetName()  +
+            (Sburb.bgm ? "' bgm='" + Sburb.bgm.asset.name + (Sburb.bgm.startLoop ? "," + Sburb.bgm.startLoop : "") : "") +
+            (Sburb.Stage.scaleX != 1 ? "' scale='" + Sburb.Stage.scaleX : "") +
+            (sburbInst->GetNextQueueId() > 0 ? "' nextQueueId='" + sburbInst->GetNextQueueId() : "") +
+            (sburbInst->resourcePath != "" ? ("' resourcePath='" + sburbInst->resourcePath) : "") +
+            (sburbInst->levelPath != "" ? ("' levelPath='" + sburbInst->levelPath) : "") +
+            (loadedFilesExist ? ("' loadedFiles='" + loadedFiles) : "") +
+            "'>\n";
+        output = Serializer::SerializeAssets(output, assets, effects);
+        output = Serializer::SerializeTemplates(output, templateClasses);
+        output = Serializer::SerializeHud(output, hud, dialoger);
+        output = Serializer::SerializeLooseObjects(output, rooms, sprites);
+        output = Serializer::SerializeRooms(output, rooms);
+        output = Serializer::SerializeGameState(output, gameState);
+        output = Serializer::SerializeActionQueues(output, actionQueues);
+
+        output = output + "\n</sburb>";
+        
+        return output;
+    }
+
     bool Serializer::LoadSerialFromXML(std::string path, bool keepOld) {
         Sburb::GetInstance()->HaltUpdateProcess();
         path = Sburb::GetInstance()->levelPath + path;
