@@ -17,11 +17,18 @@ namespace SBURB
         bool HasGroup(std::string group);
         std::string Serialize(std::string output);
 
+        void SetCurrentAction(std::shared_ptr<Action> curAction) { this->curAction = curAction; }
         std::shared_ptr<Action> GetCurrentAction() { return this->curAction; };
 
         std::string GetId() { return this->id; };
 
         void SetPaused(bool isPaused) { this->isPaused = isPaused; };
+        bool GetPaused() { return this->isPaused; };
+
+        bool GetNoWait() { return this->noWait; };
+
+        void SetTrigger(std::shared_ptr<Trigger> trigger) { this->trigger = trigger; };
+        std::shared_ptr<Trigger> GetTrigger() { return this->trigger; };
 
     protected:
         std::shared_ptr<Action> curAction;

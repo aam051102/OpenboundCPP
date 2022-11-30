@@ -9,7 +9,7 @@
 namespace SBURB {
     class CommandHandler {
     public:
-        static void PerformActionSilent(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue = nullptr);
+        static std::shared_ptr<Trigger> PerformActionSilent(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue = nullptr);
 
         static void Talk(std::string info);
         static void RandomTalk(std::string info);

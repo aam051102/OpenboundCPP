@@ -1,5 +1,4 @@
 #include "BatchHandler.h"
-
 #include <SFML/Graphics/RenderTarget.hpp>
 #include "AssetHandler.h"
 

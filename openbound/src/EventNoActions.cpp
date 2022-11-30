@@ -18,7 +18,7 @@ namespace SBURB {
 
     bool EventNoActions::CheckCompletion() {
         if (this->queue == "") {
-            return Sburb::GetInstance()->GetCurrentAction() == nullptr;
+            return Sburb::GetInstance()->GetQueue()->GetCurrentAction() == nullptr;
         }
 
         std::shared_ptr<ActionQueue> queue = Sburb::GetInstance()->GetActionQueueById(this->queue);

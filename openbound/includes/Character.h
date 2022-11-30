@@ -45,6 +45,10 @@ namespace SBURB
 
         void SetFacing(bool facing) { this->facing = facing; };
 
+        void SetFollowBuffer(std::vector<Vector2> followBuffer) { this->followBuffer = followBuffer; };
+
+        std::shared_ptr<Character> GetFollower() { return this->follower; };
+
     protected:
         int speed;
         int vx;

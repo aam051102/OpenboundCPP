@@ -35,7 +35,7 @@ namespace SBURB {
 
 		this->clicked = false;
 		if (this->HitsPoint(x - this->width / 2, y - this->height / 2)) {
-			Sburb::GetInstance()->SetMouseCursor("pointer");
+			Sburb::GetInstance()->SetMouseCursor(sf::Cursor::Hand);
 		}
 		if (mouseDown) {
 			if (!this->mousePressed) {

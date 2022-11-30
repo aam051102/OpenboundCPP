@@ -28,12 +28,21 @@ namespace SBURB
         void Update();
         void Render();
 
+        void HandleAudio();
+        void HandleHud();
+        void FocusCamera();
+        void HandleRoomChange();
+        void ChainAction();
+        void UpdateWait();
+
+        void ChainActionInQueue(std::shared_ptr<ActionQueue> queue);
+
         bool Start();
 
         double GetFPS();
         std::string GetName();
 
-        void SetCurrentRoom(std::shared_ptr<Room> room) { this->room = room; };
+        void SetCurrentRoom(std::shared_ptr<Room> curRoom) { this->curRoom = curRoom; };
         std::shared_ptr<Room> GetCurrentRoom();
 
         void SetSprite(std::string name, std::shared_ptr<Sprite> sprite) { this->sprites[name] = sprite; };
@@ -61,16 +70,20 @@ namespace SBURB
         void ForEachActionQueueInGroup(std::string group, void(*func)(std::shared_ptr<ActionQueue>));
         void AddActionQueue(std::shared_ptr<ActionQueue> queue) { this->actionQueues.push_back(queue); };
 
-        // TODO: Use std::variant instead??????
         std::shared_ptr<ActionQueue> PerformAction(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue = nullptr);
 
-        void SetMouseCursor(std::string cursor);
+        void PerformActionInQueue(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue);
 
-        void ChangeRoom(std::shared_ptr<Room> room, int newCharacterX, int newCharacterY);
+        void HandleCommandResult(std::shared_ptr<ActionQueue> queue, std::shared_ptr<Trigger> result);
+
+        void SetMouseCursor(sf::Cursor::Type newCursor);
+
+        void ChangeRoom(std::shared_ptr<Room> room, int newX, int newY);
         void PlayEffect(std::shared_ptr<Animation> effect, int x, int y);
         void PlaySound(std::shared_ptr<AssetSound> sound);
-        void PlayMovie();
-        void SetCurRoomOf(std::shared_ptr<Character> character);
+        void PlayMovie(std::shared_ptr<AssetMovie> movie);
+        void SetCurRoomOf(std::shared_ptr<Character> sprite);
+        void MoveSprite(std::shared_ptr<Character> sprite, std::shared_ptr<Room> oldRoom, std::shared_ptr<Room> newRoom);
 
         std::shared_ptr<AssetMusic> GetBGM();
         void ChangeBGM(std::shared_ptr<AssetMusic> music);
@@ -93,8 +106,6 @@ namespace SBURB
 
         void SetDestFocus(std::shared_ptr<Sprite> destFocus) { this->destFocus = destFocus; };
 
-        std::shared_ptr<Action> GetCurrentAction() { return this->curAction; };
-
         float GetGlobalVolume() { return this->globalVolume; };
         void SetGlobalVolume(float globalVolume) { this->globalVolume = globalVolume; };
 
@@ -115,6 +126,10 @@ namespace SBURB
         void HaltUpdateProcess();
         void StartUpdateProcess();
 
+        bool HasControl();
+
+        std::shared_ptr<ActionQueue> GetQueue() { return this->queue; };
+
         Window window;
 
         std::string name;
@@ -128,7 +143,9 @@ namespace SBURB
 
         int nextQueueId;
 
-        std::shared_ptr<Action> curAction;
+        std::shared_ptr<ActionQueue> queue;
+
+        std::shared_ptr<AssetMusic> bgm;
         std::shared_ptr<Sprite> focus;
         std::shared_ptr<Sprite> destFocus;
 
@@ -138,6 +155,7 @@ namespace SBURB
         sf::RectangleShape fadeShape;
         float fade;
         bool fading;
+
         bool playingMovie;
         bool loadingRoom;
         bool inputDisabled;
@@ -160,7 +178,11 @@ namespace SBURB
         sf::Int32 FPS;
         sf::Clock FPStimeObj;
 
-        std::shared_ptr<Room> room;
+        int destX;
+        int destY;
+
+        std::shared_ptr<Room> destRoom;
+        std::shared_ptr<Room> curRoom;
         std::shared_ptr<Character> character;
         std::shared_ptr<Dialoger> dialoger;
         std::shared_ptr<Chooser> chooser;

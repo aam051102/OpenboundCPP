@@ -13,7 +13,7 @@
 #undef PlaySound
 
 namespace SBURB {
-    void CommandHandler::PerformActionSilent(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue)
+    std::shared_ptr<Trigger> CommandHandler::PerformActionSilent(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue)
     {
         action->SetTimes(action->GetTimes() - 1);
 
@@ -51,9 +51,9 @@ namespace SBURB {
         else if(command == "removeMovie") CommandHandler::RemoveMovie(info);
         else if(command == "disableControl") CommandHandler::DisableControl(info);
         else if(command == "enableControl") CommandHandler::EnableControl(info);
-        else if(command == "waitFor") CommandHandler::WaitFor(info);
-        else if(command == "macro") CommandHandler::Macro(info);
-        else if(command == "sleep") CommandHandler::Sleep(info);
+        else if(command == "waitFor") return std::make_shared<Trigger>(CommandHandler::WaitFor(info));
+        else if(command == "macro") return std::make_shared<Trigger>(CommandHandler::Macro(info));
+        else if(command == "sleep") return std::make_shared<Trigger>(CommandHandler::Sleep(info));
         else if(command == "pauseActionQueue") CommandHandler::PauseActionQueue(info);
         else if(command == "pauseActionQueues") CommandHandler::PauseActionQueues(info);
         else if(command == "resumeActionQueue") CommandHandler::ResumeActionQueue(info);
@@ -154,7 +154,7 @@ namespace SBURB {
 
         CommandHandler::ChangeRoom(info);
         Sburb::GetInstance()->PlayEffect(Sburb::GetInstance()->GetEffect("teleportEffect"), Sburb::GetInstance()->GetCharacter()->GetX(), Sburb::GetInstance()->GetCharacter()->GetY());
-        Sburb::GetInstance()->GetCurrentAction()->SetFollowUp(std::make_shared<Action>("playEffect", "teleportEffect," + params[1] + "," + params[2], "", "", Sburb::GetInstance()->GetCurrentAction()->GetFollowUp()));
+        Sburb::GetInstance()->GetQueue()->GetCurrentAction()->SetFollowUp(std::make_shared<Action>("playEffect", "teleportEffect," + params[1] + "," + params[2], "", "", Sburb::GetInstance()->GetQueue()->GetCurrentAction()->GetFollowUp()));
     }
 
     void CommandHandler::ChangeChar(std::string info)
@@ -273,7 +273,7 @@ namespace SBURB {
             }
         }
 
-        chest->RemoveAction(Sburb::GetInstance()->GetCurrentAction()->GetName());
+        chest->RemoveAction(Sburb::GetInstance()->GetQueue()->GetCurrentAction()->GetName());
         int offset = params[0].size() + params[1].size() + 2;
         std::string speech = trim(info.substr(offset, info.size()));
         speech = speech[0] == '@' ? speech : "@!" + speech;
@@ -307,7 +307,7 @@ namespace SBURB {
         lastAction->SetFollowUp(std::make_shared<Action>("removeSprite", item->GetName()  + "," + Sburb::GetInstance()->GetCurrentRoom()->GetName()));
         lastAction = lastAction->GetFollowUp();
 
-        lastAction->SetFollowUp(Sburb::GetInstance()->GetCurrentAction()->GetFollowUp());
+        lastAction->SetFollowUp(Sburb::GetInstance()->GetQueue()->GetCurrentAction()->GetFollowUp());
         
         Sburb::GetInstance()->PerformAction(newAction);
     }
@@ -352,7 +352,7 @@ namespace SBURB {
     {
         // NOT SUPPORTED
         auto params = ParseParams(info);
-        Sburb::GetInstance()->PlayMovie(/*Sburb.assets[params[0]]*/);
+        Sburb::GetInstance()->PlayMovie(/*Sburb.assets[params[0]]*/nullptr);
 
         /*if (params.size()> 0) {
             var interval = setInterval(function() {
@@ -389,8 +389,8 @@ namespace SBURB {
     Trigger CommandHandler::Macro(std::string info) {
         std::vector<Action> actions = Parser::ParseActionString(info);
         Action action = actions[0];
-        if (!action.GetIsSilent()) {
-            action.SetIsSilent(true);
+        if (!action.GetSilent()) {
+            action.SetSilent("true");
         }
 
         std::shared_ptr<ActionQueue> newQueue = Sburb::GetInstance()->PerformAction(std::make_shared<Action>(action));
@@ -630,7 +630,7 @@ namespace SBURB {
         lastAction->SetFollowUp(std::make_shared<Action>("changeRoom", params[1] + "," + params[2] + "," + params[3]));
         lastAction = lastAction->GetFollowUp();
 
-        lastAction->SetFollowUp(Sburb::GetInstance()->GetCurrentAction()->GetFollowUp());
+        lastAction->SetFollowUp(Sburb::GetInstance()->GetQueue()->GetCurrentAction()->GetFollowUp());
         
         Sburb::GetInstance()->PerformAction(newAction);
     }
@@ -644,7 +644,7 @@ namespace SBURB {
         Sburb::GetInstance()->PlayEffect(Sburb::GetInstance()->GetEffect("teleportEffect"), Sburb::GetInstance()->GetCharacter()->GetX(), Sburb::GetInstance()->GetCharacter()->GetY());
 
         auto params = ParseParams(info);
-        Sburb::GetInstance()->GetCurrentAction()->GetFollowUp()->GetFollowUp()->SetFollowUp(std::make_shared<Action>("playEffect", "teleportEffect," + params[2] + "," + params[3], "", "", Sburb::GetInstance()->GetCurrentAction()->GetFollowUp()->GetFollowUp()->GetFollowUp()));
+        Sburb::GetInstance()->GetQueue()->GetCurrentAction()->GetFollowUp()->GetFollowUp()->SetFollowUp(std::make_shared<Action>("playEffect", "teleportEffect," + params[2] + "," + params[3], "", "", Sburb::GetInstance()->GetQueue()->GetCurrentAction()->GetFollowUp()->GetFollowUp()->GetFollowUp()));
     }
 
     void CommandHandler::SetButtonState(std::string info)

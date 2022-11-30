@@ -9,7 +9,7 @@ namespace SBURB
     class Action
     {
     public:
-        Action(std::string command, std::string info, std::string name = "", std::string sprite = "", std::shared_ptr<Action> followUp = NULL, bool noWait = false, bool noDelay = false, uint16_t times = 1, bool isSoft = false, bool isSilent = false);
+        Action(std::string command, std::string info, std::string name = "", std::string sprite = "", std::shared_ptr<Action> followUp = NULL, bool noWait = false, bool noDelay = false, uint16_t times = 1, bool soft = false, std::string silent = "");
         ~Action();
 
         Action Clone();
@@ -25,12 +25,29 @@ namespace SBURB
 
         std::string GetCommand() { return this->command; };
 
-        void SetIsSilent(bool isSilent) { this->isSilent = isSilent; };
-        bool GetIsSilent() { return this->isSilent; };
+        void SetSoft(bool soft) { this->soft = soft; };
+        bool GetSoft() { return this->soft; };
+
+        bool GetNoDelay() { return this->noDelay; };
+
+        void SetSilent(std::string silent) {
+            if (silent == "" || silent == "false") {
+                this->silent = false;
+            }
+            else {
+                this->silent = true;
+            }
+
+            this->silentCause = silentCause;
+        };
+        bool GetSilent() { return this->silent; };
+        std::string GetSilentCause() { return this->silentCause; };
 
         std::shared_ptr<Action> GetFollowUp() { return this->followUp; };
 
         std::string info;
+
+        bool GetNoWait() { return this->noWait; };
 
     protected:
         std::shared_ptr<Action> followUp;
@@ -40,8 +57,9 @@ namespace SBURB
         bool noWait;
         bool noDelay;
         uint16_t times;
-        bool isSoft;
-        bool isSilent;
+        bool soft;
+        bool silent;
+        std::string silentCause;
 
     };
 }

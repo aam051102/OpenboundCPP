@@ -117,7 +117,7 @@ namespace SBURB {
         Sburb.sprites = {};
         Sburb.buttons = {};
         Sburb.effects = {};
-        Sburb::GetInstance()->SetCurrentAction(nullptr);
+        Sburb::GetInstance()->GetQueue()->SetCurrentAction(nullptr);
         Sburb.actionQueues = {};
         Sburb.nextQueueId = 0;
         Sburb.pressed = {};

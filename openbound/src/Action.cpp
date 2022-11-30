@@ -1,11 +1,20 @@
 #include "Action.h"
 
 namespace SBURB {
-    Action::Action(std::string command, std::string info, std::string name, std::string sprite, std::shared_ptr<Action> followUp, bool noWait, bool noDelay, uint16_t times, bool isSoft, bool isSilent) {
+    Action::Action(std::string command, std::string info, std::string name, std::string sprite, std::shared_ptr<Action> followUp, bool noWait, bool noDelay, uint16_t times, bool soft, std::string silent) {
         this->command = command;
         this->info = info;
-        this->isSilent = isSilent;
-        this->isSoft = isSoft;
+
+        this->silentCause = silent;
+        
+        if (silent == "" || silent == "false") {
+            this->silent = false;
+        }
+        else {
+            this->silent = true;
+        }
+        
+        this->soft = soft;
         this->name = name;
         this->noWait = noWait;
         this->noDelay = noDelay;
@@ -19,7 +28,7 @@ namespace SBURB {
     }
 
     Action Action::Clone() {
-        return Action(this->command, this->info, this->name, this->sprite, this->followUp, this->noWait, this->noDelay, this->times, this->isSoft, this->isSilent);
+        return Action(this->command, this->info, this->name, this->sprite, this->followUp, this->noWait, this->noDelay, this->times, this->soft, this->silentCause);
     }
 
     std::string Action::Serialize(std::string output) {
@@ -29,8 +38,8 @@ namespace SBURB {
             (this->name != "" ? "' name='" + this->name : "") +
             (this->noWait ? "' noWait='" + this->noWait : "") +
             (this->noDelay ? "' noDelay='" + this->noDelay : "") +
-            (this->isSoft ? "' soft='" + this->isSoft : "") +
-            (this->isSilent ? "' silent='" + this->isSilent : "") +
+            (this->soft ? "' soft='" + this->soft : "") +
+            (this->silentCause != "" ? "' silent='" + this->silentCause : "") +
             (this->times != 1 ? "' times='" + this->times : "") +
             "'>";
 
