@@ -3,15 +3,20 @@
 
 #include "Common.h"
 #include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 
 namespace SBURB
 {
     class AssetSound
     {
     public:
-        AssetSound() {
-            this->type = "sound";
-        };
+        AssetSound(std::string path);
+
+        void Play(float pos = 0);
+        void Pause();
+        void Stop();
+        bool Ended();
+        void FixVolume();
 
         void SetName(std::string name) { this->name = name; };
         std::string GetName() { return this->name; };
@@ -20,8 +25,11 @@ namespace SBURB
 
     private:
         std::string name;
+        std::string path;
         std::string type;
+
         sf::Sound asset;
+        sf::SoundBuffer buffer;
 
     };
 }

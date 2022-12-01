@@ -9,9 +9,15 @@ namespace SBURB
     class AssetMusic
     {
     public:
-        AssetMusic() {
-            this->type = "music";
-        };
+        AssetMusic(std::string path, float startLoop = 0);
+
+        void SetLoopPoints(float start);
+        void Loop();
+        void Play(float pos);
+        void Pause();
+        void Stop();
+        bool Ended();
+        void FixVolume();
 
         void SetName(std::string name) { this->name = name; };
         std::string GetName() { return this->name; };
@@ -19,9 +25,13 @@ namespace SBURB
         std::string GetType() { return this->type; };
 
     private:
+        float startLoop;
+        
+        std::string path;
         std::string name;
         std::string type;
-        sf::Music asset;
+
+        std::unique_ptr<sf::Music> asset;
 
     };
 }
