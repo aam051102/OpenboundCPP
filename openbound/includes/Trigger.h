@@ -29,7 +29,7 @@ namespace SBURB {
         bool shouldDetonate;
         std::string op;
         std::shared_ptr<Trigger> waitFor;
-        std::vector<Event> events;
+        std::vector<std::shared_ptr<Event>> events;
 
     };
 }

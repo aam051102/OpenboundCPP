@@ -5,7 +5,6 @@
 #include "Serializer.h"
 
 #if defined(_WIN32) || defined(WIN32)
-#include <windows.h>
 #include <shellapi.h>
 #include <windows.h>
 #endif

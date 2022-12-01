@@ -18,7 +18,7 @@ namespace SBURB {
             std::vector<std::string> params = split(inf, ",");
             std::string type = params[0];
 
-            this->events.push_back(*EventFactory::CreateEvent(type, inf));
+            this->events.push_back(EventFactory::CreateEvent(type, inf));
         }
         this->Reset();
     }
@@ -29,7 +29,7 @@ namespace SBURB {
 
     void Trigger::Reset() {
         for (int i = 0; i < this->events.size(); i++) {
-            this->events[i].Reset();
+            this->events[i]->Reset();
         }
     }
 
@@ -80,8 +80,8 @@ namespace SBURB {
             (this->op != "" ? " operator='" + this->op + "'" : "") +
             ">";
         for (int i = 0; i < this->info.size(); i++) {
-            if (this->events[i].canSerialize) {
-                newOutput = newOutput + "<args>" + escape(this->events[i].Serialize().c_str()) + "</args>";
+            if (this->events[i]->canSerialize) {
+                newOutput = newOutput + "<args>" + escape(this->events[i]->Serialize().c_str()) + "</args>";
             }
             else {
                 newOutput = newOutput + "<args>" + escape(this->info[i].c_str()) + "</args>";

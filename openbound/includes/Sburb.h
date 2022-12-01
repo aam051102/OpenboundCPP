@@ -6,7 +6,6 @@
 #include "Input.h"
 #include "Room.h"
 #include "Character.h"
-#include "Dialoger.h"
 #include "SpriteButton.h"
 #include "Chooser.h"
 #include "AssetMusic.h"
@@ -17,6 +16,8 @@
 
 namespace SBURB
 {
+    class Dialoger;
+
     // Handles a running instance of the game.
     class Sburb
     {

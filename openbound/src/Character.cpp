@@ -274,7 +274,7 @@ namespace SBURB {
 
 		std::shared_ptr<Room> room = Sburb::GetInstance()->GetCurrentRoom();
 
-		std::shared_ptr<Character> sharedThis = std::make_shared<Character>(this);
+		std::shared_ptr<Character> sharedThis(this);
 
 		int minX = 1; // NOTE: originally Sburb.Stage.scaleX;
 		int minY = 1; // NOTE: originally Sburb.Stage.scaleY;
@@ -374,7 +374,10 @@ namespace SBURB {
 		}
 
 		this->following = sprite;
-		sprite->follower = std::make_shared<Character>(this);
+
+		std::shared_ptr<Character> sharedThis(this);
+		sprite->follower = sharedThis;
+
 		this->followBuffer = {};
 		this->lastLeaderPos = Vector2();
 		this->collidable = false;

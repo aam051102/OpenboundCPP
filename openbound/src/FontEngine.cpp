@@ -217,6 +217,29 @@ namespace SBURB {
 		}
 	}
 
+	// I (MadCreativity) wrote this function, so it may be faulty.
+	sf::Color HexToColor(std::string hex) {
+		if (hex.size() != 6) throw std::invalid_argument("Hex is not 6 characters long.");
+		std::transform(hex.begin(), hex.end(), hex.begin(), [](unsigned char c) { return std::tolower(c); });
+
+		int32_t c = 0x000000FF;
+
+		for (int i = 0; i < hex.size(); i++) {
+			int val = 0;
+
+			if (hex[i] >= 'a' && hex[i] <= 'f') {
+				val = hex[i] - 'a' + 10;
+			}
+			else {
+				val = stoi(std::to_string(hex[i]));
+			}
+
+			c += pow(16, 7 - i) * val;
+		}
+
+		return sf::Color(c);
+	}
+
 	void FontEngine::ParseColors() {
 		int escapePoint = 0;
 		int index = 0;
@@ -256,29 +279,6 @@ namespace SBURB {
 				this->RealignFormatQueue(index, 7);
 			}
 		}
-	}
-
-	// I (MadCreativity) wrote this function, so it may be faulty.
-	sf::Color HexToColor(std::string hex) {
-		if (hex.size() != 6) throw std::invalid_argument("Hex is not 6 characters long.");
-		std::transform(hex.begin(), hex.end(), hex.begin(), [](unsigned char c) { return std::tolower(c); });
-
-		int32_t c = 0x000000FF;
-
-		for (int i = 0; i < hex.size(); i++) {
-			int val = 0;
-
-			if (hex[i] >= 'a' && hex[i] <= 'f') {
-				val = hex[i] - 'a' + 10;
-			}
-			else {
-				val = stoi(std::to_string(hex[i]));
-			}
-
-			c += pow(16, 7 - i) * val;
-		}
-
-		return sf::Color(c);
 	}
 
 	void FontEngine::AddToFormatQueue(FormatRange format) {
