@@ -5,7 +5,7 @@
 namespace SBURB
 {
     static std::unordered_map<std::string, std::shared_ptr<AssetTexture>> textures;
-    static std::unordered_map<std::string, std::shared_ptr<sf::SoundBuffer>> sounds;
+    static std::unordered_map<std::string, std::shared_ptr<AssetSound>> sounds;
     static std::unordered_map<std::string, std::shared_ptr<sf::Font>> fonts;
     static std::unordered_map<std::string, std::shared_ptr<Path>> paths;
 

@@ -536,7 +536,7 @@ namespace SBURB {
         std::string bgm = node.attribute("bgm").as_string();
         if (bgm != "") {
             std::vector<std::string> params = split(bgm, ",");
-            Sburb::GetInstance()->ChangeBGM(BGM(AssetHandler::GetSoundByName(params[0]), std::stof(params.size() > 1 ? params[1] : "0")));
+            Sburb::GetInstance()->ChangeBGM(std::make_shared<AssetMusic>(params[0], std::stof(params.size() > 1 ? params[1] : "0")));
         }
 
         std::shared_ptr<Action> initAction;

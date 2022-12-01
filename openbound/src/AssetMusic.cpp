@@ -7,7 +7,7 @@ namespace SBURB {
         this->path = path;
         this->startLoop = startLoop;
 
-        this->asset = std::make_unique<sf::Music>();
+        this->asset = std::make_shared<sf::Music>();
         this->asset->openFromFile(path);
        
         this->SetLoopPoints(startLoop);

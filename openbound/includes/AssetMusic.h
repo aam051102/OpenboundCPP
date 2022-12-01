@@ -13,7 +13,7 @@ namespace SBURB
 
         void SetLoopPoints(float start);
         void Loop();
-        void Play(float pos);
+        void Play(float pos = 0);
         void Pause();
         void Stop();
         bool Ended();
@@ -24,6 +24,10 @@ namespace SBURB
 
         std::string GetType() { return this->type; };
 
+        std::shared_ptr<sf::Music> GetAsset() { return this->asset; };
+
+        float GetStartLoop() { return this->startLoop; };
+
     private:
         float startLoop;
         
@@ -31,7 +35,7 @@ namespace SBURB
         std::string name;
         std::string type;
 
-        std::unique_ptr<sf::Music> asset;
+        std::shared_ptr<sf::Music> asset;
 
     };
 }

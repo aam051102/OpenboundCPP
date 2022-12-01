@@ -5,8 +5,8 @@
 #include "Serializer.h"
 
 #if defined(_WIN32) || defined(WIN32)
-#include <shellapi.h>
 #include <windows.h>
+#include <shellapi.h>
 #endif
 
 #undef PlaySound
