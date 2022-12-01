@@ -159,6 +159,8 @@ namespace SBURB
         Vector2 viewPos;
         Vector2 scale;
 
+        sf::View view;
+
         float globalVolume;
         std::string engineMode;
 

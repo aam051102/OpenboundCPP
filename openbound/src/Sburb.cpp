@@ -30,6 +30,8 @@ namespace SBURB
         this->curRoom = nullptr;
         this->queue = std::make_shared<ActionQueue>(nullptr, "__SBURB__");
 
+        this->view = sf::View(sf::FloatRect((float)viewPos.x, (float)viewPos.y, (float)viewSize.x, (float)viewSize.y));
+
         if (gameInstance == nullptr) {
             gameInstance = this;
         }
@@ -88,6 +90,8 @@ namespace SBURB
                 this->ChainAction();
                 this->UpdateWait();
             }
+
+            this->window->setView(this->view);
 
             // Render
             if (this->shouldDraw) {
@@ -159,6 +163,9 @@ namespace SBURB
         
         this->viewPos.x = std::max(0, std::min((int)round(this->camera.x / this->scale.x) * this->scale.x, this->curRoom->GetWidth() - this->viewSize.x));
         this->viewPos.y = std::max(0, std::min((int)round(this->camera.y / this->scale.y) * this->scale.y, this->curRoom->GetHeight() - this->viewSize.y));
+  
+        // Move view
+        this->view.setCenter(sf::Vector2f(this->viewPos.x + this->viewSize.x / 2, this->viewPos.y + this->viewSize.y / 2));
     }
 
     void Sburb::HandleRoomChange() {
