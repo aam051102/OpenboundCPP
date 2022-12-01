@@ -251,7 +251,7 @@ namespace SBURB {
     {
         auto actions = Parser::ParseActionString(info);
         Sburb::GetInstance()->GetChooser()->SetChoices(actions);
-        Sburb::GetInstance()->GetChooser()->BeginChoosing(Sburb::GetInstance()->GetCamera()->GetX() + 20, Sburb::GetInstance()->GetCamera()->GetY() + 50);
+        Sburb::GetInstance()->GetChooser()->BeginChoosing(Sburb::GetInstance()->GetCamera().x + 20, Sburb::GetInstance()->GetCamera().y + 50);
     }
 
     void CommandHandler::PresentActions(std::string info)
@@ -677,8 +677,8 @@ namespace SBURB {
     {
         auto params = ParseParams(info);
         auto sprite = Sburb::GetInstance()->GetSprite(params[0]);
-        sprite->SetX(Sburb::GetInstance()->GetCamera()->GetX());
-        sprite->SetY(Sburb::GetInstance()->GetCamera()->GetX());
+        sprite->SetX(Sburb::GetInstance()->GetCamera().x);
+        sprite->SetY(Sburb::GetInstance()->GetCamera().y);
 
         Sburb::GetInstance()->GetCurrentRoom()->AddSprite(sprite);
     }
@@ -726,7 +726,7 @@ namespace SBURB {
         actions.push_back(Action("cancel", "", "Cancel"));
 
         Sburb::GetInstance()->GetChooser()->SetChoices(actions);
-        Sburb::GetInstance()->GetChooser()->BeginChoosing(Sburb::GetInstance()->GetCamera()->GetX() + 20, Sburb::GetInstance()->GetCamera()->GetY() + 50);
+        Sburb::GetInstance()->GetChooser()->BeginChoosing(Sburb::GetInstance()->GetCamera().x + 20, Sburb::GetInstance()->GetCamera().y + 50);
     }
 
     void CommandHandler::SetGameState(std::string info)
@@ -797,7 +797,7 @@ namespace SBURB {
         actions.push_back(Action("cancel", "", "Cancel"));
 
         Sburb::GetInstance()->GetChooser()->SetChoices(actions);
-        Sburb::GetInstance()->GetChooser()->BeginChoosing(Sburb::GetInstance()->GetCamera()->GetX() + 200, Sburb::GetInstance()->GetCamera()->GetY() + 250);
+        Sburb::GetInstance()->GetChooser()->BeginChoosing(Sburb::GetInstance()->GetCamera().x + 200, Sburb::GetInstance()->GetCamera().y + 250);
     }
 
     void CommandHandler::OpenDirect(std::string info)

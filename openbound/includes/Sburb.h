@@ -132,6 +132,9 @@ namespace SBURB
 
         std::shared_ptr<ActionQueue> GetQueue() { return this->queue; };
 
+        void SetCamera(Vector2 camera) { this->camera = camera; };
+        Vector2 GetCamera() { return this->camera; };
+
         Window window;
 
         std::string name;
@@ -150,6 +153,11 @@ namespace SBURB
         std::shared_ptr<AssetMusic> bgm;
         std::shared_ptr<Sprite> focus;
         std::shared_ptr<Sprite> destFocus;
+
+        Vector2 camera;
+        Vector2 viewSize;
+        Vector2 viewPos;
+        Vector2 scale;
 
         float globalVolume;
         std::string engineMode;

@@ -144,21 +144,21 @@ namespace SBURB
     void Sburb::FocusCamera() {
         if (!this->destFocus) {
             if (this->focus) {
-                this->camera.x = this->focus.x - this->Stage.width / 2;
-                this->camera.y = this->focus.y - this->Stage.height / 2;
+                this->camera.x = this->focus->GetX() - this->viewSize.x / 2;
+                this->camera.y = this->focus->GetY() - this->viewSize.y / 2;
             }
         }
-        else if (abs(this->destFocus.x - this->camera.x - this->Stage.width / 2) > 4 || abs(this->destFocus.y - this->cam.y - this->Stage.height / 2) > 4) {
-            this->camera.x += (this->destFocus.x - this->Stage.width / 2 - this->cam.x) / 5;
-            this->camera.y += (this->destFocus.y - this->Stage.height / 2 - this->cam.y) / 5;
+        else if (abs(this->destFocus->GetX() - this->camera.x - this->viewSize.x / 2) > 4 || abs(this->destFocus->GetY() - this->camera.y - this->viewSize.y / 2) > 4) {
+            this->camera.x += (this->destFocus->GetX() - this->viewSize.x / 2 - this->camera.x) / 5;
+            this->camera.y += (this->destFocus->GetY() - this->viewSize.y / 2 - this->camera.y) / 5;
         }
         else {
             this->focus = this->destFocus;
             this->destFocus = nullptr;
         }
         
-        this->Stage.x = std::max(0, std::min(round(this->cam.x / this->Stage.scaleX) * this->Stage.scaleX, this->curRoom.width - this->Stage.width));
-        this->Stage.y = std::max(0, std::min(round(this->cam.y / this->Stage.scaleX) * this->Stage.scaleX, this->curRoom.height - this->Stage.height));
+        this->viewPos.x = std::max(0, std::min((int)round(this->camera.x / this->scale.x) * this->scale.x, this->curRoom->GetWidth() - this->viewSize.x));
+        this->viewPos.y = std::max(0, std::min((int)round(this->camera.y / this->scale.y) * this->scale.y, this->curRoom->GetHeight() - this->viewSize.y));
     }
 
     void Sburb::HandleRoomChange() {
