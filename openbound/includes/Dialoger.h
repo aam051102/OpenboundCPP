@@ -46,6 +46,8 @@ namespace SBURB
         void SetDialogSpriteRight(std::shared_ptr<Sprite> dialogSpriteRigght) { this->dialogSpriteRight = dialogSpriteRight; };
         std::shared_ptr<Sprite> GetDialogSpriteRight() { return this->dialogSpriteRight; };
 
+        bool GetTalking() { return this->talking; };
+
     protected:
         std::string name;
         std::string currentDialog;

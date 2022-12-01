@@ -74,7 +74,7 @@ namespace SBURB
             // Run main update method for all objects
             if (this->shouldUpdate) {
                 this->HandleAudio();
-                // NOTE: Inputs were previously handled here, but are kept in the InputHandler in this port.
+                this->HandleInputs();
                 this->HandleHud();
 
                 if (this->curRoom && !this->loadingRoom) curRoom->Update();
@@ -96,8 +96,43 @@ namespace SBURB
         }
     }
 
-    void Sburb::HandleAudio() {
+    void Sburb::HandleInputs() {
+        this->SetMouseCursor(sf::Cursor::Arrow);
+        if (this->HasControl() && !this->inputDisabled) {
+            this->character->HandleInputs(Sburb.pressedOrder);
+        }
+        else {
+            this->character->MoveNone();
+        }
 
+        // NOTE: Debugger not implemented
+        // Sburb.debugger.handleInputs(Sburb.pressed);
+    }
+
+    void Sburb::HandleAudio() {
+        if (this->bgm && this->bgm->GetAsset()) {
+            if (this->bgm->Ended()) {
+                this->bgm->Loop();
+            }
+            
+            if (this->lastMusicTime == this->bgm->GetAsset()->getPlayingOffset()) {
+                this->musicStoppedFor++;
+                
+                if (this->musicStoppedFor > 4) {
+                    this->bgm->Pause();
+                    this->bgm->Play(); // asset.play() because sometimes this condition is true on startup
+                }
+            }
+            else {
+                this->musicStoppedFor = 0;
+            }
+
+            if (this->bgm->GetAsset()->getStatus() == sf::SoundStream::Paused) {
+                this->bgm->Play();
+            }
+
+            this->lastMusicTime = this->bgm->GetAsset()->getPlayingOffset();
+        }
     }
 
     void Sburb::HandleHud() {
@@ -107,7 +142,23 @@ namespace SBURB
     }
 
     void Sburb::FocusCamera() {
-
+        if (!this->destFocus) {
+            if (this->focus) {
+                this->camera.x = this->focus.x - this->Stage.width / 2;
+                this->camera.y = this->focus.y - this->Stage.height / 2;
+            }
+        }
+        else if (abs(this->destFocus.x - this->camera.x - this->Stage.width / 2) > 4 || abs(this->destFocus.y - this->cam.y - this->Stage.height / 2) > 4) {
+            this->camera.x += (this->destFocus.x - this->Stage.width / 2 - this->cam.x) / 5;
+            this->camera.y += (this->destFocus.y - this->Stage.height / 2 - this->cam.y) / 5;
+        }
+        else {
+            this->focus = this->destFocus;
+            this->destFocus = nullptr;
+        }
+        
+        this->Stage.x = std::max(0, std::min(round(this->cam.x / this->Stage.scaleX) * this->Stage.scaleX, this->curRoom.width - this->Stage.width));
+        this->Stage.y = std::max(0, std::min(round(this->cam.y / this->Stage.scaleX) * this->Stage.scaleX, this->curRoom.height - this->Stage.height));
     }
 
     void Sburb::HandleRoomChange() {
@@ -318,7 +369,11 @@ namespace SBURB
 
     bool Sburb::HasControl()
     {
-        return false;
+        return !this->dialoger->GetTalking()
+            && !this->chooser->GetChoosing()
+            && !this->destRoom
+            && !this->fading
+            && !this->destFocus;
     }
 
     std::shared_ptr<ActionQueue> Sburb::GetActionQueueById(std::string id)

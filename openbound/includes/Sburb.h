@@ -29,6 +29,7 @@ namespace SBURB
         void Update();
         void Render();
 
+        void HandleInputs();
         void HandleAudio();
         void HandleHud();
         void FocusCamera();
@@ -156,6 +157,9 @@ namespace SBURB
         sf::RectangleShape fadeShape;
         float fade;
         bool fading;
+
+        int musicStoppedFor = 0;
+        sf::Time lastMusicTime;
 
         bool playingMovie;
         bool loadingRoom;

@@ -17,6 +17,8 @@ namespace SBURB {
         void NextChoice();
         void PrevChoice();
         void BeginChoosing(int x, int y);
+        
+        bool GetChoosing() { return this->choosing; };
 
         void Update();
 
