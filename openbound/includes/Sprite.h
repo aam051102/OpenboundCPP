@@ -23,6 +23,7 @@ namespace SBURB
 
         void AddAnimation(std::shared_ptr<Animation> anim);
         void StartAnimation(std::string name);
+        std::map<std::string, std::shared_ptr<Animation>> GetAnimations() { return this->animations; };
         std::shared_ptr<Animation> GetAnimation() { return this->animation; };
         std::shared_ptr<Animation> GetAnimation(std::string name) { return this->animations[name]; };
         void Update();

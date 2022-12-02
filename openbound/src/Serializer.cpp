@@ -66,8 +66,8 @@ namespace SBURB {
         output = output + "<actionQueues>";
 
         for (auto actionQueue : Sburb::GetInstance()->GetActionQueues()) {
-            if (actionQueue.second->GetCurrentAction()) {
-                output = actionQueue.second->Serialize(output);
+            if (actionQueue->GetCurrentAction()) {
+                output = actionQueue->Serialize(output);
             }
         }
         output = output + "\n</actionQueues>\n";
@@ -126,9 +126,8 @@ namespace SBURB {
         output = output + "\n</assets>\n";
         output = output + "\n<effects>";
 
-        for (var effect in effects) {
-            var curEffect = effects[effect];
-            output = curEffect.serialize(output);
+        for (auto effect : Sburb::GetInstance()->GetEffects()) {
+            output = effect.second->Serialize(output);
         }
 
         output = output + "\n</effects>\n";
@@ -153,8 +152,8 @@ namespace SBURB {
     std::string Serializer::SerializeHud(std::string output) {
         output = output + "\n<hud>";
 
-        for (auto content : hud) {
-            output = content->Serialize(output);
+        for (auto content : Sburb::GetInstance()->GetHud()) {
+            output = content.second->Serialize(output);
         }
 
         output = Sburb::GetInstance()->GetDialoger()->Serialize(output);
@@ -163,7 +162,7 @@ namespace SBURB {
         output = output + "\n<dialogsprites>";
 
         for (auto animation : animations) {
-            output = animation->Serialize(output);
+            output = animation.second->Serialize(output);
         }
 
         output = output + "\n</dialogsprites>";
@@ -184,7 +183,7 @@ namespace SBURB {
             }
 
             if (!contained) {
-                output = theSprite.serialize(output);
+                output = theSprite->Serialize(output);
             }
         }
 

@@ -69,6 +69,14 @@ namespace SBURB
         std::map<std::string, std::string> GetGameState() { return this->gameState; };
         std::string GetGameState(std::string prop) { return this->gameState[prop]; };
 
+        std::map<std::string, std::shared_ptr<Sprite>> GetHud() { return this->hud; };
+        std::shared_ptr<Sprite> GetHud(std::string name) { return this->hud[name]; };
+
+        std::map<std::string, std::shared_ptr<Sprite>> GetSprites() { return this->sprites; };
+        std::map<std::string, std::shared_ptr<Animation>> GetEffects() { return this->effects; };
+        std::map<std::string, std::shared_ptr<SpriteButton>> GetButtons() { return this->buttons; };
+
+        std::vector<std::shared_ptr<ActionQueue>> GetActionQueues() { return this->actionQueues; };
         std::shared_ptr<ActionQueue> GetActionQueueById(std::string id);
         void RemoveActionQueueById(std::string id);
         void RemoveActionQueuesByGroup(std::string group);
