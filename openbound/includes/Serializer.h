@@ -8,6 +8,15 @@
 namespace SBURB {
     class Serializer {
     public:
+        static std::string Serialize();
+        static std::string SerializeAssets(std::string output);
+        static std::string SerializeTemplates(std::string output);
+        static std::string SerializeHud(std::string output);
+        static std::string SerializeLooseObjects(std::string output);
+        static std::string SerializeRooms(std::string output);
+        static std::string SerializeGameState(std::string output);
+        static std::string SerializeActionQueues(std::string output);
+ 
         template <typename T>
         static std::string SerializeAttribute(std::string name, T value, T defaultValue = T());
 

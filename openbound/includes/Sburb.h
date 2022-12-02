@@ -66,6 +66,7 @@ namespace SBURB
         std::shared_ptr<Animation> GetEffect(std::string name) { return this->effects[name]; };
 
         void SetGameState(std::string prop, std::string value) { this->gameState[prop] = value; };
+        std::map<std::string, std::string> GetGameState() { return this->gameState; };
         std::string GetGameState(std::string prop) { return this->gameState[prop]; };
 
         std::shared_ptr<ActionQueue> GetActionQueueById(std::string id);
@@ -136,6 +137,11 @@ namespace SBURB
 
         void SetCamera(Vector2 camera) { this->camera = camera; };
         Vector2 GetCamera() { return this->camera; };
+
+        void SetScale(Vector2 scale) { this->scale = scale; };
+        Vector2 GetScale() { return this->scale; };
+
+        Vector2 GetViewSize() { return this->viewSize; };
 
         Window window;
 

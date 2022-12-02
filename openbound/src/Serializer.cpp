@@ -12,47 +12,202 @@ namespace SBURB {
     std::string Serializer::Serialize() {
         Sburb* sburbInst = Sburb::GetInstance();
 
-        auto assets = sburbInst->GetAssets();
-        auto effects = sburbInst->GetEffects();
-        auto rooms = sburbInst->GetRooms();
-        auto sprites = sburbInst->GetSprites();
-        auto hud = sburbInst->GetHud();
-        auto dialoger = sburbInst->GetDialoger();
-        auto curRoom = sburbInst->GetCurrentRoom();
-        auto gameState = sburbInst->GetGameState();
-        auto actionQueues = sburbInst->GetActionQueues();
-        auto character = sburbInst->GetCharacter();
-
         std::string loadedFiles = "";
         bool loadedFilesExist = false;
 
         for (auto key : sburbInst->loadedFiles) // Not sburbInst.loadedFiles ?
         {
-            if (!Sburb.loadedFiles.hasOwnProperty(key)) continue;
             loadedFiles = loadedFiles + (loadedFilesExist ? "," : "") + key;
             loadedFilesExist = true;
         }
 
+        auto character = sburbInst->GetCharacter();
+        auto bgm = sburbInst->GetBGM();
 
         std::string output = "<sburb" +
-            " char='" + character->GetName()  +
-            (Sburb.bgm ? "' bgm='" + Sburb.bgm.asset.name + (Sburb.bgm.startLoop ? "," + Sburb.bgm.startLoop : "") : "") +
-            (Sburb.Stage.scaleX != 1 ? "' scale='" + Sburb.Stage.scaleX : "") +
+            std::string(" char='") + character->GetName()  +
+            (bgm ? "' bgm='" + bgm->GetName() + (bgm->GetStartLoop() ? "," + std::to_string(bgm->GetStartLoop()) : "") : "") +
+            (sburbInst->GetScale().x != 1 ? "' scale='" + sburbInst->GetScale().x : "") +
             (sburbInst->GetNextQueueId() > 0 ? "' nextQueueId='" + sburbInst->GetNextQueueId() : "") +
             (sburbInst->resourcePath != "" ? ("' resourcePath='" + sburbInst->resourcePath) : "") +
             (sburbInst->levelPath != "" ? ("' levelPath='" + sburbInst->levelPath) : "") +
             (loadedFilesExist ? ("' loadedFiles='" + loadedFiles) : "") +
             "'>\n";
-        output = Serializer::SerializeAssets(output, assets, effects);
-        output = Serializer::SerializeTemplates(output, templateClasses);
-        output = Serializer::SerializeHud(output, hud, dialoger);
-        output = Serializer::SerializeLooseObjects(output, rooms, sprites);
-        output = Serializer::SerializeRooms(output, rooms);
-        output = Serializer::SerializeGameState(output, gameState);
-        output = Serializer::SerializeActionQueues(output, actionQueues);
+        output = Serializer::SerializeAssets(output);
+        output = Serializer::SerializeTemplates(output);
+        output = Serializer::SerializeHud(output);
+        output = Serializer::SerializeLooseObjects(output);
+        output = Serializer::SerializeRooms(output);
+        output = Serializer::SerializeGameState(output);
+        output = Serializer::SerializeActionQueues(output);
 
         output = output + "\n</sburb>";
         
+        return output;
+    }
+
+    std::string EncodeXML(std::string str) {
+        return replace(replace(replace(replace(str, "&", "&amp;"), "<", "&lt;"), ">", "&gt;"), "\"", "&quot;");
+    };
+
+    std::string Serializer::SerializeGameState(std::string output) {
+        output = output + "\n<gameState>\n";
+
+        for (auto state : Sburb::GetInstance()->GetGameState()) {
+            output = output + "  <" + state.first + ">" + EncodeXML(state.second) + "</" + state.first + ">";
+        }
+
+        output = output + "\n</gameState>\n";
+
+        return output;
+    }
+
+    std::string Serializer::SerializeActionQueues(std::string output) {
+        output = output + "<actionQueues>";
+
+        for (auto actionQueue : Sburb::GetInstance()->GetActionQueues()) {
+            if (actionQueue.second->GetCurrentAction()) {
+                output = actionQueue.second->Serialize(output);
+            }
+        }
+        output = output + "\n</actionQueues>\n";
+
+        return output;
+    }
+
+    std::string Serializer::SerializeAssets(std::string output) {
+        output = output + "\n<assets>";
+
+        for (auto asset : assets) {
+            std::shared_ptr<Asset> curAsset = assets[asset];
+            std::string innerHTML = "";
+
+            if (curAsset.type == "graphic") {
+
+                innerHTML += curAsset.originalVals;
+            }
+            else if (curAsset.type == "audio") {
+                bool firstSrc = false;
+                for (int i = 0; i < curAsset.originalVals.length; i++)
+                {
+                    auto srcVal = curAsset.originalVals[i];
+                    innerHTML += (firstSrc ? ";" : "") + srcVal;
+
+                    firstSrc = true;
+                }
+
+            }
+            else if (curAsset.type == "path") {
+                for (int i = 0; i < curAsset.points.length; i++) {
+                    innerHTML = innerHTML.concat(curAsset.points[i].x + "," + curAsset.points[i].y);
+                    if (i != curAsset.points.length - 1) {
+                        innerHTML = innerHTML.concat(";");
+                    }
+                }
+            }
+            else if (curAsset.type == "movie") {
+                // UNSUPPORTED
+                innerHTML += curAsset.originalVals;
+            }
+            else if (curAsset.type == "font") {
+                innerHTML += curAsset.originalVals;
+            }
+            else if (curAsset.type == "text") {
+                innerHTML += escape(trim(curAsset.text).c_str());
+            }
+
+            output = output + "\n<asset name='" + curAsset.name + "' type='" + curAsset.type + "' ";
+
+            output = output + " >";
+            output = output + innerHTML;
+            output = output + "</asset>";
+        }
+
+        output = output + "\n</assets>\n";
+        output = output + "\n<effects>";
+
+        for (var effect in effects) {
+            var curEffect = effects[effect];
+            output = curEffect.serialize(output);
+        }
+
+        output = output + "\n</effects>\n";
+        return output;
+    }
+
+    std::string Serializer::SerializeTemplates(std::string output) {
+        output = output + "\n<classes>";
+
+        std::ostringstream serializeStream;
+
+        for (auto templateNode : templateClasses) {
+            serializeStream.clear();
+            templateNode.second.print(serializeStream, "", pugi::format_raw);
+            output += serializeStream.str();
+        }
+
+        output = output + "\n</classes>\n";
+        return output;
+    }
+
+    std::string Serializer::SerializeHud(std::string output) {
+        output = output + "\n<hud>";
+
+        for (auto content : hud) {
+            output = content->Serialize(output);
+        }
+
+        output = Sburb::GetInstance()->GetDialoger()->Serialize(output);
+
+        auto animations = Sburb::GetInstance()->GetDialoger()->GetDialogSpriteLeft()->GetAnimations();
+        output = output + "\n<dialogsprites>";
+
+        for (auto animation : animations) {
+            output = animation->Serialize(output);
+        }
+
+        output = output + "\n</dialogsprites>";
+        output = output + "\n</hud>\n";
+        return output;
+    }
+
+    std::string Serializer::SerializeLooseObjects(std::string output) {
+        for (auto sprite : Sburb::GetInstance()->GetSprites()) {
+            auto theSprite = sprite.second;
+            bool contained = false;
+
+            for (auto room : Sburb::GetInstance()->GetRooms()) {
+                if (room.second->Contains(theSprite)) {
+                    contained = true;
+                    break;
+                }
+            }
+
+            if (!contained) {
+                output = theSprite.serialize(output);
+            }
+        }
+
+        for (auto button : Sburb::GetInstance()->GetButtons()) {
+            auto theButton = button.second;
+
+            if (!Sburb::GetInstance()->GetHud(theButton->GetName())) {
+                output = theButton->Serialize(output);
+            }
+        }
+
+        return output;
+    }
+
+    std::string Serializer::SerializeRooms(std::string output) {
+        output = output + "\n<rooms>\n";
+        
+        for (auto room : Sburb::GetInstance()->GetRooms()) {
+            output = room.second->Serialize(output);
+        }
+
+        output = output + "\n</rooms>\n";
+
         return output;
     }
 
@@ -163,10 +318,10 @@ namespace SBURB {
     bool Serializer::LoadSerialAssets(pugi::xml_node node) {
         std::string description = node.attribute("description").value();
         if (description != "") {
-            Sburb::GetInstance()->assetManager.SetDescription(description);
+            Sburb::GetInstance()->SetDescription(description);
         }
         else {
-            Sburb::GetInstance()->assetManager.SetDescription("assets");
+            Sburb::GetInstance()->SetDescription("assets");
         }
 
         pugi::xml_node assetsNode = node.child("assets");
@@ -474,7 +629,7 @@ namespace SBURB {
 
         int scale = node.attribute("scale").as_int();
         if (scale) {
-            Sburb.Stage.scaleX = Sburb.Stage.scaleY = scale;
+            Sburb::GetInstance()->SetScale(Vector2(scale, scale));
         }
 
         int nextQueueId = node.attribute("nextQueueId").as_int();
@@ -544,8 +699,8 @@ namespace SBURB {
         }
 
         if (!dialoger->GetDialogSpriteLeft()) {
-            dialoger->SetDialogSpriteLeft(std::make_shared<Sprite>("dialogSprite", -1000, Sburb.Stage.height, 0, 0));
-            dialoger->SetDialogSpriteRight(std::make_shared<Sprite>("dialogSprite", Sburb.Stage.width + 1000, Sburb.Stage.height, 0, 0));
+            dialoger->SetDialogSpriteLeft(std::make_shared<Sprite>("dialogSprite", -1000, Sburb::GetInstance()->GetViewSize().y, 0, 0));
+            dialoger->SetDialogSpriteRight(std::make_shared<Sprite>("dialogSprite", Sburb::GetInstance()->GetViewSize().x + 1000, Sburb::GetInstance()->GetViewSize().y, 0, 0));
         }
 
         auto animations = dialogSprites.children("animation");
