@@ -349,9 +349,9 @@ namespace SBURB {
 
     void CommandHandler::PlayMovie(std::string info)
     {
-        // NOT SUPPORTED
+        // UNSUPPORTED
         auto params = ParseParams(info);
-        Sburb::GetInstance()->PlayMovie(/*Sburb.assets[params[0]]*/nullptr);
+        Sburb::GetInstance()->PlayMovie(/*Sburb.assets[params[0]]*/);
 
         /*if (params.size()> 0) {
             var interval = setInterval(function() {

@@ -29,6 +29,8 @@ namespace SBURB
         void Update();
         void Render();
 
+        void PurgeState();
+
         void HandleInputs();
         void HandleAudio();
         void HandleHud();
@@ -83,7 +85,7 @@ namespace SBURB
         void ChangeRoom(std::shared_ptr<Room> room, int newX, int newY);
         void PlayEffect(std::shared_ptr<Animation> effect, int x, int y);
         void PlaySound(std::shared_ptr<AssetSound> sound);
-        void PlayMovie(std::shared_ptr<AssetMovie> movie);
+        void PlayMovie();
         void SetCurRoomOf(std::shared_ptr<Character> sprite);
         void MoveSprite(std::shared_ptr<Character> sprite, std::shared_ptr<Room> oldRoom, std::shared_ptr<Room> newRoom);
 

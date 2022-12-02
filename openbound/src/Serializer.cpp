@@ -95,48 +95,12 @@ namespace SBURB {
         AssetHandler::ClearTextures();
     }
 
-    void PurgeState() {
-        if (Sburb.rooms) {
-            delete Sburb.rooms;
-        }
-
-        if (Sburb.sprites) {
-            delete Sburb.sprites;
-        }
-
-        Sburb.rooms = {};
-
-        if (Sburb.bgm) {
-            Sburb.bgm.stop();
-            Sburb.bgm = null;
-        }
-
-        Sburb.gameState = {};
-        Sburb::GetInstance()->SetGlobalVolume(1);
-        Sburb.hud = {};
-        Sburb.sprites = {};
-        Sburb.buttons = {};
-        Sburb.effects = {};
-        Sburb::GetInstance()->GetQueue()->SetCurrentAction(nullptr);
-        Sburb.actionQueues = {};
-        Sburb.nextQueueId = 0;
-        Sburb.pressed = {};
-        Sburb.pressedOrder = {};
-        Sburb::GetInstance()->SetChooser(std::make_shared<Chooser>());
-        Sburb::GetInstance()->SetDialoger(nullptr);
-        Sburb::GetInstance()->SetCurrentRoom(nullptr);
-        Sburb::GetInstance()->SetCharacter(nullptr);
-        Sburb::GetInstance()->resourcePath = "";
-        Sburb::GetInstance()->levelPath = "";
-        Sburb.loadedFiles = {};
-    }
-
     bool Serializer::LoadSerial(pugi::xml_document* doc, bool keepOld) {
         pugi::xml_node rootNode = doc->child("sburb");
 
         if (!keepOld) {
             PurgeAssets();
-            PurgeState();
+            Sburb::GetInstance()->PurgeState();
         }
 
         std::string levelPath = rootNode.attribute("levelPath").value();

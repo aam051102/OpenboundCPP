@@ -42,6 +42,36 @@ namespace SBURB
         AssetHandler::ClearTextures();
     }
 
+    void Sburb::PurgeState() {
+        this->rooms = {};
+
+        this->sprites = {};
+
+        if (this->bgm) {
+            this->bgm->Stop();
+            this->bgm = nullptr;
+        }
+
+        this->gameState = {};
+        this->globalVolume = 1;
+        this->hud = {};
+        this->sprites = {};
+        this->buttons = {};
+        this->effects = {};
+        this->queue->SetCurrentAction(nullptr);
+        this->actionQueues = {};
+        this->chooser = std::make_shared<Chooser>();
+        this->dialoger = nullptr;
+        this->curRoom = nullptr;
+        this->character = nullptr;
+        this->resourcePath = "";
+        this->levelPath = "";
+        this->nextQueueId = 0;
+        this->pressed = {};
+        this->pressedOrder = {};
+        this->loadedFiles = {};
+    }
+
     void Sburb::Update()
     {
         sf::Int32 FPStime = FPStimeObj.getElapsedTime().asMilliseconds();
@@ -103,7 +133,7 @@ namespace SBURB
     void Sburb::HandleInputs() {
         this->SetMouseCursor(sf::Cursor::Arrow);
         if (this->HasControl() && !this->inputDisabled) {
-            this->character->HandleInputs(Sburb.pressedOrder);
+            this->character->HandleInputs(this->pressedOrder);
         }
         else {
             this->character->MoveNone();
@@ -296,7 +326,7 @@ namespace SBURB
     bool Sburb::Start()
     {
         // Create & initialize main window
-        window.Init(name, { 650, 450 }, sf::Style::Close | sf::Style::Titlebar, icon); // Standard
+        window.Init(name, { this->viewSize.x, this->viewSize.y }, sf::Style::Close | sf::Style::Titlebar, icon); // Standard
 
         if (!window.GetWin())
         {
@@ -523,10 +553,11 @@ namespace SBURB
         sound->Stop();
         sound->Play();
     }
-
-    void Sburb::PlayMovie(std::shared_ptr<AssetMovie> movie)
+    
+    void Sburb::PlayMovie()
     {
-        this->queue->SetTrigger(std::make_shared<Trigger>("movie," + movie->GetName() + ",5"));
+        // UNSUPPORTED
+        //this->queue->SetTrigger(std::make_shared<Trigger>("movie," + movie->GetName() + ",5"));
         this->playingMovie = true;
     }
 
