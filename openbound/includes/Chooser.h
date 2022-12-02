@@ -12,7 +12,6 @@ namespace SBURB {
         Chooser();
         ~Chooser();
 
-        void SetChoices(std::vector<Action> choices) { this->choices = choices; };
 
         void NextChoice();
         void PrevChoice();
@@ -20,11 +19,18 @@ namespace SBURB {
         
         bool GetChoosing() { return this->choosing; };
 
+        void SetChoices(std::vector<std::shared_ptr<Action>> choices) { this->choices = choices; };
+        void AddChoice(std::shared_ptr<Action> choice) { this->choices.push_back(choice); };
+        std::vector<std::shared_ptr<Action>> GetChoices() { return this->choices; };
+
+        std::shared_ptr<Action> GetChoice() { return this->choices[this->choice]; };
+        std::shared_ptr<Action> GetChoice(int index) { return this->choices[index]; };
+
         void Update();
 
     private:
         bool choosing;
-        std::vector<Action> choices;
+        std::vector<std::shared_ptr<Action>> choices;
         int choice = 0;
         std::vector<FontEngine> dialogs;
         int time = 0;

@@ -18,6 +18,57 @@ namespace SBURB
 {
     static Sburb* gameInstance = nullptr;
 
+    void KeyDown(sf::Event::KeyEvent e) {
+        auto sburbInst = Sburb::GetInstance();
+
+        if (!sburbInst->GetInputDisabled()) { // Make sure we are loaded before trying to do things
+            if (sburbInst->GetChooser()->GetChoosing()) {
+                if (e.keyCode == Sburb.Keys.down || e.keyCode == Sburb.Keys.s) {
+                    Sburb.chooser.nextChoice();
+                }
+
+                if (e.keyCode == Sburb.Keys.up || e.keyCode == Sburb.Keys.w) {
+                    Sburb.chooser.prevChoice();
+                }
+
+                if (e.keyCode == Sburb.Keys.space && !Sburb.pressed[Sburb.Keys.space]) {
+                    sburbInst->PerformAction(sburbInst->GetChooser()->GetChoice());
+                    sburbInst->GetChooser()->SetChoosing(false);
+                }
+            }
+            else if (Sburb.dialoger.talking) {
+                if (e.keyCode == Sburb.Keys.space && !Sburb.pressed[Sburb.Keys.space]) {
+                    sburbInst->GetDialoger()->Nudge();
+                }
+            }
+            else if (sburbInst->HasControl()) {
+                if (e.keyCode == Sburb.Keys.space && !Sburb.pressed[Sburb.Keys.space] && sburbInst->GetEngineMode() == "wander") {
+                    sburbInst->GetChooser()->SetChoices({});
+                    auto queries = sburbInst->GetCharacter()->GetActionQueries();
+                    
+                    for (auto query : queries) {
+                        sburbInst->GetChooser()->SetChoices(sburbInst->GetCurrentRoom()->QueryActions(sburbInst->GetCharacter(), query.x, query.y));
+                       
+                        if (sburbInst->GetChooser()->GetChoices().size() > 0) {
+                            break;
+                        }
+                    }
+
+                    if (sburbInst->GetChooser()->GetChoices().size() > 0) {
+                        sburbInst->GetChooser()->AddChoice(std::make_shared<Action>("cancel", "cancel", "Cancel."));
+                        sburbInst->BeginChoosing();
+                    }
+                }
+            }
+        }
+
+        // NOTE: Figure out what to do here.
+        if (!InputHandler::GetPressed()) {
+            InputHandler::AddPressedOrder(e.code);
+        }
+        InputHandler::SetPressed(e.code, true);
+    }
+
     Sburb::Sburb()
     {
         this->name = "Jterniabound";
@@ -31,6 +82,9 @@ namespace SBURB
         this->queue = std::make_shared<ActionQueue>(nullptr, "__SBURB__");
 
         this->view = sf::View(sf::FloatRect((float)viewPos.x, (float)viewPos.y, (float)viewSize.x, (float)viewSize.y));
+
+        std::vector<std::function<void(sf::Event::KeyEvent)>> v = { KeyDown };
+        this->inputHandler.callbacks.insert(std::pair(InputState::Pressed, v));
 
         if (gameInstance == nullptr) {
             gameInstance = this;
@@ -67,9 +121,12 @@ namespace SBURB
         this->resourcePath = "";
         this->levelPath = "";
         this->nextQueueId = 0;
-        this->pressed = {};
-        this->pressedOrder = {};
         this->loadedFiles = {};
+    }
+
+    void Sburb::BeginChoosing() {
+        this->character->Idle();
+        this->chooser->BeginChoosing(this->character->GetX(), this->character->GetY());
     }
 
     void Sburb::Update()
@@ -133,7 +190,7 @@ namespace SBURB
     void Sburb::HandleInputs() {
         this->SetMouseCursor(sf::Cursor::Arrow);
         if (this->HasControl() && !this->inputDisabled) {
-            this->character->HandleInputs(this->pressedOrder);
+            this->character->HandleInputs(InputHandler::GetKeyOrder());
         }
         else {
             this->character->MoveNone();

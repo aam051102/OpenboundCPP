@@ -68,12 +68,15 @@ namespace SBURB
 
         void Update(sf::Event event, bool focused);
 
+        static std::vector<InputActions> GetKeyOrder();
+
     private:
         InputHandler();
 
         std::unordered_map<InputActions, std::vector<sf::Keyboard::Key>> keyboardAliases;
         std::unordered_map<InputActions, std::vector<unsigned int>> gamepadAliases;
         std::map<InputActions, InputState> keyStates;
+        std::vector<InputActions> keyOrder;
 
         std::unordered_map<MouseInputActions, std::vector<sf::Mouse::Button>> mouseAliases;
         std::map<MouseInputActions, InputState> mouseButtonStates;

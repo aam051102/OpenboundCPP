@@ -38,6 +38,7 @@ namespace SBURB
         void HandleRoomChange();
         void ChainAction();
         void UpdateWait();
+        void BeginChoosing();
 
         void ChainActionInQueue(std::shared_ptr<ActionQueue> queue);
 
@@ -123,6 +124,7 @@ namespace SBURB
         void SetGlobalVolume(float globalVolume) { this->globalVolume = globalVolume; };
 
         void SetEngineMode(std::string engineMode) { this->engineMode = engineMode; };
+        std::string GetEngineMode() { return this->engineMode; };
 
         void SetFading(bool fading) { this->fading = fading; };
 
@@ -150,6 +152,8 @@ namespace SBURB
         Vector2 GetScale() { return this->scale; };
 
         Vector2 GetViewSize() { return this->viewSize; };
+
+        bool GetInputDisabled() { return this->inputDisabled; };
 
         Window window;
 

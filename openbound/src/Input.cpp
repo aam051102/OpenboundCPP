@@ -253,4 +253,8 @@ namespace SBURB
     {
         return inputHandlerInstance->mouseButtonStates[button] == InputState::Released;
     }
+
+    std::vector<InputActions> InputHandler::GetKeyOrder() {
+        return inputHandlerInstance->keyOrder;
+    }
 }
