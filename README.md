@@ -12,4 +12,5 @@ Example data can be found in the official Openbound engine repository or in the 
 
 ## TODO
 
-- Possibly integrate Lightspark or some other Flash emulator to support "movies".
+- Finish Asset loading (Serializer + AssetHandler)
+- (Plausibly) Integrate Lightspark or some other Flash emulator to support "movies" (i.e. Flash).

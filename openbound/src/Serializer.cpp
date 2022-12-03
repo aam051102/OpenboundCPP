@@ -15,7 +15,7 @@ namespace SBURB {
         std::string loadedFiles = "";
         bool loadedFilesExist = false;
 
-        for (auto key : sburbInst->loadedFiles) // Not sburbInst.loadedFiles ?
+        for (auto key : sburbInst->loadedFiles)
         {
             loadedFiles = loadedFiles + (loadedFilesExist ? "," : "") + key;
             loadedFilesExist = true;

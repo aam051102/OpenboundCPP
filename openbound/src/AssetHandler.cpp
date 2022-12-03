@@ -1,6 +1,7 @@
 #include "AssetHandler.h"
 #include <vector>
 #include <unordered_map>
+#include "AssetSound.h"
 
 namespace SBURB
 {
