@@ -17,9 +17,39 @@ namespace SBURB {
         static std::string SerializeRooms(std::string output);
         static std::string SerializeGameState(std::string output);
         static std::string SerializeActionQueues(std::string output);
- 
-        template <typename T>
-        static std::string SerializeAttribute(std::string name, T value, T defaultValue = T());
+
+        // SerializeAttribute used to be done with templates, but it was such a hassle, I got annoyed and stopped.
+        static std::string SerializeAttribute(std::string name, bool value, bool defaultValue = false) {
+            return value != defaultValue ? " " + name + "='" + std::to_string(value) + "' " : "";
+        }
+
+        static std::string SerializeAttribute(std::string name, int value, int defaultValue = 0) {
+            return value != defaultValue ? " " + name + "='" + std::to_string(value) + "' " : "";
+        }
+
+        static std::string SerializeAttribute(std::string name, std::string value, std::string defaultValue = "") {
+            return value != defaultValue ? " " + name + "='" + value + "' " : "";
+        }
+
+        static std::string Serializer::SerializeAttribute(std::string name, Vector2 value)
+        {
+            std::string sub = " " + name + "='";
+            sub += value.x + ",";
+            sub += value.y;
+            sub += "' ";
+            return sub;
+        }
+
+        static std::string Serializer::SerializeAttribute(std::string name, Vector4 value)
+        {
+            std::string sub = " " + name + "='";
+            sub += value.x + ",";
+            sub += value.y + ",";
+            sub += value.z + ",";
+            sub += value.w;
+            sub += "' ";
+            return sub;
+        }
 
         static pugi::xml_document ParseXML(std::string inText);
 
