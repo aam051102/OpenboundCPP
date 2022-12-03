@@ -34,7 +34,6 @@ namespace SBURB {
     }
 
     bool Trigger::CheckCompletion() {
-        // TODO: Check completion
         if (this->op == "AND") {
             bool result = true;
             
