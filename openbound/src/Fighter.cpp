@@ -167,9 +167,9 @@ namespace SBURB {
 		this->y += vy;
 
 		std::shared_ptr<Room> room = Sburb::GetInstance()->GetCurrentRoom();
-		std::shared_ptr<Fighter> sharedThis = std::make_shared<Fighter>(this);
+		std::shared_ptr<Fighter> sharedThis(this);
 
-		std::shared_ptr<Sprite> collides = room->Collides(std::make_shared<Fighter>(this));
+		std::shared_ptr<Sprite> collides = room->Collides(sharedThis);
 		if (collides) {
 			float tx = 0;
 			float ty = 0;

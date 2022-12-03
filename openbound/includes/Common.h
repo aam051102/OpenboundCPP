@@ -189,6 +189,7 @@ namespace SBURB
 
     static inline std::string replace(std::string s, std::string oldSubstr, std::string newSubstr) {
         // TODO
+        return "";
     }
 
 }

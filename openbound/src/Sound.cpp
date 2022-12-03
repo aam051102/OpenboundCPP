@@ -3,13 +3,13 @@
 
 namespace SBURB
 {
-    Sound::Sound(std::string name, std::shared_ptr<sf::SoundBuffer> buffer)
+    Sound::Sound(std::string name, std::shared_ptr<AssetAudio> audio)
     {
         this->name = name;
         this->type = "sound";
-        this->buffer = buffer;
+        this->audio = audio;
         this->asset = sf::Sound();
-        this->asset.setBuffer(*this->buffer);
+        this->asset.setBuffer(*this->audio->GetAsset());
     }
 
     void Sound::Play(float pos)
@@ -32,7 +32,7 @@ namespace SBURB
 
     bool Sound::Ended()
     {
-        return this->asset.getPlayingOffset() >= this->buffer->getDuration();
+        return this->asset.getPlayingOffset() >= this->audio->GetAsset()->getDuration();
     }
 
     void Sound::FixVolume()

@@ -41,7 +41,7 @@ namespace SBURB
 
 		std::string GetFollowUp() { return this->followUp; };
 
-        Animation Clone(int x = 0, int y = 0);
+        std::shared_ptr<Animation> Clone(int x = 0, int y = 0);
 
         std::string Serialize(std::string output);
 

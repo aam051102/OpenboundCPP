@@ -112,10 +112,10 @@ namespace SBURB {
                 std::shared_ptr<ActionQueue> result = Sburb::GetInstance()->PerformAction(this->action);
 
                 if (result) {
-                    this->waitFor = std::make_shared<Trigger>("noActions," + result->GetId());
+                    this->waitFor = std::make_shared<Trigger>(std::vector<std::string>({ "noActions," + result->GetId() }));
                 }
                 else {
-                    this->waitFor = std::make_shared<Trigger>("noActions");
+                    this->waitFor = std::make_shared<Trigger>(std::vector<std::string>({ "noActions" }));
                 }
             }
 

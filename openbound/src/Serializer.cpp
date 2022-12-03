@@ -693,7 +693,7 @@ namespace SBURB
                 dialogSpriteRight = oldDialoger->GetDialogSpriteRight();
             }
 
-            Sburb::GetInstance()->SetDialoger(std::make_shared<Dialoger>(Parser::ParseDialoger(dialogerNode)));
+            Sburb::GetInstance()->SetDialoger(Parser::ParseDialoger(dialogerNode));
             Sburb::GetInstance()->GetDialoger()->SetDialogSpriteLeft(dialogSpriteLeft);
             Sburb::GetInstance()->GetDialoger()->SetDialogSpriteRight(dialogSpriteRight);
         }
@@ -787,7 +787,7 @@ namespace SBURB
             {
                 if (tmp.name() == "action" && tmp.attribute("name").as_string() == initActionName)
                 {
-                    initAction = std::make_shared<Action>(Parser::ParseAction(tmp));
+                    initAction = Parser::ParseAction(tmp);
                     continue;
                 }
             }
@@ -825,7 +825,7 @@ namespace SBURB
         auto dialoger = Sburb::GetInstance()->GetDialoger();
         if (!dialoger)
         {
-            Sburb::GetInstance()->SetDialoger(std::make_shared<Dialoger>());
+            Sburb::GetInstance()->SetDialoger(std::make_shared<Dialoger>(Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector4(0, 0, 0, 0), Vector4(0, 0, 0, 0), Vector4(0, 0, 0, 0), "standard"));
         }
 
         if (!dialoger->GetDialogSpriteLeft())
@@ -837,8 +837,8 @@ namespace SBURB
         auto animations = dialogSprites.children("animation");
         for (pugi::xml_node anim : animations)
         {
-            dialoger->GetDialogSpriteLeft()->AddAnimation(std::make_shared<Animation>(Parser::ParseAnimation(anim)));
-            dialoger->GetDialogSpriteRight()->AddAnimation(std::make_shared<Animation>(Parser::ParseAnimation(anim)));
+            dialoger->GetDialogSpriteLeft()->AddAnimation(Parser::ParseAnimation(anim));
+            dialoger->GetDialogSpriteRight()->AddAnimation(Parser::ParseAnimation(anim));
         }
     }
 
@@ -896,7 +896,7 @@ namespace SBURB
         {
             if (candidate.name() == "trigger")
             {
-                newRoom->AddTrigger(std::make_shared<Trigger>(Parser::ParseTrigger(candidate)));
+                newRoom->AddTrigger(Parser::ParseTrigger(candidate));
             }
         }
     }

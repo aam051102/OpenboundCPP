@@ -41,9 +41,9 @@ namespace SBURB {
         /*
         DEPRECATED: DO NOT USE
         */
-        static Trigger WaitFor(std::string info);
-        static Trigger Macro(std::string info);
-        static Trigger Sleep(std::string info);
+        static std::shared_ptr<Trigger> WaitFor(std::string info);
+        static std::shared_ptr<Trigger> Macro(std::string info);
+        static std::shared_ptr<Trigger> Sleep(std::string info);
         static void PauseActionQueue(std::string info);
         static void PauseActionQueues(std::string info);
         static void ResumeActionQueue(std::string info);

@@ -269,9 +269,9 @@ namespace SBURB
 		setScale(this->flipY, this->flipY);
 	};
 
-	Animation Animation::Clone(int x, int y)
+	std::shared_ptr<Animation> Animation::Clone(int x, int y)
 	{
-		return Animation(this->name, this->sheetName, x + this->x, y + this->y, this->colSize, this->rowSize, this->startPos, this->length, std::to_string(this->frameInterval), this->loopNum, this->followUp, this->flipX, this->flipY, this->sliced, this->numCols, this->numRows);
+		return std::make_shared<Animation>(this->name, this->sheetName, x + this->x, y + this->y, this->colSize, this->rowSize, this->startPos, this->length, std::to_string(this->frameInterval), this->loopNum, this->followUp, this->flipX, this->flipY, this->sliced, this->numCols, this->numRows);
 	}
 
 	std::string Animation::Serialize(std::string output)

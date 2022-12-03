@@ -590,13 +590,13 @@ namespace SBURB
     void Sburb::PerformActionInQueue(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue)
     {
         bool looped = false;
-        queue->SetCurrentAction(std::make_shared<Action>(action->Clone()));
+        queue->SetCurrentAction(action->Clone());
 
         do
         {
             if (looped)
             {
-                queue->SetCurrentAction(std::make_shared<Action>(queue->GetCurrentAction()->GetFollowUp()->Clone()));
+                queue->SetCurrentAction(queue->GetCurrentAction()->GetFollowUp()->Clone());
             }
 
             std::shared_ptr<Trigger> result = CommandHandler::PerformActionSilent(queue->GetCurrentAction());
@@ -639,7 +639,7 @@ namespace SBURB
 
     void Sburb::PlayEffect(std::shared_ptr<Animation> effect, int x, int y)
     {
-        this->curRoom->AddEffect(std::make_shared<Animation>(effect->Clone(x, y)));
+        this->curRoom->AddEffect(effect->Clone(x, y));
     }
 
     void Sburb::PlaySound(std::shared_ptr<Sound> sound)

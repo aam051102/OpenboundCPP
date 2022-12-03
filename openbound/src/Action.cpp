@@ -27,8 +27,8 @@ namespace SBURB {
         
     }
 
-    Action Action::Clone() {
-        return Action(this->command, this->info, this->name, this->sprite, this->followUp, this->noWait, this->noDelay, this->times, this->soft, this->silentCause);
+    std::shared_ptr<Action> Action::Clone() {
+        return std::make_shared<Action>(this->command, this->info, this->name, this->sprite, this->followUp, this->noWait, this->noDelay, this->times, this->soft, this->silentCause);
     }
 
     std::string Action::Serialize(std::string output) {

@@ -4,13 +4,14 @@
 #include "Common.h"
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
+#include "AssetAudio.h"
 
 namespace SBURB
 {
     class Sound
     {
     public:
-        Sound(std::string name, std::shared_ptr<sf::SoundBuffer> buffer);
+        Sound(std::string name, std::shared_ptr<AssetAudio> audio);
 
         void Play(float pos = 0);
         void Pause();
@@ -28,7 +29,7 @@ namespace SBURB
         std::string type;
 
         sf::Sound asset;
-        std::shared_ptr<sf::SoundBuffer> buffer;
+        std::shared_ptr<AssetAudio> audio;
     };
 }
 

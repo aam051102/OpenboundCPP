@@ -11,7 +11,7 @@ namespace SBURB
     class ActionQueue
     {
     public:
-        ActionQueue(std::shared_ptr<Action> action, std::string id, std::vector<std::string> groups, bool noWait = false, bool isPaused = false, std::shared_ptr<Trigger> trigger = NULL);
+        ActionQueue(std::shared_ptr<Action> action, std::string id = "", std::vector<std::string> groups = {}, bool noWait = false, bool isPaused = false, std::shared_ptr<Trigger> trigger = NULL);
         ~ActionQueue();
 
         bool HasGroup(std::string group);

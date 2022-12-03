@@ -14,7 +14,6 @@ namespace SBURB
         ~EventInBox();
 
         virtual void Reset() override;
-        virtual std::string Serialize() override;
         virtual bool CheckCompletion() override;
 
         bool canSerialize;

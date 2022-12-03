@@ -153,22 +153,22 @@ namespace SBURB
         return output;
     }
 
-    Sprite Sprite::Clone(std::string newName) {
-        Sprite newSprite = Sprite(newName, this->x, this->y, this->width, this->height, this->dx, this->dy, this->depthing, this->collidable);
+    std::shared_ptr<Sprite> Sprite::Clone(std::string newName) {
+        auto newSprite = std::make_shared<Sprite>(newName, this->x, this->y, this->width, this->height, this->dx, this->dy, this->depthing, this->collidable);
 
         for (auto anim : this->animations) {
-            newSprite.AddAnimation(std::make_shared<Animation>(anim.second->Clone()));
+            newSprite->AddAnimation(anim.second->Clone());
         }
         
         for (auto action : this->actions) {
-            newSprite.AddAction(std::make_shared<Action>(action.second->Clone()));
+            newSprite->AddAction(action.second->Clone());
         }
         
         if (this->animation) {
-            newSprite.StartAnimation(this->animation->GetName());
+            newSprite->StartAnimation(this->animation->GetName());
         }
         
-        Sburb::GetInstance()->SetSprite(newName, std::make_shared<Sprite>(newSprite));
+        Sburb::GetInstance()->SetSprite(newName, newSprite);
 
         return newSprite;
     }

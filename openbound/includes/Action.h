@@ -9,10 +9,10 @@ namespace SBURB
     class Action
     {
     public:
-        Action(std::string command, std::string info, std::string name = "", std::string sprite = "", std::shared_ptr<Action> followUp = NULL, bool noWait = false, bool noDelay = false, uint16_t times = 1, bool soft = false, std::string silent = "");
+        Action(std::string command, std::string info = "", std::string name = "", std::string sprite = "", std::shared_ptr<Action> followUp = nullptr, bool noWait = false, bool noDelay = false, uint16_t times = 1, bool soft = false, std::string silent = "");
         ~Action();
 
-        Action Clone();
+        std::shared_ptr<Action> Clone();
         std::string Serialize(std::string output);
 
         void SetFollowUp(std::shared_ptr<Action> followUp) { this->followUp = followUp; };

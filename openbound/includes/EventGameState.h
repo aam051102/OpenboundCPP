@@ -1,7 +1,6 @@
 #ifndef SBURB_EVENT_GAME_STATE_H
 #define SBURB_EVENT_GAME_STATE_H
 
-#include <pugixml.hpp>
 #include "Common.h"
 #include "Event.h"
 
@@ -14,7 +13,6 @@ namespace SBURB
         ~EventGameState();
 
         virtual void Reset() override;
-        virtual std::string Serialize() override;
         virtual bool CheckCompletion() override;
 
         bool canSerialize;

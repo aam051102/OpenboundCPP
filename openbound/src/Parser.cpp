@@ -149,16 +149,16 @@ namespace SBURB
 			info = trim(unescape(info));
 
 			std::shared_ptr<Action> newAction = std::make_shared<Action>(
-				curNode->attribute("command").as_string(),
+				std::string(curNode->attribute("command").as_string()),
 				info,
 				unescape(curNode->attribute("name").as_string()),
 				targSprite,
-				NULL,
+				nullptr,
 				curNode->attribute("noWait").as_bool(),
 				curNode->attribute("noDelay").as_bool(),
 				times,
 				curNode->attribute("soft").as_bool(),
-				curNode->attribute("silent").as_bool());
+				curNode->attribute("silent").as_string());
 
 			if (oldAction)
 			{
@@ -207,11 +207,11 @@ namespace SBURB
 			}
 			if (child.name() == "action")
 			{
-				newAction = std::make_shared<Action>(ParseAction(child));
+				newAction = ParseAction(child);
 			}
 			else
 			{
-				newTrigger = std::make_shared<Trigger>(ParseTrigger(child));
+				newTrigger = ParseTrigger(child);
 			}
 		}
 
@@ -282,7 +282,7 @@ namespace SBURB
 
 	std::shared_ptr<Character> Parser::ParseCharacter(pugi::xml_node node)
 	{
-		Character newChar = Character(node.attribute("name").as_string(),
+		auto newChar = std::make_shared<Character>(std::string(node.attribute("name").as_string()),
 									  node.attribute("x").as_int(),
 									  node.attribute("y").as_int(),
 									  node.attribute("width").as_int(),
@@ -300,7 +300,7 @@ namespace SBURB
 			std::shared_ptr<Character> following = std::static_pointer_cast<Character>(Sburb::GetInstance()->GetSprite(tmpFollowing));
 			if (following)
 			{
-				newChar.Follow(following);
+				newChar->Follow(following);
 			}
 		}
 
@@ -310,7 +310,7 @@ namespace SBURB
 			std::shared_ptr<Character> follower = std::static_pointer_cast<Character>(Sburb::GetInstance()->GetSprite(tmpFollower));
 			if (follower)
 			{
-				follower->Follow(std::make_shared<Character>(newChar));
+				follower->Follow(newChar);
 			}
 		}
 
@@ -318,12 +318,12 @@ namespace SBURB
 		for (auto anim : anims)
 		{
 			std::shared_ptr<Animation> newAnim = ParseAnimation(anim);
-			newChar.AddAnimation(newAnim);
+			newChar->AddAnimation(newAnim);
 		}
-		newChar.StartAnimation(node.attribute("state").as_string());
-		newChar.SetFacing(node.attribute("facing").as_string());
+		newChar->StartAnimation(node.attribute("state").as_string());
+		newChar->SetFacing(node.attribute("facing").as_string());
 
-		return std::make_shared<Character>(newChar);
+		return newChar;
 	}
 
 	Vector2 parse2Dimensions(std::string in)
@@ -364,14 +364,14 @@ namespace SBURB
 		Vector4 rightTextDimensions = parse4Dimensions(node.attribute("rightTextDimensions").as_string());
 		std::string type = node.attribute("type").as_string("standard");
 
-		Dialoger newDialoger = Dialoger(hiddenPos, alertPos, talkPosLeft, talkPosRight,
+		auto newDialoger = std::make_shared<Dialoger>(hiddenPos, alertPos, talkPosLeft, talkPosRight,
 										spriteStartRight, spriteEndRight, spriteStartLeft, spriteEndLeft,
 										alertTextDimensions, leftTextDimensions, rightTextDimensions, type);
 
 		std::string box = node.attribute("box").as_string();
-		newDialoger.SetBox(box);
+		newDialoger->SetBox(box);
 
-		return std::make_shared<Dialoger>(newDialoger);
+		return newDialoger;
 	}
 
 	std::shared_ptr<Fighter> Parser::ParseFighter(pugi::xml_node node)
@@ -385,14 +385,14 @@ namespace SBURB
 		std::string newState = node.attribute("state").as_string();
 		std::string newFacing = node.attribute("facing").as_string("Right");
 
-		Fighter newSprite = Fighter(name, x, y, width, height);
-		newSprite.SetFacing(newFacing);
+		auto newSprite = std::make_shared<Fighter>(name, x, y, width, height);
+		newSprite->SetFacing(newFacing);
 
 		auto anims = node.children("animation");
 		for (pugi::xml_node anim : anims)
 		{
 			std::shared_ptr<Animation> newAnim = ParseAnimation(anim);
-			newSprite.AddAnimation(newAnim);
+			newSprite->AddAnimation(newAnim);
 
 			if (newState == "")
 			{
@@ -400,56 +400,55 @@ namespace SBURB
 			}
 		}
 
-		newSprite.StartAnimation(newState);
+		newSprite->StartAnimation(newState);
 
-		return std::make_shared<Fighter>(newSprite);
+		return newSprite;
 	}
 
 	std::shared_ptr<Room> Parser::ParseRoom(pugi::xml_node node)
 	{
-		Room newRoom = Room(node.attribute("name").as_string(),
+		auto newRoom = std::make_shared<Room>(node.attribute("name").as_string(),
 							node.attribute("width").as_int(),
 							node.attribute("height").as_int());
 
 		int mapScale = node.attribute("mapScale").as_int();
 		if (mapScale != 0)
 		{
-			newRoom.SetMapScale(mapScale);
+			newRoom->SetMapScale(mapScale);
 		}
 
 		std::string walkableMap = node.attribute("walkableMap").as_string();
 		if (walkableMap != "")
 		{
-			newRoom.SetWalkableMap(AssetManager::GetGraphicByName(walkableMap));
-			if (!newRoom.GetWidth())
+			newRoom->SetWalkableMap(AssetManager::GetGraphicByName(walkableMap));
+			if (!newRoom->GetWidth())
 			{
-				newRoom.SetWidth(newRoom.GetWalkableMap()->GetAsset()->getSize().x * newRoom.GetMapScale());
+				newRoom->SetWidth(newRoom->GetWalkableMap()->GetAsset()->getSize().x * newRoom->GetMapScale());
 			}
 
-			if (!newRoom.GetHeight())
+			if (!newRoom->GetHeight())
 			{
-				newRoom.SetHeight(newRoom.GetWalkableMap()->GetAsset()->getSize().y * newRoom.GetMapScale());
+				newRoom->SetHeight(newRoom->GetWalkableMap()->GetAsset()->getSize().y * newRoom->GetMapScale());
 			}
 		}
 
-		std::shared_ptr<Room> sharedNewRoom = std::make_shared<Room>(newRoom);
-		Serializer::SerialLoadRoomSprites(sharedNewRoom, node.children("sprite"));
-		Serializer::SerialLoadRoomSprites(sharedNewRoom, node.children("character"));
-		Serializer::SerialLoadRoomSprites(sharedNewRoom, node.children("fighter"));
+		Serializer::SerialLoadRoomSprites(newRoom, node.children("sprite"));
+		Serializer::SerialLoadRoomSprites(newRoom, node.children("character"));
+		Serializer::SerialLoadRoomSprites(newRoom, node.children("fighter"));
 
 		auto paths = node.child("paths");
 		if (!paths)
 		{
-			Serializer::SerialLoadRoomPaths(sharedNewRoom, paths);
+			Serializer::SerialLoadRoomPaths(newRoom, paths);
 		}
 
 		auto triggers = node.child("triggers");
 		if (!triggers)
 		{
-			Serializer::SerialLoadRoomTriggers(sharedNewRoom, triggers);
+			Serializer::SerialLoadRoomTriggers(newRoom, triggers);
 		}
 
-		return std::make_shared<Room>(newRoom);
+		return newRoom;
 	}
 
 	std::shared_ptr<Sprite> Parser::ParseSprite(pugi::xml_node node)
@@ -465,14 +464,14 @@ namespace SBURB
 		bool collidable = node.attribute("collidable").as_bool();
 		std::string state = node.attribute("state").as_string();
 
-		Sprite newSprite = Sprite(name, x, y, width, height, dx, dy, depthing, collidable);
+		auto newSprite = std::make_shared<Sprite>(name, x, y, width, height, dx, dy, depthing, collidable);
 
 		auto anims = node.children("animation");
 
 		for (pugi::xml_node anim : anims)
 		{
 			std::shared_ptr<Animation> newAnim = ParseAnimation(anim);
-			newSprite.AddAnimation(std::make_shared<Animation>(newAnim));
+			newSprite->AddAnimation(newAnim);
 
 			if (state == "")
 			{
@@ -486,20 +485,20 @@ namespace SBURB
 
 			if (asset && asset->GetType() == "graphic")
 			{
-				newSprite.AddAnimation(std::make_shared<Animation>("image", name));
+				newSprite->AddAnimation(std::make_shared<Animation>(std::string("image"), name));
 				state = "image";
 			}
 		}
 
-		newSprite.StartAnimation(state);
+		newSprite->StartAnimation(state);
 
-		return std::make_shared<Sprite>(newSprite);
+		return newSprite;
 	}
 
 	std::shared_ptr<SpriteButton> Parser::ParseSpriteButton(pugi::xml_node node)
 	{
 		std::shared_ptr<AssetGraphic> sheet = AssetManager::GetGraphicByName(node.attribute("sheet").as_string());
-		SpriteButton newButton = SpriteButton(node.attribute("name").as_string(),
+		auto newButton = std::make_shared<SpriteButton>(node.attribute("name").as_string(),
 											  node.attribute("x").as_int(),
 											  node.attribute("y").as_int(),
 											  node.attribute("width").as_int(sheet->GetAsset()->getSize().x),
@@ -511,10 +510,10 @@ namespace SBURB
 		if (action)
 		{
 			std::shared_ptr<Action> newAction = ParseAction(action);
-			newButton.SetAction(newAction);
+			newButton->SetAction(newAction);
 		}
 
-		return std::make_shared<SpriteButton>(newButton);
+		return newButton;
 	}
 
 	std::vector<std::string> GetTriggerNodeText(pugi::xml_node node)
@@ -581,7 +580,7 @@ namespace SBURB
 			std::shared_ptr<Action> curAction = nullptr;
 			if (action && action.parent() == *curNode)
 			{
-				curAction = std::make_shared<Action>(ParseAction(action));
+				curAction = ParseAction(action);
 			}
 
 			bool restart = curNode->attribute("restart").as_bool();

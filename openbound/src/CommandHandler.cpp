@@ -80,11 +80,11 @@ namespace SBURB
         else if (command == "enableControl")
             CommandHandler::EnableControl(info);
         else if (command == "waitFor")
-            return std::make_shared<Trigger>(CommandHandler::WaitFor(info));
+            return CommandHandler::WaitFor(info);
         else if (command == "macro")
-            return std::make_shared<Trigger>(CommandHandler::Macro(info));
+            return CommandHandler::Macro(info);
         else if (command == "sleep")
-            return std::make_shared<Trigger>(CommandHandler::Sleep(info));
+            return CommandHandler::Sleep(info);
         else if (command == "pauseActionQueue")
             CommandHandler::PauseActionQueue(info);
         else if (command == "pauseActionQueues")
@@ -373,12 +373,12 @@ namespace SBURB
         lastAction->SetFollowUp(std::make_shared<Action>("moveSprite", item->GetName() + "," + std::to_string(chest->GetX()) + "," + std::to_string(chest->GetY() - 60), "", "", nullptr, true, true));
         lastAction = lastAction->GetFollowUp();
 
-        lastAction->SetFollowUp(std::make_shared<Action>("deltaSprite", item->GetName() + ",0,-3", "", "", nullptr, true, "", 10));
+        lastAction->SetFollowUp(std::make_shared<Action>("deltaSprite", item->GetName() + ",0,-3", "", "", nullptr, true, false, 10));
         lastAction = lastAction->GetFollowUp();
 
         if (AssetManager::GetAudioByName("itemGetSound"))
         {
-            lastAction->SetFollowUp(std::make_shared<Action>("playSound", "itemGetSound", "", "", nullptr, true, ""));
+            lastAction->SetFollowUp(std::make_shared<Action>("playSound", "itemGetSound", "", "", nullptr, true, false));
             lastAction = lastAction->GetFollowUp();
         }
 
@@ -475,7 +475,7 @@ namespace SBURB
         Sburb::GetInstance()->SetInputDisabled(false);
     }
 
-    Trigger CommandHandler::Macro(std::string info)
+    std::shared_ptr<Trigger> CommandHandler::Macro(std::string info)
     {
         std::vector<std::shared_ptr<Action>> actions = Parser::ParseActionString(info);
         std::shared_ptr<Action> action = actions[0];
@@ -487,19 +487,19 @@ namespace SBURB
         std::shared_ptr<ActionQueue> newQueue = Sburb::GetInstance()->PerformAction(action);
         if (newQueue)
         {
-            return Trigger({"noActions," + newQueue->GetId()});
+            return std::make_shared<Trigger>(std::vector({"noActions," + newQueue->GetId()}));
         }
     }
 
-    Trigger CommandHandler::WaitFor(std::string info)
+    std::shared_ptr<Trigger> CommandHandler::WaitFor(std::string info)
     {
         CommandHandler::DisableControl(info);
         return CommandHandler::Sleep(info);
     }
 
-    Trigger CommandHandler::Sleep(std::string info)
+    std::shared_ptr<Trigger> CommandHandler::Sleep(std::string info)
     {
-        return Trigger({info});
+        return std::make_shared<Trigger>(std::vector({info}));
     }
 
     void CommandHandler::PauseActionQueue(std::string info)

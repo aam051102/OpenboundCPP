@@ -1,7 +1,7 @@
 #ifndef SBURB_SPRITE_H
 #define SBURB_SPRITE_H
-#include <SFML/Graphics.hpp>
 
+#include <SFML/Graphics.hpp>
 #include "Common.h"
 #include "AssetGraphic.h"
 #include "Animation.h"
@@ -19,7 +19,7 @@ namespace SBURB
     class Sprite : public sf::Drawable, public sf::Transformable
     {
     public:
-        Sprite(std::string name, int x, int y, int width, int height, int dx = 0, int dy = 0, int depthing = static_cast<int>(Depth::BG_DEPTHING), bool collidable = false);
+        Sprite(std::string name = "", int x = 0, int y = 0, int width = 0, int height = 0, int dx = 0, int dy = 0, int depthing = static_cast<int>(Depth::BG_DEPTHING), bool collidable = false);
 
         void AddAnimation(std::shared_ptr<Animation> anim);
         void StartAnimation(std::string name);
@@ -39,7 +39,7 @@ namespace SBURB
 
         std::map<std::string, Vector2> GetBoundaryQueries(int dx, int dy);
 
-        Sprite Clone(std::string name);
+        std::shared_ptr<Sprite> Clone(std::string name);
         std::string Serialize(std::string output);
 
         std::string GetName() { return this->name; };
