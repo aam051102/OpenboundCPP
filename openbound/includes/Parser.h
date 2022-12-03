@@ -20,21 +20,21 @@ namespace SBURB
     {
     public:
         static std::shared_ptr<Sprite> ParseCharacterString(std::string spriteName);
-        static std::vector<Action> ParseActionString(std::string str);
-        static std::vector<Trigger> ParseTriggerString(std::string str);
+        static std::vector<std::shared_ptr<Action>> ParseActionString(std::string str);
+        static std::vector<std::shared_ptr<Trigger>> ParseTriggerString(std::string str);
         static std::string ParseURLString(std::string str);
 
 
-        static Action ParseAction(pugi::xml_node node);
-        static ActionQueue ParseActionQueue(pugi::xml_node node);
-        static Animation ParseAnimation(pugi::xml_node node);
-        static Character ParseCharacter(pugi::xml_node node);
-        static Dialoger ParseDialoger(pugi::xml_node node);
-        static Fighter ParseFighter(pugi::xml_node node);
-        static Room ParseRoom(pugi::xml_node node);
-        static Sprite ParseSprite(pugi::xml_node node);
-        static SpriteButton ParseSpriteButton(pugi::xml_node node);
-        static Trigger ParseTrigger(pugi::xml_node node);
+        static std::shared_ptr<Action> ParseAction(pugi::xml_node node);
+        static std::shared_ptr<ActionQueue>ParseActionQueue(pugi::xml_node node);
+        static std::shared_ptr<Animation>ParseAnimation(pugi::xml_node node);
+        static std::shared_ptr<Character>ParseCharacter(pugi::xml_node node);
+        static std::shared_ptr<Dialoger>ParseDialoger(pugi::xml_node node);
+        static std::shared_ptr<Fighter>ParseFighter(pugi::xml_node node);
+        static std::shared_ptr<Room>ParseRoom(pugi::xml_node node);
+        static std::shared_ptr<Sprite>ParseSprite(pugi::xml_node node);
+        static std::shared_ptr<SpriteButton>ParseSpriteButton(pugi::xml_node node);
+        static std::shared_ptr<Trigger>ParseTrigger(pugi::xml_node node);
 
     };
 }

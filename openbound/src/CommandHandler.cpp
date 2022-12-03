@@ -219,11 +219,11 @@ namespace SBURB {
         auto sprite = Parser::ParseCharacterString(params[0]);
         std::string actionString = info.substr(firstComma + 1, info.size());
 
-        std::vector<Action> actions = Parser::ParseActionString(actionString);
+        std::vector<std::shared_ptr<Action>> actions = Parser::ParseActionString(actionString);
 
         for (int i = 0; i < actions.size(); i++) {
-            Action action = actions[i];
-            sprite->AddAction(std::make_shared<Action>(action));
+            std::shared_ptr<Action> action = actions[i];
+            sprite->AddAction(action);
         }
     }
 
@@ -386,13 +386,13 @@ namespace SBURB {
     }
 
     Trigger CommandHandler::Macro(std::string info) {
-        std::vector<Action> actions = Parser::ParseActionString(info);
-        Action action = actions[0];
-        if (!action.GetSilent()) {
-            action.SetSilent("true");
+        std::vector<std::shared_ptr<Action>> actions = Parser::ParseActionString(info);
+        std::shared_ptr<Action> action = actions[0];
+        if (!action->GetSilent()) {
+            action->SetSilent("true");
         }
 
-        std::shared_ptr<ActionQueue> newQueue = Sburb::GetInstance()->PerformAction(std::make_shared<Action>(action));
+        std::shared_ptr<ActionQueue> newQueue = Sburb::GetInstance()->PerformAction(action);
         if (newQueue) {
             return Trigger({ "noActions," + newQueue->GetId() });
         }
@@ -712,18 +712,18 @@ namespace SBURB {
     {
         auto params = ParseParams(info);
         bool local = params.size() > 0 && params[0] == "true";
-        std::vector<Action> actions = {};
+        std::vector<std::shared_ptr<Action>> actions = {};
 
         if (Sburb::GetInstance()->IsStateInStorage(false, local)) {
-            actions.push_back(Action("load", "false, " + local, "Load " + Sburb::GetInstance()->GetStateDescription(false)));
+            actions.push_back(std::make_shared<Action>("load", "false, " + local, "Load " + Sburb::GetInstance()->GetStateDescription(false)));
         }
 
         if (Sburb::GetInstance()->IsStateInStorage(true, local)) {
-            actions.push_back(Action("load", "true, " + local, "Load " + Sburb::GetInstance()->GetStateDescription(true)));
+            actions.push_back(std::make_shared<Action>("load", "true, " + local, "Load " + Sburb::GetInstance()->GetStateDescription(true)));
         }
 
-        actions.push_back(Action("save", "false," + local, "Save"));
-        actions.push_back(Action("cancel", "", "Cancel"));
+        actions.push_back(std::make_shared<Action>("save", "false," + local, "Save"));
+        actions.push_back(std::make_shared<Action>("cancel", "", "Cancel"));
 
         Sburb::GetInstance()->GetChooser()->SetChoices(actions);
         Sburb::GetInstance()->GetChooser()->BeginChoosing(Sburb::GetInstance()->GetCamera().x + 20, Sburb::GetInstance()->GetCamera().y + 50);
@@ -749,13 +749,13 @@ namespace SBURB {
 
     void CommandHandler::Try(std::string info)
     {
-        std::vector<Trigger> triggers = Parser::ParseTriggerString(info);
+        std::vector<std::shared_ptr<Trigger>> triggers = Parser::ParseTriggerString(info);
         
         for (int i = 0; i < triggers.size(); i++) {
-            Trigger trigger = triggers[i];
-            trigger.SetDetonate(true);
+            std::shared_ptr<Trigger> trigger = triggers[i];
+            trigger->SetDetonate(true);
 
-            if (trigger.TryToTrigger()) {
+            if (trigger->TryToTrigger()) {
                 return;
             }
         }
@@ -791,10 +791,10 @@ namespace SBURB {
             text = url;
         }
 
-        std::vector<Action> actions = {};
+        std::vector<std::shared_ptr<Action>> actions = {};
 
-        actions.push_back(Action("openDirect", url + "," + text, "Go To " + text));
-        actions.push_back(Action("cancel", "", "Cancel"));
+        actions.push_back(std::make_shared<Action>("openDirect", url + "," + text, "Go To " + text));
+        actions.push_back(std::make_shared<Action>("cancel", "", "Cancel"));
 
         Sburb::GetInstance()->GetChooser()->SetChoices(actions);
         Sburb::GetInstance()->GetChooser()->BeginChoosing(Sburb::GetInstance()->GetCamera().x + 200, Sburb::GetInstance()->GetCamera().y + 250);

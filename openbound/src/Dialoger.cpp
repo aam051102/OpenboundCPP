@@ -1,6 +1,7 @@
 #include "Dialoger.h"
 #include "Serializer.h"
 #include "AssetHandler.h"
+#include "Sburb.h"
 
 namespace SBURB {
     Dialoger::Dialoger(Vector2 hiddenPos, Vector2 alertPos, Vector2 talkPosLeft, Vector2 talkPosRight, Vector2 spriteStartRight, Vector2 spriteEndRight, Vector2 spriteStartLeft, Vector2 spriteEndLeft, Vector4 alertTextDimensions, Vector4 leftTextDimensions, Vector4 rightTextDimensions, std::string type) {

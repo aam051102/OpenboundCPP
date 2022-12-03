@@ -5,7 +5,6 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include "FontEngine.h"
 #include "Sprite.h"
-#include "Sburb.h"
 
 namespace SBURB
 {

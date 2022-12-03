@@ -13,8 +13,8 @@ namespace SBURB {
 		}
 	}
 
-	std::vector<Action> Parser::ParseActionString(std::string str) {
-		std::vector<Action> actions = {};
+	std::vector<std::shared_ptr<Action>> Parser::ParseActionString(std::string str) {
+		std::vector<std::shared_ptr<Action>> actions = {};
 		str = "<sburb>" + str + "</sburb>";
 
 		pugi::xml_document input = Serializer::ParseXML(str);
@@ -28,8 +28,8 @@ namespace SBURB {
 		return actions;
 	}
 
-	std::vector<Trigger> Parser::ParseTriggerString(std::string str) {
-		std::vector<Trigger> triggers = {};
+	std::vector<std::shared_ptr<Trigger>> Parser::ParseTriggerString(std::string str) {
+		std::vector<std::shared_ptr<Trigger>> triggers = {};
 		str = "<triggers>" + str + "</triggers>";
 
 		pugi::xml_document input = Serializer::ParseXML(str);
@@ -96,7 +96,7 @@ namespace SBURB {
 		return node.first_child().value();
 	}
 
-    Action Parser::ParseAction(pugi::xml_node node) {
+    std::shared_ptr<Action> Parser::ParseAction(pugi::xml_node node) {
 		pugi::xml_node* curNode = &node;
 		std::string targSprite = "";
 		std::shared_ptr<Action> firstAction = NULL;
@@ -141,7 +141,7 @@ namespace SBURB {
 
 			oldAction = newAction;
 			pugi::xml_node* oldNode = curNode;
-			curNode = NULL;
+			curNode = nullptr;
 
 			for (pugi::xml_node child : oldNode->children()) {
 				if (child.name() == "action") {
@@ -154,10 +154,10 @@ namespace SBURB {
 			}
 		} while (curNode);
 
-		return *firstAction;
+		return firstAction;
     }
 
-    ActionQueue Parser::ParseActionQueue(pugi::xml_node node) {
+    std::shared_ptr<ActionQueue> Parser::ParseActionQueue(pugi::xml_node node) {
 		std::shared_ptr<Action> newAction = NULL;
 		std::vector<std::string> newGroups;
 		bool newNoWait = false;
@@ -187,10 +187,10 @@ namespace SBURB {
 		bool tmpPaused = node.attribute("paused").as_bool();
 		if (tmpPaused) newPaused = tmpPaused;
 
-		return ActionQueue(newAction, newId, newGroups, newNoWait, newPaused, newTrigger);
+		return std::make_shared<ActionQueue>(newAction, newId, newGroups, newNoWait, newPaused, newTrigger);
     }
 
-    Animation Parser::ParseAnimation(pugi::xml_node node) {
+    std::shared_ptr<Animation> Parser::ParseAnimation(pugi::xml_node node) {
 		int colSize = 0;
 		int rowSize = 0;
 
@@ -229,10 +229,10 @@ namespace SBURB {
 		bool flipX = node.attribute("flipX").as_bool();
 		bool flipY = node.attribute("flipY").as_bool();
 
-		return Animation(name, tmpSheet, x, y, colSize, rowSize, startPos, length, std::to_string(frameInterval), loopNum, followUp, flipX, flipY, sliced, numCols, numRows);
+		return std::make_shared<Animation>(name, tmpSheet, x, y, colSize, rowSize, startPos, length, std::to_string(frameInterval), loopNum, followUp, flipX, flipY, sliced, numCols, numRows);
     }
 
-    Character Parser::ParseCharacter(pugi::xml_node node) {
+    std::shared_ptr<Character> Parser::ParseCharacter(pugi::xml_node node) {
 		Character newChar = Character(node.attribute("name").as_string(),
 			node.attribute("x").as_int(),
 			node.attribute("y").as_int(),
@@ -263,13 +263,13 @@ namespace SBURB {
 
 		auto anims = node.children("animation");
 		for (auto anim : anims) {
-			Animation newAnim = ParseAnimation(anim);
-			newChar.AddAnimation(std::make_shared<Animation>(newAnim));
+			std::shared_ptr<Animation> newAnim = ParseAnimation(anim);
+			newChar.AddAnimation(newAnim);
 		}
 		newChar.StartAnimation(node.attribute("state").as_string());
 		newChar.SetFacing(node.attribute("facing").as_string());
 
-		return newChar;
+		return std::make_shared<Character>(newChar);
     }
 
 	Vector2 parse2Dimensions(std::string in) {
@@ -293,7 +293,7 @@ namespace SBURB {
 		return dimensions;
 	}
 
-    Dialoger Parser::ParseDialoger(pugi::xml_node node) {
+    std::shared_ptr<Dialoger> Parser::ParseDialoger(pugi::xml_node node) {
 		Vector2 hiddenPos = parse2Dimensions(node.attribute("hiddenPos").as_string());
 		Vector2 alertPos = parse2Dimensions(node.attribute("alertPos").as_string());
 		Vector2 talkPosLeft = parse2Dimensions(node.attribute("talkPosLeft").as_string());
@@ -314,10 +314,10 @@ namespace SBURB {
 		std::string box = node.attribute("box").as_string();
 		newDialoger.SetBox(box);
 
-		return newDialoger;
+		return std::make_shared<Dialoger>(newDialoger);
     }
 
-    Fighter Parser::ParseFighter(pugi::xml_node node) {
+    std::shared_ptr<Fighter> Parser::ParseFighter(pugi::xml_node node) {
 		std::string name = node.attribute("name").as_string();
 		int x = node.attribute("x").as_int();
 		int y = node.attribute("y").as_int();
@@ -332,20 +332,20 @@ namespace SBURB {
 
 		auto anims = node.children("animation");
 		for (pugi::xml_node anim : anims) {
-			Animation newAnim = ParseAnimation(anim);
-			newSprite.AddAnimation(std::make_shared<Animation>(newAnim));
+			std::shared_ptr<Animation> newAnim = ParseAnimation(anim);
+			newSprite.AddAnimation(newAnim);
 
 			if (newState == "") {
-				newState = newAnim.GetName();
+				newState = newAnim->GetName();
 			}
 		}
 
 		newSprite.StartAnimation(newState);
 
-		return newSprite;
+		return std::make_shared<Fighter>(newSprite);
     }
 
-    Room Parser::ParseRoom(pugi::xml_node node) {
+    std::shared_ptr<Room> Parser::ParseRoom(pugi::xml_node node) {
 		Room newRoom = Room(node.attribute("name").as_string(),
 			node.attribute("width").as_int(),
 			node.attribute("height").as_int());
@@ -382,10 +382,10 @@ namespace SBURB {
 			Serializer::SerialLoadRoomTriggers(sharedNewRoom, triggers);
 		}
 
-		return newRoom;
+		return std::make_shared<Room>(newRoom);
     }
 
-    Sprite Parser::ParseSprite(pugi::xml_node node) {
+    std::shared_ptr<Sprite> Parser::ParseSprite(pugi::xml_node node) {
 		std::string name = node.attribute("name").as_string();
 		int x = node.attribute("x").as_int();
 		int y = node.attribute("y").as_int();
@@ -404,11 +404,11 @@ namespace SBURB {
 		auto anims = node.children("animation");
 
 		for (pugi::xml_node anim : anims) {
-			Animation newAnim = ParseAnimation(anim);
+			std::shared_ptr<Animation> newAnim = ParseAnimation(anim);
 			newSprite.AddAnimation(std::make_shared<Animation>(newAnim));
 
 			if (state == "") {
-				state = newAnim.GetName();
+				state = newAnim->GetName();
 			}
 		}
 
@@ -423,10 +423,10 @@ namespace SBURB {
 
 		newSprite.StartAnimation(state);
 
-		return newSprite;
+		return std::make_shared<Sprite>(newSprite);
     }
 
-    SpriteButton Parser::ParseSpriteButton(pugi::xml_node node) {
+    std::shared_ptr<SpriteButton> Parser::ParseSpriteButton(pugi::xml_node node) {
 		std::shared_ptr<AssetTexture> sheet = AssetHandler::GetTextureByName(node.attribute("sheet").as_string());
 		SpriteButton newButton = SpriteButton(node.attribute("name").as_string(),
 			node.attribute("x").as_int(),
@@ -438,11 +438,11 @@ namespace SBURB {
 
 		auto action = node.child("action");
 		if (action) {
-			Action newAction = ParseAction(action);
-			newButton.SetAction(std::make_shared<Action>(newAction));
+			std::shared_ptr<Action> newAction = ParseAction(action);
+			newButton.SetAction(newAction);
 		}
 
-		return newButton;
+		return std::make_shared<SpriteButton>(newButton);
     }
 
 	std::vector<std::string> GetTriggerNodeText(pugi::xml_node node) {
@@ -481,7 +481,7 @@ namespace SBURB {
 		return outputs;
 	}
 
-    Trigger Parser::ParseTrigger(pugi::xml_node node) {
+    std::shared_ptr<Trigger> Parser::ParseTrigger(pugi::xml_node node) {
 		pugi::xml_node* curNode = &node;
 		std::shared_ptr<Trigger> firstTrigger = nullptr;
 		std::shared_ptr<Trigger> oldTrigger = nullptr;
@@ -528,6 +528,6 @@ namespace SBURB {
 			}
 		} while (curNode);
 
-		return *firstTrigger;
+		return firstTrigger;
     }
 }
