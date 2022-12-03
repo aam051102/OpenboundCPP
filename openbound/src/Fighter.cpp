@@ -26,23 +26,23 @@ namespace SBURB {
 		this->animation->SetFlipX(this->facing == "Left");
 	}
 
-	void Fighter::HandleInputs(std::map<InputActions, bool> pressed) {
+	void Fighter::HandleInputs(std::map<sf::Keyboard::Key, bool> pressed) {
 		bool moved = false;
-		if (pressed[InputActions::Down]) {
+		if (pressed[sf::Keyboard::Down] || pressed[sf::Keyboard::S]) {
 			this->MoveDown(); moved = true;
 		}
-		else if (pressed[InputActions::Up]) {
+		else if (pressed[sf::Keyboard::Up] || pressed[sf::Keyboard::W]) {
 			this->MoveUp(); moved = true;
 		}
 
-		if (pressed[InputActions::Left]) {
+		if (pressed[sf::Keyboard::Left] || pressed[sf::Keyboard::A]) {
 			this->MoveLeft(); moved = true;
 		}
-		else if (pressed[InputActions::Right]) {
+		else if (pressed[sf::Keyboard::Right] || pressed[sf::Keyboard::D]) {
 			this->MoveRight(); moved = true;
 		}
 
-		if (pressed[InputActions::Attack]) {
+		if (pressed[sf::Keyboard::Space] || pressed[sf::Keyboard::Enter] || pressed[sf::Keyboard::LControl]) {
 			this->Attack();
 		}
 

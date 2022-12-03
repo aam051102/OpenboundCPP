@@ -12,6 +12,26 @@ namespace SBURB
         inputHandlerInst = this;
     }
 
+    std::map<sf::Keyboard::Key, bool> InputHandler::GetPressed()
+    {
+        return inputHandlerInst->pressed;
+    }
+
+    bool InputHandler::GetPressed(sf::Keyboard::Key key)
+    {
+        return inputHandlerInst->pressed[key];
+    }
+
+    void InputHandler::SetPressed(sf::Keyboard::Key key, bool value)
+    {
+        inputHandlerInst->pressed[key] = value;
+    }
+
+    std::vector<sf::Keyboard::Key> InputHandler::GetPressedOrder()
+    {
+        return inputHandlerInst->pressedOrder;
+    }
+
     void InputHandler::AddToPressedOrder(sf::Keyboard::Key key) {
         inputHandlerInst->pressedOrder.push_back(key);
     }
@@ -124,6 +144,11 @@ namespace SBURB
 
     sf::Vector2i InputHandler::GetMousePosition() {
         return sf::Mouse::getPosition();
+    }
+
+    bool InputHandler::GetMouseDown()
+    {
+        return inputHandlerInst->mouseDown;
     }
 
 }

@@ -31,7 +31,7 @@ namespace SBURB {
     void SpriteButton::UpdateMouse() {
 		int x = InputHandler::GetMousePosition().x;
 		int y = InputHandler::GetMousePosition().y;
-		int mouseDown = InputHandler::IsMousePressed(MouseInputActions::Click);
+		int mouseDown = InputHandler::GetMouseDown();
 
 		this->clicked = false;
 		if (this->HitsPoint(x - this->width / 2, y - this->height / 2)) {

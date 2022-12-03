@@ -86,7 +86,7 @@ namespace SBURB {
 				destPos = this->followBuffer[0];
 				didMove = true;
 
-				std::vector<InputActions> keys = {};
+				std::vector<sf::Keyboard::Key> keys = {};
 
 				/*if (moveMap) {
 					delta = moveMap(destPos.x - this.x, destPos.y - this.y);
@@ -98,18 +98,18 @@ namespace SBURB {
 
 				if (abs(delta.x) >= this->speed / 1.9) {
 					if (delta.x > 0) {
-						keys.push_back(InputActions::Right);
+						keys.push_back(sf::Keyboard::Right);
 					}
 					else {
-						keys.push_back(InputActions::Left);
+						keys.push_back(sf::Keyboard::Left);
 					}
 				}
 				if (abs(delta.y) >= this->speed / 1.9) {
 					if (delta.y > 0) {
-						keys.push_back(InputActions::Down);
+						keys.push_back(sf::Keyboard::Down);
 					}
 					else {
-						keys.push_back(InputActions::Up);
+						keys.push_back(sf::Keyboard::Up);
 					}
 				}
 				if (keys.size()  == 0) {
@@ -204,11 +204,16 @@ namespace SBURB {
 		this->animations["walkRight"]->SetFrameInterval(4);
 	}
 
-	void Character::HandleInputs(std::vector<InputActions> order) {
-		auto downIt = std::find(order.begin(), order.end(), InputActions::Down);
-		auto upIt = std::find(order.begin(), order.end(), InputActions::Up);
-		auto leftIt = std::find(order.begin(), order.end(), InputActions::Left);
-		auto rightIt = std::find(order.begin(), order.end(), InputActions::Right);
+	void Character::HandleInputs(std::vector<sf::Keyboard::Key> order) {
+		auto downIt = std::find(order.begin(), order.end(), sf::Keyboard::Down);
+		auto upIt = std::find(order.begin(), order.end(), sf::Keyboard::Up);
+		auto leftIt = std::find(order.begin(), order.end(), sf::Keyboard::Left);
+		auto rightIt = std::find(order.begin(), order.end(), sf::Keyboard::Right);
+
+		auto downAltIt = std::find(order.begin(), order.end(), sf::Keyboard::S);
+		auto upAltIt = std::find(order.begin(), order.end(), sf::Keyboard::W);
+		auto leftAltIt = std::find(order.begin(), order.end(), sf::Keyboard::A);
+		auto rightAltIt = std::find(order.begin(), order.end(), sf::Keyboard::D);
 
 		float down = -1;
 		float up = -1;
@@ -216,9 +221,16 @@ namespace SBURB {
 		float right = -1;
 
 		if (downIt != order.end()) down = downIt - order.begin();
+		else if (downAltIt != order.end()) down = downAltIt - order.begin();
+		
 		if (upIt != order.end()) up = upIt - order.begin();
+		else if (upAltIt != order.end()) up = upAltIt - order.begin();
+
 		if (leftIt != order.end()) left = leftIt - order.begin();
+		else if (leftAltIt != order.end()) left = leftAltIt - order.begin();
+
 		if (rightIt != order.end()) right = rightIt - order.begin();
+		else if (rightAltIt != order.end()) right = rightAltIt - order.begin();
 
 		float none = -0.5;
 		float most = std::max(std::max(left, right), none);

@@ -15,7 +15,7 @@ namespace SBURB
         
         void Update();
 
-        void HandleInputs(std::map<InputActions, bool> pressed);
+        void HandleInputs(std::map<sf::Keyboard::Key, bool> pressed);
         
         void Idle();
         void Walk();

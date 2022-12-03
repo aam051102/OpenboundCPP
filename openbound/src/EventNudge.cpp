@@ -15,6 +15,6 @@ namespace SBURB {
     }
 
     bool EventNudge::CheckCompletion() {
-        return InputHandler::IsInputPressed(InputActions::Confirm) || InputHandler::IsMousePressed(MouseInputActions::Click);
+        return InputHandler::GetPressed(sf::Keyboard::Space) || InputHandler::GetMouseDown();
     }
 }
