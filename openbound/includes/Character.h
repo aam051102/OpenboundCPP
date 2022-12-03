@@ -28,7 +28,7 @@ namespace SBURB
         void BecomeNPC();
         void BecomePlayer();
 
-        void HandleInputs(std::vector<InputActions> order);
+        void HandleInputs(std::vector<sf::Keyboard::Key> order);
 
         bool TryToMove(int vx, int vy);
         

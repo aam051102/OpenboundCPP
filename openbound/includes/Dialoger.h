@@ -48,6 +48,8 @@ namespace SBURB
 
         bool GetTalking() { return this->talking; };
 
+        std::shared_ptr<Sprite> GetBox() { return this->box; };
+
     protected:
         std::string name;
         std::string currentDialog;

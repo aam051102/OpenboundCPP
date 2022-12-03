@@ -1,260 +1,129 @@
 #include "Input.h"
+#include "Sburb.h"
 
 namespace SBURB
 {
-    static InputHandler* inputHandlerInstance;
+    static InputHandler* inputHandlerInst;
 
-    typedef std::function<void(sf::Event::KeyEvent)> CallbackSignature;
     InputHandler::InputHandler()
     {
-        keyboardAliases = {
-            {InputActions::Confirm, {sf::Keyboard::Space}},
-            {InputActions::Back, {sf::Keyboard::X, sf::Keyboard::LShift}},
-            {InputActions::Menu, {sf::Keyboard::C, sf::Keyboard::LControl}},
-            {InputActions::Skip, {sf::Keyboard::X, sf::Keyboard::LShift}},
-            {InputActions::Exit, {sf::Keyboard::Escape, sf::Keyboard::Escape}},
-            {InputActions::Up, {sf::Keyboard::W, sf::Keyboard::Up}},
-            {InputActions::Left, {sf::Keyboard::A, sf::Keyboard::Left}},
-            {InputActions::Right, {sf::Keyboard::D, sf::Keyboard::Right}},
-            {InputActions::Down, {sf::Keyboard::S, sf::Keyboard::Down}},
-            {InputActions::Attack, {sf::Keyboard::Space, sf::Keyboard::Enter, sf::Keyboard::LControl}}};
+        this->mouseDown = false;
 
-        mouseAliases = {
-           {MouseInputActions::Click, {sf::Mouse::Left}}
-        };
-
-        gamepadAliases = {
-            {InputActions::Confirm, {1, 1}},
-            {InputActions::Back, {2, 2}},
-            {InputActions::Menu, {4, 9}},
-            {InputActions::Skip, {3, 2}},
-            {InputActions::Exit, {10, 10}},
-            {InputActions::Up, {LSAXIS_NEGY, 12}},
-            {InputActions::Down, {LSAXIS_POSY, 13}},
-            {InputActions::Left, {LSAXIS_NEGX, 14}},
-            {InputActions::Right, {LSAXIS_POSX, 15}}};
-
-        callbacks = std::map<InputState, std::vector<CallbackSignature>>{
-            {InputState::Pressed, std::vector<CallbackSignature>()},
-            {InputState::Released, std::vector<CallbackSignature>()}};
-
-        inputHandlerInstance = this;
+        inputHandlerInst = this;
     }
 
-    void InputHandler::Update(sf::Event event, bool focused)
+    void InputHandler::AddToPressedOrder(sf::Keyboard::Key key) {
+        inputHandlerInst->pressedOrder.push_back(key);
+    }
+
+    void InputHandler::RemoveFromPressedOrder(sf::Keyboard::Key key) {
+        inputHandlerInst->pressedOrder.erase(std::find(inputHandlerInst->pressedOrder.begin(), inputHandlerInst->pressedOrder.end(), key));
+    }
+
+    void InputHandler::Update(sf::Event e, bool focused)
     {
-        if (focused)
-            return;
+        if (!focused) return;
 
-        if (event.type == sf::Event::KeyPressed)
-        {
-            for (auto &callback : callbacks[InputState::Pressed])
-            {
-                callback(event.key);
+        if (e.type == sf::Event::MouseButtonPressed) {
+            if (e.mouseButton.button == sf::Mouse::Left) {
+                inputHandlerInst->OnMouseDown();
             }
+        } else if (e.type == sf::Event::MouseButtonReleased) {
+            if (e.mouseButton.button == sf::Mouse::Left) {
+                inputHandlerInst->OnMouseUp();
+            }
+        } else if (e.type == sf::Event::KeyPressed) {
+            inputHandlerInst->OnKeyDown(e.key.code);
         }
-        else if (event.type == sf::Event::KeyReleased)
-        {
-            for (auto &callback : callbacks[InputState::Released])
-            {
-                callback(event.key);
-            }
+        else if (e.type == sf::Event::KeyReleased) {
+            inputHandlerInst->OnKeyUp(e.key.code);
         }
+    }
 
-        std::map<InputActions, bool> actionHandled =
-            {
-                {InputActions::Confirm, false},
-                {InputActions::Back, false},
-                {InputActions::Menu, false},
-                {InputActions::Skip, false},
-                {InputActions::Exit, false},
-                {InputActions::Up, false},
-                {InputActions::Down, false},
-                {InputActions::Left, false},
-                {InputActions::Right, false}};
+    void InputHandler::OnKeyDown(sf::Keyboard::Key key) {
+        auto sburbInst = Sburb::GetInstance();
 
-        for (auto &&keyAlias : keyboardAliases)
-        {
-            if (actionHandled[keyAlias.first])
-                continue;
+        if (sburbInst->GetShouldUpdate() && !sburbInst->GetInputDisabled()) { // Make sure we are loaded before trying to do things
+            auto chooser = sburbInst->GetChooser();
+            
+            if (chooser->GetChoosing()) {
+                if (key == sf::Keyboard::Down || key == sf::Keyboard::S) {
+                    chooser->NextChoice();
+                }
 
-            bool isPressed = false;
+                if (key == sf::Keyboard::Up || key == sf::Keyboard::W) {
+                    chooser->PrevChoice();
+                }
 
-            for (auto alias : keyAlias.second) {
-                if (sf::Keyboard::isKeyPressed(alias)) {
-                    isPressed = true;
-                    break;
+                if (key == sf::Keyboard::Space && !inputHandlerInst->pressed[sf::Keyboard::Space]) {
+                    sburbInst->PerformAction(chooser->GetChoice());
+                    chooser->SetChoosing(false);
                 }
             }
-
-            if (isPressed)
-            {
-                if (keyStates[keyAlias.first] != InputState::Pressed && keyStates[keyAlias.first] != InputState::Held)
-                {
-                    keyStates[keyAlias.first] = InputState::Pressed;
+            else if (sburbInst->GetDialoger()->GetTalking()) {
+                if (key == sf::Keyboard::Space && !inputHandlerInst->pressed[sf::Keyboard::Space]) {
+                    sburbInst->GetDialoger()->Nudge();
                 }
-                actionHandled[keyAlias.first] = true;
             }
-            else
-            {
-                if (keyStates[keyAlias.first] == InputState::Released)
-                {
-                    keyStates[keyAlias.first] = InputState::None;
-                }
-                else
-                {
-                    keyStates[keyAlias.first] = InputState::Released;
-                }
-                actionHandled[keyAlias.first] = true;
-            }
-        }
-
-        if (sf::Joystick::isConnected(0))
-        {
-            for (auto &&gamepadAlias : gamepadAliases)
-            {
-                if (actionHandled[gamepadAlias.first])
-                    continue;
-
-                bool isPressed = false;
-                for (auto alias : gamepadAlias.second) {
-                    if (alias >= LSAXIS_NEGX)
-                    {
-                        switch (alias)
-                        {
-                        case LSAXIS_NEGX:
-                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::X) < -10;
-                            break;
-                        case LSAXIS_POSX:
-                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::X) > 10;
-                            break;
-                        case LSAXIS_NEGY:
-                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::Y) < -10;
-                            break;
-                        case LSAXIS_POSY:
-                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::Y) > 10;
-                            break;
-                        case RSAXIS_NEGX:
-                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) < -10;
-                            break;
-                        case RSAXIS_POSX:
-                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) > 10;
-                            break;
-                        case RSAXIS_NEGY:
-                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) < -10;
-                            break;
-                        case RSAXIS_POSY:
-                            isPressed = sf::Joystick::getAxisPosition(0, sf::Joystick::PovY) > 10;
+            else if (sburbInst->HasControl()) {
+                if (key == sf::Keyboard::Space && !inputHandlerInst->pressed[sf::Keyboard::Space] && sburbInst->GetEngineMode() == "wander") {
+                    sburbInst->GetChooser()->SetChoices({});
+                    auto queries = sburbInst->GetCharacter()->GetActionQueries();
+                  
+                    for (auto query : queries) {
+                        chooser->SetChoices(sburbInst->GetCurrentRoom()->QueryActions(sburbInst->GetCharacter(), query.x, query.y));
+                       
+                        if (chooser->GetChoices().size() > 0) {
                             break;
                         }
                     }
-                    else
-                    {
-                        isPressed = sf::Joystick::isButtonPressed(0, alias);
-                    }
 
-                    if (isPressed) break;
-                }
-
-                if (isPressed)
-                {
-                    if (keyStates[gamepadAlias.first] != InputState::Pressed && keyStates[gamepadAlias.first] != InputState::Held)
-                    {
-                        keyStates[gamepadAlias.first] = InputState::Pressed;
+                    if (sburbInst->GetChooser()->GetChoices().size() > 0) {
+                        sburbInst->GetChooser()->AddChoice(std::make_shared<Action>("cancel", "cancel", "Cancel."));
+                        sburbInst->BeginChoosing();
                     }
-                    actionHandled[gamepadAlias.first] = true;
-                }
-                else
-                {
-                    if (keyStates[gamepadAlias.first] == InputState::Released)
-                    {
-                        keyStates[gamepadAlias.first] = InputState::None;
-                    }
-                    else
-                    {
-                        keyStates[gamepadAlias.first] = InputState::Released;
-                    }
-                    actionHandled[gamepadAlias.first] = true;
                 }
             }
         }
 
-        for (auto mouseAction : this->mouseAliases) {
-            bool isPressed = false;
+        if (inputHandlerInst->GetPressed(key)) inputHandlerInst->AddToPressedOrder(key);
+        inputHandlerInst->SetPressed(key, true);
+    }
 
-            for (auto alias : mouseAction.second) {
-                if (sf::Mouse::isButtonPressed(alias)) {
-                    isPressed = true;
-                    break;
-                }
-            }
+    void InputHandler::OnKeyUp(sf::Keyboard::Key key) {
+        if (inputHandlerInst->GetPressed(key)) inputHandlerInst->RemoveFromPressedOrder(key);
+        inputHandlerInst->SetPressed(key, false);
+    }
 
-            if (isPressed)
-            {
-                if (this->mouseButtonStates[mouseAction.first] != InputState::Pressed && this->mouseButtonStates[mouseAction.first] != InputState::Held)
-                {
-                    this->mouseButtonStates[mouseAction.first] = InputState::Pressed;
-                }
-            }
-            else
-            {
-                if (this->mouseButtonStates[mouseAction.first] == InputState::Released)
-                {
-                    this->mouseButtonStates[mouseAction.first] = InputState::None;
-                }
-                else
-                {
-                    this->mouseButtonStates[mouseAction.first] = InputState::Released;
-                }
+    void InputHandler::OnMouseDown() {
+        auto sburbInst = Sburb::GetInstance();
+
+        if (!sburbInst->GetShouldUpdate()) return;
+        if (sburbInst->GetEngineMode() == "strife" && sburbInst->HasControl()) {
+            sburbInst->GetChooser()->SetChoices(sburbInst->GetCurrentRoom()->QueryActionsVisual(sburbInst->GetCharacter(), sburbInst->GetViewPos().x + inputHandlerInst->GetMousePosition().x, sburbInst->GetViewPos().y + inputHandlerInst->GetMousePosition().y));
+
+            if (sburbInst->GetChooser()->GetChoices().size() > 0) {
+                sburbInst->GetChooser()->AddChoice(std::make_shared<Action>("cancel", "cancel", "cancel"));
+                sburbInst->BeginChoosing();
             }
         }
+
+        inputHandlerInst->mouseDown = true;
     }
 
-    bool InputHandler::IsInputPressed(InputActions input)
-    {
-        if (inputHandlerInstance->keyStates[input] == InputState::Pressed)
-        {
-            inputHandlerInstance->keyStates[input] = InputState::Held;
-            return true;
+    void InputHandler::OnMouseUp() {
+        inputHandlerInst->mouseDown = false;
+
+        auto sburbInst = Sburb::GetInstance();
+
+        if (!sburbInst->GetShouldUpdate()) return;
+        if (sburbInst->GetDialoger() && sburbInst->GetDialoger()->GetBox() && sburbInst->GetDialoger()->GetBox()->IsVisuallyUnder(inputHandlerInst->GetMousePosition().x, inputHandlerInst->GetMousePosition().y)) {
+            sburbInst->GetDialoger()->Nudge();
         }
-        return false;
-    }
-
-    bool InputHandler::IsInputHeld(InputActions input)
-    {
-        return inputHandlerInstance->keyStates[input] == InputState::Pressed || inputHandlerInstance->keyStates[input] == InputState::Held;
-    }
-
-    bool InputHandler::IsInputReleased(InputActions input)
-    {
-        return inputHandlerInstance->keyStates[input] == InputState::Released;
     }
 
     sf::Vector2i InputHandler::GetMousePosition() {
         return sf::Mouse::getPosition();
     }
 
-    bool InputHandler::IsMousePressed(MouseInputActions button)
-    {
-        if (inputHandlerInstance->mouseButtonStates[button] == InputState::Pressed)
-        {
-            inputHandlerInstance->mouseButtonStates[button] = InputState::Held;
-            return true;
-        }
-        return false;
-    }
-
-    bool InputHandler::IsMouseHeld(MouseInputActions button)
-    {
-        return inputHandlerInstance->mouseButtonStates[button] == InputState::Pressed || inputHandlerInstance->mouseButtonStates[button] == InputState::Held;
-    }
-
-    bool InputHandler::IsMouseReleased(MouseInputActions button)
-    {
-        return inputHandlerInstance->mouseButtonStates[button] == InputState::Released;
-    }
-
-    std::vector<InputActions> InputHandler::GetKeyOrder() {
-        return inputHandlerInstance->keyOrder;
-    }
 }

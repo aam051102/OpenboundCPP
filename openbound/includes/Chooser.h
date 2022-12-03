@@ -17,6 +17,7 @@ namespace SBURB {
         void PrevChoice();
         void BeginChoosing(int x, int y);
         
+        void SetChoosing(bool choosing) { this->choosing = choosing; };
         bool GetChoosing() { return this->choosing; };
 
         void SetChoices(std::vector<std::shared_ptr<Action>> choices) { this->choices = choices; };

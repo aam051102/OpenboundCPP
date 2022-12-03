@@ -11,13 +11,12 @@
 #include "AssetMusic.h"
 #include "AssetSound.h"
 #include "ActionQueue.h"
+#include "Dialoger.h"
 
 #include <pugixml.hpp>
 
 namespace SBURB
 {
-    class Dialoger;
-
     // Handles a running instance of the game.
     class Sburb
     {
@@ -151,7 +150,10 @@ namespace SBURB
         void SetScale(Vector2 scale) { this->scale = scale; };
         Vector2 GetScale() { return this->scale; };
 
+        Vector2 GetViewPos() { return this->viewPos; };
         Vector2 GetViewSize() { return this->viewSize; };
+
+        bool GetShouldUpdate() { return this->shouldUpdate; };
 
         bool GetInputDisabled() { return this->inputDisabled; };
 
