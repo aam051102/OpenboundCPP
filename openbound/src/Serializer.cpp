@@ -23,11 +23,11 @@ namespace SBURB
         std::string loadedFiles = "";
         bool loadedFilesExist = false;
 
-        for (auto key : sburbInst->loadedFiles)
+        /*for (auto key : sburbInst->loadedFiles)
         {
             loadedFiles = loadedFiles + (loadedFilesExist ? "," : "") + key;
             loadedFilesExist = true;
-        }
+        }*/
 
         auto character = sburbInst->GetCharacter();
         auto bgm = sburbInst->GetBGM();
@@ -92,7 +92,7 @@ namespace SBURB
     std::string Serializer::SerializeAssets(std::string output)
     {
         output = output + "\n<assets>";
-
+        /*
         for (auto asset : assets)
         {
             std::shared_ptr<Asset> curAsset = assets[asset];
@@ -145,7 +145,7 @@ namespace SBURB
             output = output + innerHTML;
             output = output + "</asset>";
         }
-
+        */
         output = output + "\n</assets>\n";
         output = output + "\n<effects>";
 
@@ -253,14 +253,14 @@ namespace SBURB
         Sburb::GetInstance()->HaltUpdateProcess();
         path = Sburb::GetInstance()->levelPath + path;
 
-        if (keepOld && Sburb::GetInstance()->loadedFiles[path])
+        if (keepOld /* && Sburb::GetInstance()->loadedFiles[path]*/)
         {
             Sburb::GetInstance()->StartUpdateProcess();
-            return;
+            return true;
         }
         else
         {
-            Sburb::GetInstance()->loadedFiles[path] = true;
+            //Sburb::GetInstance()->loadedFiles[path] = true;
         }
 
         pugi::xml_document doc;
@@ -393,10 +393,10 @@ namespace SBURB
 
             for (pugi::xml_node assetNode : assetNodes)
             {
-                if (!AssetManager::CheckIsLoaded(assetNode.attribute("name").value()))
-                {
+                /*if (!AssetManager::CheckIsLoaded(assetNode.attribute("name").value()))
+                {*/
                     LoadSerialAsset(assetNode);
-                }
+               // }
             }
         }
 

@@ -12,5 +12,5 @@ Example data can be found in the official Openbound engine repository or in the 
 
 ## TODO
 
-- Finish Asset loading (Serializer + AssetManager)
+- Search for "CheckIsLoaded", uncomment everything and implement it.
 - (Plausibly) Integrate Lightspark or some other Flash emulator to support "movies" (i.e. Flash).

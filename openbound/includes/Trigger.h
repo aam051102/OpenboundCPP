@@ -9,7 +9,7 @@ namespace SBURB {
     class Trigger
     {
     public:
-        Trigger(std::vector<std::string> info, std::shared_ptr<Action> action = NULL, std::shared_ptr<Trigger> followUp = NULL, bool shouldRestart = false, bool shouldDetonate = false, std::string op = "AND");
+        Trigger(std::vector<std::string> info, std::shared_ptr<Action> action = nullptr, std::shared_ptr<Trigger> followUp = nullptr, bool shouldRestart = false, bool shouldDetonate = false, std::string op = "AND");
         ~Trigger();
 
         void Reset();
