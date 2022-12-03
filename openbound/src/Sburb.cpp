@@ -3,11 +3,11 @@
 #include "Sburb.h"
 #include "Logger.h"
 #include "Sprite.h"
-#include "AssetHandler.h"
+#include "AssetManager.h"
 #include "BatchHandler.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include "Path.h"
+#include "AssetPath.h"
 #include "Serializer.h"
 #include "Parser.h"
 #include "CommandHandler.h"
@@ -16,7 +16,7 @@ constexpr float FADE_RATE = 0.1;
 
 namespace SBURB
 {
-    static Sburb* gameInstance = nullptr;
+    static Sburb *gameInstance = nullptr;
 
     Sburb::Sburb()
     {
@@ -32,22 +32,30 @@ namespace SBURB
 
         this->view = sf::View(sf::FloatRect((float)viewPos.x, (float)viewPos.y, (float)viewSize.x, (float)viewSize.y));
 
-        if (gameInstance == nullptr) {
+        if (gameInstance == nullptr)
+        {
             gameInstance = this;
         }
     }
 
     Sburb::~Sburb()
     {
-        AssetHandler::ClearTextures();
+        AssetManager::ClearGraphics();
+        AssetManager::ClearAudio();
+        AssetManager::ClearText();
+        AssetManager::ClearPaths();
+        AssetManager::ClearMovies();
+        AssetManager::ClearFonts();
     }
 
-    void Sburb::PurgeState() {
+    void Sburb::PurgeState()
+    {
         this->rooms = {};
 
         this->sprites = {};
 
-        if (this->bgm) {
+        if (this->bgm)
+        {
             this->bgm->Stop();
             this->bgm = nullptr;
         }
@@ -67,10 +75,10 @@ namespace SBURB
         this->resourcePath = "";
         this->levelPath = "";
         this->nextQueueId = 0;
-        this->loadedFiles = {};
     }
 
-    void Sburb::BeginChoosing() {
+    void Sburb::BeginChoosing()
+    {
         this->character->Idle();
         this->chooser->BeginChoosing(this->character->GetX(), this->character->GetY());
     }
@@ -107,12 +115,14 @@ namespace SBURB
             }
 
             // Run main update method for all objects
-            if (this->shouldUpdate) {
+            if (this->shouldUpdate)
+            {
                 this->HandleAudio();
                 this->HandleInputs();
                 this->HandleHud();
 
-                if (this->curRoom && !this->loadingRoom) curRoom->Update();
+                if (this->curRoom && !this->loadingRoom)
+                    curRoom->Update();
 
                 this->FocusCamera();
                 this->HandleRoomChange();
@@ -127,18 +137,22 @@ namespace SBURB
             this->window->setView(this->view);
 
             // Render
-            if (this->shouldDraw) {
+            if (this->shouldDraw)
+            {
                 Render();
             }
         }
     }
 
-    void Sburb::HandleInputs() {
+    void Sburb::HandleInputs()
+    {
         this->SetMouseCursor(sf::Cursor::Arrow);
-        if (this->HasControl() && !this->inputDisabled) {
+        if (this->HasControl() && !this->inputDisabled)
+        {
             this->character->HandleInputs(InputHandler::GetPressedOrder());
         }
-        else {
+        else
+        {
             this->character->MoveNone();
         }
 
@@ -146,25 +160,32 @@ namespace SBURB
         // Sburb.debugger.handleInputs(Sburb.pressed);
     }
 
-    void Sburb::HandleAudio() {
-        if (this->bgm && this->bgm->GetAsset()) {
-            if (this->bgm->Ended()) {
+    void Sburb::HandleAudio()
+    {
+        if (this->bgm && this->bgm->GetAsset())
+        {
+            if (this->bgm->Ended())
+            {
                 this->bgm->Loop();
             }
-            
-            if (this->lastMusicTime == this->bgm->GetAsset()->getPlayingOffset()) {
+
+            if (this->lastMusicTime == this->bgm->GetAsset()->getPlayingOffset())
+            {
                 this->musicStoppedFor++;
-                
-                if (this->musicStoppedFor > 4) {
+
+                if (this->musicStoppedFor > 4)
+                {
                     this->bgm->Pause();
                     this->bgm->Play(); // asset.play() because sometimes this condition is true on startup
                 }
             }
-            else {
+            else
+            {
                 this->musicStoppedFor = 0;
             }
 
-            if (this->bgm->GetAsset()->getStatus() == sf::SoundStream::Paused) {
+            if (this->bgm->GetAsset()->getStatus() == sf::SoundStream::Paused)
+            {
                 this->bgm->Play();
             }
 
@@ -172,46 +193,58 @@ namespace SBURB
         }
     }
 
-    void Sburb::HandleHud() {
-        for (auto obj : this->hud) {
+    void Sburb::HandleHud()
+    {
+        for (auto obj : this->hud)
+        {
             obj.second->Update();
         }
     }
 
-    void Sburb::FocusCamera() {
-        if (!this->destFocus) {
-            if (this->focus) {
+    void Sburb::FocusCamera()
+    {
+        if (!this->destFocus)
+        {
+            if (this->focus)
+            {
                 this->camera.x = this->focus->GetX() - this->viewSize.x / 2;
                 this->camera.y = this->focus->GetY() - this->viewSize.y / 2;
             }
         }
-        else if (abs(this->destFocus->GetX() - this->camera.x - this->viewSize.x / 2) > 4 || abs(this->destFocus->GetY() - this->camera.y - this->viewSize.y / 2) > 4) {
+        else if (abs(this->destFocus->GetX() - this->camera.x - this->viewSize.x / 2) > 4 || abs(this->destFocus->GetY() - this->camera.y - this->viewSize.y / 2) > 4)
+        {
             this->camera.x += (this->destFocus->GetX() - this->viewSize.x / 2 - this->camera.x) / 5;
             this->camera.y += (this->destFocus->GetY() - this->viewSize.y / 2 - this->camera.y) / 5;
         }
-        else {
+        else
+        {
             this->focus = this->destFocus;
             this->destFocus = nullptr;
         }
-        
+
         this->viewPos.x = std::max(0, std::min((int)round(this->camera.x / this->scale.x) * this->scale.x, this->curRoom->GetWidth() - this->viewSize.x));
         this->viewPos.y = std::max(0, std::min((int)round(this->camera.y / this->scale.y) * this->scale.y, this->curRoom->GetHeight() - this->viewSize.y));
-  
+
         // Move view
         this->view.setCenter(sf::Vector2f(this->viewPos.x + this->viewSize.x / 2, this->viewPos.y + this->viewSize.y / 2));
     }
 
-    void Sburb::HandleRoomChange() {
-        if (this->destRoom || this->fading) {
-            if (this->fade < 1.1) {
+    void Sburb::HandleRoomChange()
+    {
+        if (this->destRoom || this->fading)
+        {
+            if (this->fade < 1.1)
+            {
                 this->fade = std::min(1.1f, this->fade + FADE_RATE);
             }
-            else if (this->destRoom) {
+            else if (this->destRoom)
+            {
                 float deltaX = this->destX - this->character->GetX();
                 float deltaY = this->destY - this->character->GetY();
                 std::shared_ptr<Character> curSprite = this->character;
-               
-                while (curSprite) {
+
+                while (curSprite)
+                {
                     curSprite->SetX(curSprite->GetX() + deltaX);
                     curSprite->SetY(curSprite->GetY() + deltaY);
                     curSprite->SetFollowBuffer({});
@@ -224,36 +257,45 @@ namespace SBURB
                 this->curRoom->Enter();
                 this->destRoom = nullptr;
             }
-            else {
+            else
+            {
                 this->fading = false;
             }
         }
-        else if (this->HasControl() && this->fade > 0.01) {
+        else if (this->HasControl() && this->fade > 0.01)
+        {
             this->fade = std::max(0.01f, this->fade - FADE_RATE);
-            //apparently alpha 0 is buggy? - NOTE: Alpha 0 probably isn't buggy in C++, but lets keep it anyway.
+            // apparently alpha 0 is buggy? - NOTE: Alpha 0 probably isn't buggy in C++, but lets keep it anyway.
         }
     }
 
-    void Sburb::ChainAction() {
-        if (this->queue->GetCurrentAction()) {
+    void Sburb::ChainAction()
+    {
+        if (this->queue->GetCurrentAction())
+        {
             this->ChainActionInQueue(this->queue);
         }
 
-        for (int i = 0; i < this->actionQueues.size(); i++) {
+        for (int i = 0; i < this->actionQueues.size(); i++)
+        {
             auto queue = this->actionQueues[i];
-            
-            if (!queue->GetCurrentAction()) {
+
+            if (!queue->GetCurrentAction())
+            {
                 this->actionQueues.erase(this->actionQueues.begin() + i);
                 i--;
                 continue;
             }
 
-            if (queue->GetPaused()) {
-                if ((queue->GetTrigger() && queue->GetTrigger()->CheckCompletion())) {
+            if (queue->GetPaused())
+            {
+                if ((queue->GetTrigger() && queue->GetTrigger()->CheckCompletion()))
+                {
                     queue->SetPaused(false);
                     queue->SetTrigger(nullptr);
                 }
-                else {
+                else
+                {
                     continue;
                 }
             }
@@ -262,32 +304,43 @@ namespace SBURB
         }
     }
 
-    void Sburb::ChainActionInQueue(std::shared_ptr<ActionQueue> queue) {
+    void Sburb::ChainActionInQueue(std::shared_ptr<ActionQueue> queue)
+    {
         auto curAction = queue->GetCurrentAction();
-        
-        if (curAction->GetTimes() <= 0) {
-            if (curAction->GetFollowUp()) {
-                if (this->HasControl() || curAction->GetFollowUp()->GetNoWait() || queue->GetNoWait()) {
+
+        if (curAction->GetTimes() <= 0)
+        {
+            if (curAction->GetFollowUp())
+            {
+                if (this->HasControl() || curAction->GetFollowUp()->GetNoWait() || queue->GetNoWait())
+                {
                     this->PerformAction(curAction->GetFollowUp(), queue);
                 }
             }
-            else {
+            else
+            {
                 queue->SetCurrentAction(nullptr);
             }
         }
-        else if (this->HasControl() || curAction->GetNoWait() || queue->GetNoWait()) {
+        else if (this->HasControl() || curAction->GetNoWait() || queue->GetNoWait())
+        {
             this->PerformAction(curAction, queue);
         }
     }
 
-    void Sburb::UpdateWait() {
-        if (this->queue->GetTrigger()) {
-            if (this->queue->GetTrigger()->CheckCompletion()) {
+    void Sburb::UpdateWait()
+    {
+        if (this->queue->GetTrigger())
+        {
+            if (this->queue->GetTrigger()->CheckCompletion())
+            {
                 this->queue->SetTrigger(nullptr);
             }
         }
-        if (this->inputDisabled && this->inputDisabledTrigger) {
-            if (this->inputDisabledTrigger->CheckCompletion()) {
+        if (this->inputDisabled && this->inputDisabledTrigger)
+        {
+            if (this->inputDisabledTrigger->CheckCompletion())
+            {
                 this->inputDisabled = false;
             }
         }
@@ -295,7 +348,8 @@ namespace SBURB
 
     void Sburb::Render()
     {
-        if (!playingMovie) {
+        if (!playingMovie)
+        {
             window->clear(sf::Color(0, 0, 0, 255));
 
             BatchHandler::getInstance().Reset();
@@ -303,19 +357,24 @@ namespace SBURB
             // NOTE: Some sort of translation is usually done between these renders. It may be necessary to add them back later.
 
             // Render all objects
-            if (this->curRoom) window->draw(*curRoom);
+            if (this->curRoom)
+                window->draw(*curRoom);
 
-            if (this->fade > 0.1) {
+            if (this->fade > 0.1)
+            {
                 window->draw(fadeShape);
             }
 
-            if (dialoger) window->draw(*dialoger);
+            if (dialoger)
+                window->draw(*dialoger);
 
-            for (auto hudElement : hud) {
+            for (auto hudElement : hud)
+            {
                 window->draw(*hudElement.second);
             }
 
-            if (chooser) window->draw(*chooser);
+            if (chooser)
+                window->draw(*chooser);
 
             // Debugger is usually drawn here, but I don't have one.
 
@@ -329,7 +388,7 @@ namespace SBURB
     bool Sburb::Start()
     {
         // Create & initialize main window
-        window.Init(name, { this->viewSize.x, this->viewSize.y }, sf::Style::Close | sf::Style::Titlebar, icon); // Standard
+        window.Init(name, {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar, icon); // Standard
 
         if (!window.GetWin())
         {
@@ -341,7 +400,8 @@ namespace SBURB
         window.CenterWindow();
 
         // Initialize room
-        if (!Serializer::LoadSerialFromXML("./levels/init.xml")) return false;
+        if (!Serializer::LoadSerialFromXML("./levels/init.xml"))
+            return false;
 
         // Start update loop
         while (window->isOpen())
@@ -409,18 +469,26 @@ namespace SBURB
 
     bool Sburb::HasControl()
     {
-        return !this->dialoger->GetTalking()
-            && !this->chooser->GetChoosing()
-            && !this->destRoom
-            && !this->fading
-            && !this->destFocus;
+        return !this->dialoger->GetTalking() && !this->chooser->GetChoosing() && !this->destRoom && !this->fading && !this->destFocus;
+    }
+
+    std::string Sburb::ResolvePath(std::string path)
+    {
+        // NOTE: Used to have ?version=[version] added
+        if (path.find(gameInstance->resourcePath) == std::string::npos) {
+            return gameInstance->resourcePath + "/" + path;
+        }
+
+        return path;
     }
 
     std::shared_ptr<ActionQueue> Sburb::GetActionQueueById(std::string id)
     {
-        for (int i = 0; i < this->actionQueues.size(); i++) {
+        for (int i = 0; i < this->actionQueues.size(); i++)
+        {
             auto queue = this->actionQueues[i];
-            if (queue->GetId() == id) {
+            if (queue->GetId() == id)
+            {
                 return queue;
             }
         }
@@ -428,9 +496,11 @@ namespace SBURB
 
     void Sburb::RemoveActionQueueById(std::string id)
     {
-        for (int i = 0; i < this->actionQueues.size(); i++) {
+        for (int i = 0; i < this->actionQueues.size(); i++)
+        {
             auto queue = this->actionQueues[i];
-            if (queue->GetId() == id) {
+            if (queue->GetId() == id)
+            {
                 this->actionQueues.erase(this->actionQueues.begin() + i);
                 return;
             }
@@ -439,20 +509,24 @@ namespace SBURB
 
     void Sburb::RemoveActionQueuesByGroup(std::string group)
     {
-        for (int i = 0; i < this->actionQueues.size(); i++) {
+        for (int i = 0; i < this->actionQueues.size(); i++)
+        {
             auto queue = this->actionQueues[i];
-            if (queue->HasGroup(group)) {
+            if (queue->HasGroup(group))
+            {
                 this->actionQueues.erase(this->actionQueues.begin() + i);
                 i--;
             }
         }
     }
 
-    void Sburb::ForEachActionQueueInGroup(std::string group, void(*func)(std::shared_ptr<ActionQueue>))
+    void Sburb::ForEachActionQueueInGroup(std::string group, void (*func)(std::shared_ptr<ActionQueue>))
     {
-        for (int i = 0; i < this->actionQueues.size(); i++) {
+        for (int i = 0; i < this->actionQueues.size(); i++)
+        {
             auto queue = this->actionQueues[i];
-            if (queue->HasGroup(group)) {
+            if (queue->HasGroup(group))
+            {
                 func(queue);
             }
         }
@@ -460,26 +534,33 @@ namespace SBURB
 
     std::shared_ptr<ActionQueue> Sburb::PerformAction(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue)
     {
-        if (action->GetSilent()) {
-            if ((action->GetTimes() == 1) && (!action->GetFollowUp())) {
+        if (action->GetSilent())
+        {
+            if ((action->GetTimes() == 1) && (!action->GetFollowUp()))
+            {
                 CommandHandler::PerformActionSilent(action);
                 return nullptr;
             }
 
-            if ((!queue) || (queue == this->queue)) {
-                if (action->GetSilentCause() == "true") {
+            if ((!queue) || (queue == this->queue))
+            {
+                if (action->GetSilentCause() == "true")
+                {
                     queue = std::make_shared<ActionQueue>(action);
                 }
-                else {
+                else
+                {
                     auto options = split(action->GetSilentCause(), ":");
                     bool noWait = (options[0] == "full") ? true : false;
                     std::string id = "";
 
-                    if (noWait) {
+                    if (noWait)
+                    {
                         options.erase(options.begin() + 0);
                     }
 
-                    if (options.size() > 0) {
+                    if (options.size() > 0)
+                    {
                         id = options[0];
                         options.erase(options.begin() + 0);
                     }
@@ -491,12 +572,14 @@ namespace SBURB
             }
         }
 
-        if (queue && (queue != this->queue)) {
+        if (queue && (queue != this->queue))
+        {
             this->PerformActionInQueue(action, queue);
             return queue;
         }
 
-        if (((this->queue->GetCurrentAction() && this->queue->GetCurrentAction()->GetFollowUp() != action && this->queue->GetCurrentAction() != action) || !this->HasControl()) && action->GetSoft()) {
+        if (((this->queue->GetCurrentAction() && this->queue->GetCurrentAction()->GetFollowUp() != action && this->queue->GetCurrentAction() != action) || !this->HasControl()) && action->GetSoft())
+        {
             return nullptr;
         }
 
@@ -504,12 +587,15 @@ namespace SBURB
         return nullptr;
     }
 
-    void Sburb::PerformActionInQueue(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue) {
+    void Sburb::PerformActionInQueue(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue)
+    {
         bool looped = false;
         queue->SetCurrentAction(std::make_shared<Action>(action->Clone()));
-       
-        do {
-            if (looped) {
+
+        do
+        {
+            if (looped)
+            {
                 queue->SetCurrentAction(std::make_shared<Action>(queue->GetCurrentAction()->GetFollowUp()->Clone()));
             }
 
@@ -519,13 +605,17 @@ namespace SBURB
         } while (queue->GetCurrentAction() && queue->GetCurrentAction()->GetTimes() <= 0 && queue->GetCurrentAction()->GetFollowUp() && queue->GetCurrentAction()->GetFollowUp()->GetNoDelay());
     }
 
-    void Sburb::HandleCommandResult(std::shared_ptr<ActionQueue> queue, std::shared_ptr<Trigger> result) {
-        if (result) {
-            if (queue != this->queue) {
+    void Sburb::HandleCommandResult(std::shared_ptr<ActionQueue> queue, std::shared_ptr<Trigger> result)
+    {
+        if (result)
+        {
+            if (queue != this->queue)
+            {
                 queue->SetPaused(true);
                 queue->SetTrigger(result);
             }
-            else {
+            else
+            {
                 queue->SetTrigger(result);
             }
         }
@@ -534,7 +624,8 @@ namespace SBURB
     void Sburb::SetMouseCursor(sf::Cursor::Type newCursor)
     {
         sf::Cursor cursor;
-        if (cursor.loadFromSystem(newCursor)) {
+        if (cursor.loadFromSystem(newCursor))
+        {
             window.GetWin()->setMouseCursor(cursor);
         }
     }
@@ -551,24 +642,27 @@ namespace SBURB
         this->curRoom->AddEffect(std::make_shared<Animation>(effect->Clone(x, y)));
     }
 
-    void Sburb::PlaySound(std::shared_ptr<AssetSound> sound)
+    void Sburb::PlaySound(std::shared_ptr<Sound> sound)
     {
         sound->Stop();
         sound->Play();
     }
-    
+
     void Sburb::PlayMovie()
     {
         // UNSUPPORTED
-        //this->queue->SetTrigger(std::make_shared<Trigger>("movie," + movie->GetName() + ",5"));
+        // this->queue->SetTrigger(std::make_shared<Trigger>("movie," + movie->GetName() + ",5"));
         this->playingMovie = true;
     }
 
     void Sburb::SetCurRoomOf(std::shared_ptr<Character> sprite)
     {
-        if (!this->curRoom->Contains(sprite)) {
-            for (auto room : this->rooms) {
-                if (room.second->Contains(sprite)) {
+        if (!this->curRoom->Contains(sprite))
+        {
+            for (auto room : this->rooms)
+            {
+                if (room.second->Contains(sprite))
+                {
                     this->ChangeRoom(room.second, this->character->GetX(), this->character->GetY());
                     return;
                 }
@@ -580,23 +674,27 @@ namespace SBURB
     {
         std::shared_ptr<Character> curSprite = sprite;
 
-        while (curSprite) {
+        while (curSprite)
+        {
             oldRoom->RemoveSprite(curSprite);
             newRoom->AddSprite(curSprite);
             curSprite = curSprite->GetFollower();
         }
     }
 
-    std::shared_ptr<AssetMusic> Sburb::GetBGM()
+    std::shared_ptr<Music> Sburb::GetBGM()
     {
         return this->bgm;
     }
 
-    void Sburb::ChangeBGM(std::shared_ptr<AssetMusic> newSong)
+    void Sburb::ChangeBGM(std::shared_ptr<Music> newSong)
     {
-        if(newSong) {
-            if (this->bgm) {
-                if (this->bgm->GetAsset() == newSong->GetAsset() && this->bgm->GetStartLoop() == newSong->GetStartLoop()) {
+        if (newSong)
+        {
+            if (this->bgm)
+            {
+                if (this->bgm->GetAsset() == newSong->GetAsset() && this->bgm->GetStartLoop() == newSong->GetStartLoop())
+                {
                     // maybe check for some kind of restart value
                     return;
                 }

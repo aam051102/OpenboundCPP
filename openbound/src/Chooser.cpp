@@ -38,21 +38,20 @@ namespace SBURB {
 
 		height = basis.GetLineHeight() * this->choices.size()  + 10;
 
-		// NOTE: This part usually limits the chooser to be within viewzone bounds. Not sure how to do this now.
-		/*sf::Vector2u stageSize = Game::GetInstance()->window->getSize();
+		Vector2 stageSize = Sburb::GetInstance()->GetViewSize();
 
-		if (x < stageSize.x + 10) {
-			x = stageSize.x + 10;
+		if (x < 10) {
+			x = 10;
 		}
-		if (y < stageSize.y + 10) {
-			y = stageSize.y + 10;
+		if (y < 10) {
+			y = 10;
 		}
-		if (x + width > stageSize.x + stageSize.width - 10) {
-			x = stageSize.x + stageSize.width - width - 10;
+		if (x + width > stageSize.x - 10) {
+			x = stageSize.x - width - 10;
 		}
-		if (y + height > stageSize.y + stageSize.height - 10) {
-			y = stageSize.y + stageSize.height - height - 10;
-		}*/
+		if (y + height > stageSize.y - 10) {
+			y = stageSize.y - height - 10;
+		}
 
 		this->choosing = true;
 		this->choice = 0;

@@ -2,7 +2,7 @@
 #define SBURB_ANIMATION_H
 
 #include "Common.h"
-#include "AssetTexture.h"
+#include "AssetGraphic.h"
 
 namespace SBURB
 {
@@ -37,7 +37,7 @@ namespace SBURB
 		void SetFrameInterval(int frameInterval) { this->frameInterval = frameInterval; };
 		int GetFrameInterval() { return this->frameInterval; };
 
-		std::shared_ptr<AssetTexture> GetSheet() { return this->sheet; };
+		std::shared_ptr<AssetGraphic> GetSheet() { return this->sheet; };
 
 		std::string GetFollowUp() { return this->followUp; };
 
@@ -49,7 +49,7 @@ namespace SBURB
 
     protected:
 		std::string sheetName;
-		std::shared_ptr<AssetTexture> sheet;
+		std::shared_ptr<AssetGraphic> sheet;
 		bool sliced;
 		int x;
 		int y;
@@ -67,7 +67,7 @@ namespace SBURB
 		bool flipY;
 		int numRows;
 		int numCols;
-		std::map<int, std::map<int, std::shared_ptr<AssetTexture>>> sheets;
+		std::map<int, std::map<int, std::shared_ptr<AssetGraphic>>> sheets;
 		std::map<int, int> frameIntervals;
 		int frameInterval;
 

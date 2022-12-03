@@ -1,31 +1,29 @@
-#include "Path.h"
+#include "AssetPath.h"
 
 namespace SBURB {
-	Path::Path() {
-		
+	AssetPath::AssetPath(std::string name, std::vector<Vector2> points) {
+		this->type = "path";
+		this->name = name;
+		this->points = points;
 	}
 
-	Path::~Path() {
-
-	}
-
-	void Path::Push(Vector2 point) {
+	void AssetPath::Push(Vector2 point) {
 		this->points.push_back(point);
 	}
 
-	void Path::QueryBatchPos(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results) {
+	void AssetPath::QueryBatchPos(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results) {
 		for (auto query : queries) {
 			(*results)[query.first] = this->Query(query.second);
 		}
 	}
 
-	void Path::QueryBatchNeg(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results) {
+	void AssetPath::QueryBatchNeg(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results) {
 		for (auto query : queries) {
 			(*results)[query.first] = !this->Query(query.second);
 		}
 	}
 
-    bool Path::Query(Vector2 point) {
+    bool AssetPath::Query(Vector2 point) {
 		bool isOnPath = false;
 		
 		for (int i = -1, l = this->points.size(), j = l - 1; ++i < l; j = i) {

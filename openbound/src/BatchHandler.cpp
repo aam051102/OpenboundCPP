@@ -1,6 +1,6 @@
 #include "BatchHandler.h"
 #include <SFML/Graphics/RenderTarget.hpp>
-#include "AssetHandler.h"
+#include "AssetManager.h"
 
 #define BATCH_SIZE 512
 
@@ -84,7 +84,7 @@ namespace SBURB
     {
         sf::RenderStates states = sf::RenderStates();
         if (currentTexName != "")
-            states.texture = AssetHandler::GetTextureByName(currentTexName).get();
+            states.texture = AssetManager::GetGraphicByName(currentTexName)->GetAsset().get();
         if (offset != verticesSize)
             vertices.resize(offset);
         target->draw(vertices, states);

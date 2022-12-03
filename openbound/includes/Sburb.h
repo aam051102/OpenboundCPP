@@ -8,8 +8,8 @@
 #include "Character.h"
 #include "SpriteButton.h"
 #include "Chooser.h"
-#include "AssetMusic.h"
-#include "AssetSound.h"
+#include "Music.h"
+#include "Sound.h"
 #include "ActionQueue.h"
 #include "Dialoger.h"
 
@@ -60,8 +60,6 @@ namespace SBURB
         void SetButton(std::string name, std::shared_ptr<SpriteButton> button) { this->buttons[name] = button; }
         std::shared_ptr<SpriteButton> GetButton(std::string name) { return this->buttons[name]; };
 
-        std::shared_ptr<sf::Font> GetFont(std::string name) { return this->fonts[name]; };
-
         void SetEffect(std::string, std::shared_ptr<Animation> anim) { this->effects[name] = anim; };
         std::shared_ptr<Animation> GetEffect(std::string name) { return this->effects[name]; };
 
@@ -93,13 +91,13 @@ namespace SBURB
 
         void ChangeRoom(std::shared_ptr<Room> room, int newX, int newY);
         void PlayEffect(std::shared_ptr<Animation> effect, int x, int y);
-        void PlaySound(std::shared_ptr<AssetSound> sound);
+        void PlaySound(std::shared_ptr<Sound> sound);
         void PlayMovie();
         void SetCurRoomOf(std::shared_ptr<Character> sprite);
         void MoveSprite(std::shared_ptr<Character> sprite, std::shared_ptr<Room> oldRoom, std::shared_ptr<Room> newRoom);
 
-        std::shared_ptr<AssetMusic> GetBGM();
-        void ChangeBGM(std::shared_ptr<AssetMusic> music);
+        std::shared_ptr<Music> GetBGM();
+        void ChangeBGM(std::shared_ptr<Music> music);
 
         void SetPlayingMovie(bool playingMovie) { this->playingMovie = playingMovie; };
         void SetInputDisabled(bool inputDisabled) { this->inputDisabled = inputDisabled; };
@@ -157,6 +155,11 @@ namespace SBURB
 
         bool GetInputDisabled() { return this->inputDisabled; };
 
+        void SetDescription(std::string description) { this->description = description; };
+        std::string GetDescription() { return this->description; };
+
+        static std::string ResolvePath(std::string path);
+
         Window window;
 
         std::string name;
@@ -165,6 +168,8 @@ namespace SBURB
         std::string resourcePath;
 
     private:
+        std::string description;
+
         bool shouldUpdate;
         bool shouldDraw;
 
@@ -172,7 +177,7 @@ namespace SBURB
 
         std::shared_ptr<ActionQueue> queue;
 
-        std::shared_ptr<AssetMusic> bgm;
+        std::shared_ptr<Music> bgm;
         std::shared_ptr<Sprite> focus;
         std::shared_ptr<Sprite> destFocus;
 

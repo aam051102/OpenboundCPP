@@ -48,23 +48,23 @@ namespace SBURB
 		return false;
 	}
 
-	void Room::AddWalkable(std::shared_ptr<Path> path) {
+	void Room::AddWalkable(std::shared_ptr<AssetPath> path) {
 		this->walkables.push_back(path);
 	}
 
-	void Room::RemoveWalkable(std::shared_ptr<Path> path) {
+	void Room::RemoveWalkable(std::shared_ptr<AssetPath> path) {
 		this->walkables.erase(std::find(this->walkables.begin(), this->walkables.end(), path));
 	}
 	
-	void Room::AddUnwalkable(std::shared_ptr<Path> path) {
+	void Room::AddUnwalkable(std::shared_ptr<AssetPath> path) {
 		this->unwalkables.push_back(path);
 	}
 
-	void Room::RemoveUnwalkable(std::shared_ptr<Path> path) {
+	void Room::RemoveUnwalkable(std::shared_ptr<AssetPath> path) {
 		this->unwalkables.erase(std::find(this->unwalkables.begin(), this->unwalkables.end(), path));
 	}
 
-	void Room::AddMotionPath(std::shared_ptr<Path> path, int xtox, int xtoy, int ytox, int ytoy, int dx, int dy) {
+	void Room::AddMotionPath(std::shared_ptr<AssetPath> path, int xtox, int xtoy, int ytox, int ytoy, int dx, int dy) {
 		MotionPath motionPath = MotionPath(path, xtox, xtoy, ytox, ytoy, dx, dy);
 
 		this->motionPaths.push_back(std::make_shared<MotionPath>(motionPath));
@@ -72,7 +72,7 @@ namespace SBURB
 
 	void Room::Enter() {
 		if (this->walkableMap) {
-			sf::Image img = this->walkableMap->copyToImage();
+			sf::Image img = this->walkableMap->GetAsset()->copyToImage();
 			this->mapData = std::make_shared<sf::Image>(img);
 		}
 	}
@@ -192,8 +192,8 @@ namespace SBURB
 		if (this->walkableMap) {
 			for (auto query : queries) {
 				Vector2 pt = query.second;
-				int width = this->walkableMap->getSize().x;
-				int height = this->walkableMap->getSize().y;
+				int width = this->walkableMap->GetAsset()->getSize().x;
+				int height = this->walkableMap->GetAsset()->getSize().y;
 				
 				if (pt.x<0 || pt.x>width * this->mapScale || pt.y<0 || pt.y>height * this->mapScale) {
 					(*results)[query.first] = false;
@@ -244,12 +244,12 @@ namespace SBURB
 		output = output + "\n<paths>";
 
 		for (int i = 0; i < this->walkables.size(); i++) {
-			std::shared_ptr<Path> walkable = this->walkables[i];
+			std::shared_ptr<AssetPath> walkable = this->walkables[i];
 			output = output + "\n<walkable path='" + walkable->GetName() + "'/>";
 		}
 
 		for (int i = 0; i < this->unwalkables.size(); i++) {
-			std::shared_ptr<Path> unwalkable = this->unwalkables[i];
+			std::shared_ptr<AssetPath> unwalkable = this->unwalkables[i];
 			output = output + "\n<unwalkable path='" + unwalkable->GetName() + "'/>";
 		}
 

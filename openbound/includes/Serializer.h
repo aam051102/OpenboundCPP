@@ -4,6 +4,7 @@
 #include <pugixml.hpp>
 #include "Common.h"
 #include "Sprite.h"
+#include "Asset.h"
 
 namespace SBURB {
     class Serializer {
@@ -26,7 +27,7 @@ namespace SBURB {
         static bool LoadSerial(pugi::xml_document* doc, bool keepOld = false);
         static bool LoadDependencies(pugi::xml_node node);
         static bool LoadSerialAssets(pugi::xml_node node);
-        static bool LoadSerialAsset(pugi::xml_node node);
+        static void LoadSerialAsset(pugi::xml_node node);
 
         static void LoadSerialState();
 
@@ -49,7 +50,7 @@ namespace SBURB {
         static void ParseState(pugi::xml_node node);
         static void ParseActionQueues(pugi::xml_node node);
 
-        static AssetTexture ParseSerialAsset(pugi::xml_node node);
+        static std::shared_ptr<Asset> ParseSerialAsset(pugi::xml_node node);
 
         static void SerialLoadDialogSprites(pugi::xml_node dialogSprites);
         static void SerialLoadEffects(pugi::xml_node effectsNode);

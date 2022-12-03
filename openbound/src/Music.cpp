@@ -1,54 +1,54 @@
-#include "AssetMusic.h"
+#include "Music.h"
 #include "Sburb.h"
 
 namespace SBURB {
-    AssetMusic::AssetMusic(std::string path, float startLoop) {
+    Music::Music(std::string path, float startLoop) {
         this->type = "music";
         this->path = path;
         this->startLoop = startLoop;
 
         this->asset = std::make_shared<sf::Music>();
-        this->asset->openFromFile(path);
+        this->asset->openFromFile(Sburb::ResolvePath(path));
        
         this->SetLoopPoints(startLoop);
     }
 
-    void AssetMusic::SetLoopPoints(float start)
+    void Music::SetLoopPoints(float start)
     {
         this->startLoop = start;
         this->asset->setLoopPoints(sf::Music::TimeSpan(sf::seconds(start), this->asset->getDuration()));
     }
 
-    void AssetMusic::Loop()
+    void Music::Loop()
     {
         this->asset->setLoop(true);
         this->asset->setPlayingOffset(sf::seconds(this->startLoop));
         this->asset->play();
     }
 
-    void AssetMusic::Play(float pos)
+    void Music::Play(float pos)
     {
         this->asset->setLoop(false);
         this->asset->setPlayingOffset(sf::seconds(pos));
         this->asset->play();
     }
 
-    void AssetMusic::Pause()
+    void Music::Pause()
     {
         this->asset->pause();
     }
 
-    void AssetMusic::Stop()
+    void Music::Stop()
     {
         this->asset->stop();
     }
 
-    bool AssetMusic::Ended()
+    bool Music::Ended()
     {
         return this->asset->getPlayingOffset() == this->asset->getDuration() && this->asset->getStatus() != sf::SoundStream::Playing;
     }
 
-    void AssetMusic::FixVolume()
+    void Music::FixVolume()
     {
         this->asset->setVolume(Sburb::GetInstance()->GetGlobalVolume());
     }

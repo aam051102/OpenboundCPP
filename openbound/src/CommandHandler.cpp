@@ -1,7 +1,7 @@
 #include "CommandHandler.h"
 #include "Sburb.h"
 #include "Parser.h"
-#include "AssetHandler.h"
+#include "AssetManager.h"
 #include "Serializer.h"
 
 #if defined(_WIN32) || defined(WIN32)
@@ -11,90 +11,164 @@
 
 #undef PlaySound
 
-namespace SBURB {
+namespace SBURB
+{
     std::shared_ptr<Trigger> CommandHandler::PerformActionSilent(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue)
     {
         action->SetTimes(action->GetTimes() - 1);
 
         std::string info = action->info;
-        if (info != "") {
+        if (info != "")
+        {
             info = trim(info);
         }
 
         std::string command = trim(action->GetCommand());
 
-        if(command == "talk") CommandHandler::Talk(info);
-        else if(command == "randomTalk") CommandHandler::RandomTalk(info);
-        else if(command == "changeRoom") CommandHandler::ChangeRoom(info);
-        else if(command == "changeFocus") CommandHandler::ChangeFocus(info);
-        else if(command == "teleport") CommandHandler::Teleport(info);
-        else if(command == "changeChar") CommandHandler::ChangeChar(info);
-        else if(command == "playSong") CommandHandler::PlaySong(info);
-        else if(command == "becomeNPC") CommandHandler::BecomeNPC(info);
-        else if(command == "becomePlayer") CommandHandler::BecomePlayer(info);
-        else if(command == "playSound") CommandHandler::PlaySound(info);
-        else if(command == "playEffect") CommandHandler::PlayEffect(info);
-        else if(command == "playAnimation") CommandHandler::PlayAnimation(info);
-        else if(command == "starAnimation") CommandHandler::StartAnimation(info);
-        else if(command == "addAction") CommandHandler::AddAction(info);
-        else if(command == "addActions") CommandHandler::AddActions(info);
-        else if(command == "removeAction") CommandHandler::RemoveAction(info);
-        else if(command == "removeActions") CommandHandler::RemoveActions(info);
-        else if(command == "presentAction") CommandHandler::PresentAction(info);
-        else if(command == "presentActions") CommandHandler::PresentActions(info);
-        else if(command == "openChest") CommandHandler::OpenChest(info);
-        else if(command == "deltaSprite") CommandHandler::DeltaSprite(info);
-        else if(command == "moveSprite") CommandHandler::MoveSprite(info);
-        else if(command == "depthSprite") CommandHandler::DepthSprite(info);
-        else if(command == "playMovie") CommandHandler::PlayMovie(info);
-        else if(command == "removeMovie") CommandHandler::RemoveMovie(info);
-        else if(command == "disableControl") CommandHandler::DisableControl(info);
-        else if(command == "enableControl") CommandHandler::EnableControl(info);
-        else if(command == "waitFor") return std::make_shared<Trigger>(CommandHandler::WaitFor(info));
-        else if(command == "macro") return std::make_shared<Trigger>(CommandHandler::Macro(info));
-        else if(command == "sleep") return std::make_shared<Trigger>(CommandHandler::Sleep(info));
-        else if(command == "pauseActionQueue") CommandHandler::PauseActionQueue(info);
-        else if(command == "pauseActionQueues") CommandHandler::PauseActionQueues(info);
-        else if(command == "resumeActionQueue") CommandHandler::ResumeActionQueue(info);
-        else if(command == "resumeActionQueues") CommandHandler::ResumeActionQueues(info);
-        else if(command == "cancelActionQueue") CommandHandler::CancelActionQueue(info);
-        else if(command == "cancelActionQueues") CommandHandler::CancelActionQueues(info);
-        else if(command == "pauseActionQueueGroup") CommandHandler::PauseActionQueueGroup(info);
-        else if(command == "pauseActionQueueGroups") CommandHandler::PauseActionQueueGroups(info);
-        else if(command == "resumeActionQueueGroup") CommandHandler::ResumeActionQueueGroup(info);
-        else if(command == "resumeActionQueueGroups") CommandHandler::ResumeActionQueueGroups(info);
-        else if(command == "cancelActionQueueGroup") CommandHandler::CancelActionQueueGroup(info);
-        else if(command == "cancelActionQueueGroups") CommandHandler::CancelActionQueueGroups(info);
-        else if(command == "addSprite") CommandHandler::AddSprite(info);
-        else if(command == "removeSprite") CommandHandler::RemoveSprite(info);
-        else if(command == "cloneSprite") CommandHandler::CloneSprite(info);
-        else if(command == "addWalkable") CommandHandler::AddWalkable(info);
-        else if(command == "addUnwalkable") CommandHandler::AddUnwalkable(info);
-        else if(command == "addMotionPath") CommandHandler::AddMotionPath(info);
-        else if(command == "removeWalkable") CommandHandler::RemoveWalkable(info);
-        else if(command == "removeUnwalkable") CommandHandler::RemoveUnwalkable(info);
-        else if(command == "toggleVolume") CommandHandler::ToggleVolume();
-        else if(command == "changeMode") CommandHandler::ChangeMode(info);
-        else if(command == "loadStateFile") CommandHandler::LoadStateFile(info);
-        else if(command == "fadeOut") CommandHandler::FadeOut();
-        else if(command == "changeRoomRemote") CommandHandler::ChangeRoomRemote(info);
-        else if(command == "teleportRemote") CommandHandler::TeleportRemote(info);
-        else if(command == "setButtonState") CommandHandler::SetButtonState(info);
-        else if(command == "skipDialog") CommandHandler::SkipDialog();
-        else if(command == "follow") CommandHandler::Follow(info);
-        else if(command == "unfollow") CommandHandler::Unfollow(info);
-        else if(command == "addOverlay") CommandHandler::AddOverlay(info);
-        else if(command == "removeOverlay") CommandHandler::RemoveOverlay(info);
-        else if(command == "save") CommandHandler::Save(info);
-        else if(command == "load") CommandHandler::Load(info);
-        else if(command == "saveOrLoad") CommandHandler::SaveOrLoad(info);
-        else if(command == "setgameState") CommandHandler::SetGameState(info);
-        else if(command == "goBack") CommandHandler::GoBack(info);
-        else if(command == "try") CommandHandler::Try(info);
-        else if(command == "walk") CommandHandler::Walk(info);
-        else if(command == "openLink") CommandHandler::OpenLink(info);
-        else if(command == "openDirect") CommandHandler::OpenDirect(info);
-        else if(command == "cancel") CommandHandler::Cancel(info);
+        if (command == "talk")
+            CommandHandler::Talk(info);
+        else if (command == "randomTalk")
+            CommandHandler::RandomTalk(info);
+        else if (command == "changeRoom")
+            CommandHandler::ChangeRoom(info);
+        else if (command == "changeFocus")
+            CommandHandler::ChangeFocus(info);
+        else if (command == "teleport")
+            CommandHandler::Teleport(info);
+        else if (command == "changeChar")
+            CommandHandler::ChangeChar(info);
+        else if (command == "playSong")
+            CommandHandler::PlaySong(info);
+        else if (command == "becomeNPC")
+            CommandHandler::BecomeNPC(info);
+        else if (command == "becomePlayer")
+            CommandHandler::BecomePlayer(info);
+        else if (command == "playSound")
+            CommandHandler::PlaySound(info);
+        else if (command == "playEffect")
+            CommandHandler::PlayEffect(info);
+        else if (command == "playAnimation")
+            CommandHandler::PlayAnimation(info);
+        else if (command == "starAnimation")
+            CommandHandler::StartAnimation(info);
+        else if (command == "addAction")
+            CommandHandler::AddAction(info);
+        else if (command == "addActions")
+            CommandHandler::AddActions(info);
+        else if (command == "removeAction")
+            CommandHandler::RemoveAction(info);
+        else if (command == "removeActions")
+            CommandHandler::RemoveActions(info);
+        else if (command == "presentAction")
+            CommandHandler::PresentAction(info);
+        else if (command == "presentActions")
+            CommandHandler::PresentActions(info);
+        else if (command == "openChest")
+            CommandHandler::OpenChest(info);
+        else if (command == "deltaSprite")
+            CommandHandler::DeltaSprite(info);
+        else if (command == "moveSprite")
+            CommandHandler::MoveSprite(info);
+        else if (command == "depthSprite")
+            CommandHandler::DepthSprite(info);
+        else if (command == "playMovie")
+            CommandHandler::PlayMovie(info);
+        else if (command == "removeMovie")
+            CommandHandler::RemoveMovie(info);
+        else if (command == "disableControl")
+            CommandHandler::DisableControl(info);
+        else if (command == "enableControl")
+            CommandHandler::EnableControl(info);
+        else if (command == "waitFor")
+            return std::make_shared<Trigger>(CommandHandler::WaitFor(info));
+        else if (command == "macro")
+            return std::make_shared<Trigger>(CommandHandler::Macro(info));
+        else if (command == "sleep")
+            return std::make_shared<Trigger>(CommandHandler::Sleep(info));
+        else if (command == "pauseActionQueue")
+            CommandHandler::PauseActionQueue(info);
+        else if (command == "pauseActionQueues")
+            CommandHandler::PauseActionQueues(info);
+        else if (command == "resumeActionQueue")
+            CommandHandler::ResumeActionQueue(info);
+        else if (command == "resumeActionQueues")
+            CommandHandler::ResumeActionQueues(info);
+        else if (command == "cancelActionQueue")
+            CommandHandler::CancelActionQueue(info);
+        else if (command == "cancelActionQueues")
+            CommandHandler::CancelActionQueues(info);
+        else if (command == "pauseActionQueueGroup")
+            CommandHandler::PauseActionQueueGroup(info);
+        else if (command == "pauseActionQueueGroups")
+            CommandHandler::PauseActionQueueGroups(info);
+        else if (command == "resumeActionQueueGroup")
+            CommandHandler::ResumeActionQueueGroup(info);
+        else if (command == "resumeActionQueueGroups")
+            CommandHandler::ResumeActionQueueGroups(info);
+        else if (command == "cancelActionQueueGroup")
+            CommandHandler::CancelActionQueueGroup(info);
+        else if (command == "cancelActionQueueGroups")
+            CommandHandler::CancelActionQueueGroups(info);
+        else if (command == "addSprite")
+            CommandHandler::AddSprite(info);
+        else if (command == "removeSprite")
+            CommandHandler::RemoveSprite(info);
+        else if (command == "cloneSprite")
+            CommandHandler::CloneSprite(info);
+        else if (command == "addWalkable")
+            CommandHandler::AddWalkable(info);
+        else if (command == "addUnwalkable")
+            CommandHandler::AddUnwalkable(info);
+        else if (command == "addMotionPath")
+            CommandHandler::AddMotionPath(info);
+        else if (command == "removeWalkable")
+            CommandHandler::RemoveWalkable(info);
+        else if (command == "removeUnwalkable")
+            CommandHandler::RemoveUnwalkable(info);
+        else if (command == "toggleVolume")
+            CommandHandler::ToggleVolume();
+        else if (command == "changeMode")
+            CommandHandler::ChangeMode(info);
+        else if (command == "loadStateFile")
+            CommandHandler::LoadStateFile(info);
+        else if (command == "fadeOut")
+            CommandHandler::FadeOut();
+        else if (command == "changeRoomRemote")
+            CommandHandler::ChangeRoomRemote(info);
+        else if (command == "teleportRemote")
+            CommandHandler::TeleportRemote(info);
+        else if (command == "setButtonState")
+            CommandHandler::SetButtonState(info);
+        else if (command == "skipDialog")
+            CommandHandler::SkipDialog();
+        else if (command == "follow")
+            CommandHandler::Follow(info);
+        else if (command == "unfollow")
+            CommandHandler::Unfollow(info);
+        else if (command == "addOverlay")
+            CommandHandler::AddOverlay(info);
+        else if (command == "removeOverlay")
+            CommandHandler::RemoveOverlay(info);
+        else if (command == "save")
+            CommandHandler::Save(info);
+        else if (command == "load")
+            CommandHandler::Load(info);
+        else if (command == "saveOrLoad")
+            CommandHandler::SaveOrLoad(info);
+        else if (command == "setgameState")
+            CommandHandler::SetGameState(info);
+        else if (command == "goBack")
+            CommandHandler::GoBack(info);
+        else if (command == "try")
+            CommandHandler::Try(info);
+        else if (command == "walk")
+            CommandHandler::Walk(info);
+        else if (command == "openLink")
+            CommandHandler::OpenLink(info);
+        else if (command == "openDirect")
+            CommandHandler::OpenDirect(info);
+        else if (command == "cancel")
+            CommandHandler::Cancel(info);
     }
 
     void CommandHandler::Talk(std::string info)
@@ -108,19 +182,23 @@ namespace SBURB {
         dialoger->StartDialog(info);
 
         int randomNum = floor(rand() * (dialoger->GetQueue().size() + 1));
-        if (randomNum) {
-            dialoger->SetQueue({ dialoger->GetQueueItem(randomNum - 1) });
+        if (randomNum)
+        {
+            dialoger->SetQueue({dialoger->GetQueueItem(randomNum - 1)});
             dialoger->NextDialog();
         }
-        else {
+        else
+        {
             dialoger->SetQueue({});
         }
     }
 
-    std::vector<std::string> ParseParams(std::string info) {
+    std::vector<std::string> ParseParams(std::string info)
+    {
         std::vector<std::string> params = split(info, ",");
-        
-        for (int i = 0; i < params.size(); i++) {
+
+        for (int i = 0; i < params.size(); i++)
+        {
             params[i] = trim(params[i]);
         }
 
@@ -137,11 +215,13 @@ namespace SBURB {
     void CommandHandler::ChangeFocus(std::string info)
     {
         auto params = ParseParams(info);
-        if (params[0] == "null") {
+        if (params[0] == "null")
+        {
             Sburb::GetInstance()->SetFocus(nullptr);
             Sburb::GetInstance()->SetDestFocus(nullptr);
         }
-        else {
+        else
+        {
             std::shared_ptr<Sprite> sprite = Parser::ParseCharacterString(params[0]);
             Sburb::GetInstance()->SetDestFocus(sprite);
         }
@@ -175,7 +255,7 @@ namespace SBURB {
     {
         auto params = ParseParams(info);
 
-        Sburb::GetInstance()->ChangeBGM(std::make_shared<AssetMusic>(params[0], stof(params[1])));
+        Sburb::GetInstance()->ChangeBGM(std::make_shared<Music>(params[0], stof(params[1])));
     }
 
     void CommandHandler::BecomeNPC(std::string info)
@@ -190,7 +270,7 @@ namespace SBURB {
 
     void CommandHandler::PlaySound(std::string info)
     {
-        Sburb::GetInstance()->PlaySound(std::make_shared<AssetSound>(trim(info)));
+        Sburb::GetInstance()->PlaySound(std::make_shared<Sound>(trim(info), AssetManager::GetAudioByName(trim(info))));
     }
 
     void CommandHandler::PlayEffect(std::string info)
@@ -221,7 +301,8 @@ namespace SBURB {
 
         std::vector<std::shared_ptr<Action>> actions = Parser::ParseActionString(actionString);
 
-        for (int i = 0; i < actions.size(); i++) {
+        for (int i = 0; i < actions.size(); i++)
+        {
             std::shared_ptr<Action> action = actions[i];
             sprite->AddAction(action);
         }
@@ -237,7 +318,8 @@ namespace SBURB {
         auto params = ParseParams(info);
         auto sprite = Parser::ParseCharacterString(params[0]);
 
-        for (int i = 1; i < params.size(); i++) {
+        for (int i = 1; i < params.size(); i++)
+        {
             sprite->RemoveAction(params[i]);
         }
     }
@@ -265,9 +347,11 @@ namespace SBURB {
 
         auto chest = Sburb::GetInstance()->GetSprite(trim(params[0]));
         auto item = Sburb::GetInstance()->GetSprite(trim(params[1]));
-        if (chest->GetAnimation("open")) {
+        if (chest->GetAnimation("open"))
+        {
             chest->StartAnimation("open");
-            if (AssetHandler::GetSoundByName("openSound")) {
+            if (AssetManager::GetAudioByName("openSound"))
+            {
                 CommandHandler::PlaySound("openSound");
             }
         }
@@ -291,8 +375,9 @@ namespace SBURB {
 
         lastAction->SetFollowUp(std::make_shared<Action>("deltaSprite", item->GetName() + ",0,-3", "", "", nullptr, true, "", 10));
         lastAction = lastAction->GetFollowUp();
-        
-        if (AssetHandler::GetSoundByName("itemGetSound")) {
+
+        if (AssetManager::GetAudioByName("itemGetSound"))
+        {
             lastAction->SetFollowUp(std::make_shared<Action>("playSound", "itemGetSound", "", "", nullptr, true, ""));
             lastAction = lastAction->GetFollowUp();
         }
@@ -303,11 +388,11 @@ namespace SBURB {
         lastAction->SetFollowUp(std::make_shared<Action>("talk", speech));
         lastAction = lastAction->GetFollowUp();
 
-        lastAction->SetFollowUp(std::make_shared<Action>("removeSprite", item->GetName()  + "," + Sburb::GetInstance()->GetCurrentRoom()->GetName()));
+        lastAction->SetFollowUp(std::make_shared<Action>("removeSprite", item->GetName() + "," + Sburb::GetInstance()->GetCurrentRoom()->GetName()));
         lastAction = lastAction->GetFollowUp();
 
         lastAction->SetFollowUp(Sburb::GetInstance()->GetQueue()->GetCurrentAction()->GetFollowUp());
-        
+
         Sburb::GetInstance()->PerformAction(newAction);
     }
 
@@ -316,10 +401,12 @@ namespace SBURB {
         auto params = ParseParams(info);
         std::shared_ptr<Sprite> sprite = nullptr;
 
-        if (params[0] == "char") {
+        if (params[0] == "char")
+        {
             sprite = Sburb::GetInstance()->GetCharacter();
         }
-        else {
+        else
+        {
             sprite = Sburb::GetInstance()->GetSprite(params[0]);
         }
 
@@ -370,12 +457,15 @@ namespace SBURB {
         Sburb::GetInstance()->SetPlayingMovie(false);
     }
 
-    void CommandHandler::DisableControl(std::string info) {
-        if (trim(info).size() > 0) {
-            Sburb::GetInstance()->SetInputDisabledTrigger(std::make_shared<Trigger>(std::vector({ info })));
+    void CommandHandler::DisableControl(std::string info)
+    {
+        if (trim(info).size() > 0)
+        {
+            Sburb::GetInstance()->SetInputDisabledTrigger(std::make_shared<Trigger>(std::vector({info})));
             Sburb::GetInstance()->SetInputDisabled(false);
         }
-        else {
+        else
+        {
             Sburb::GetInstance()->SetInputDisabled(true);
         }
     }
@@ -385,36 +475,43 @@ namespace SBURB {
         Sburb::GetInstance()->SetInputDisabled(false);
     }
 
-    Trigger CommandHandler::Macro(std::string info) {
+    Trigger CommandHandler::Macro(std::string info)
+    {
         std::vector<std::shared_ptr<Action>> actions = Parser::ParseActionString(info);
         std::shared_ptr<Action> action = actions[0];
-        if (!action->GetSilent()) {
+        if (!action->GetSilent())
+        {
             action->SetSilent("true");
         }
 
         std::shared_ptr<ActionQueue> newQueue = Sburb::GetInstance()->PerformAction(action);
-        if (newQueue) {
-            return Trigger({ "noActions," + newQueue->GetId() });
+        if (newQueue)
+        {
+            return Trigger({"noActions," + newQueue->GetId()});
         }
     }
 
-    Trigger CommandHandler::WaitFor(std::string info) {
+    Trigger CommandHandler::WaitFor(std::string info)
+    {
         CommandHandler::DisableControl(info);
         return CommandHandler::Sleep(info);
     }
 
-    Trigger CommandHandler::Sleep(std::string info) {
-        return Trigger({ info });
+    Trigger CommandHandler::Sleep(std::string info)
+    {
+        return Trigger({info});
     }
 
     void CommandHandler::PauseActionQueue(std::string info)
     {
         auto params = ParseParams(info);
 
-        for (int i = 0; i < params.size(); i++) {
+        for (int i = 0; i < params.size(); i++)
+        {
             std::shared_ptr<ActionQueue> queue = Sburb::GetInstance()->GetActionQueueById(params[i]);
-            
-            if (queue) {
+
+            if (queue)
+            {
                 queue->SetPaused(true);
             }
         }
@@ -428,10 +525,12 @@ namespace SBURB {
     void CommandHandler::ResumeActionQueue(std::string info)
     {
         auto params = ParseParams(info);
-        for (int i = 0; i < params.size(); i++) {
+        for (int i = 0; i < params.size(); i++)
+        {
             std::shared_ptr<ActionQueue> queue = Sburb::GetInstance()->GetActionQueueById(params[i]);
 
-            if (queue) {
+            if (queue)
+            {
                 queue->SetPaused(false);
             }
         }
@@ -445,7 +544,8 @@ namespace SBURB {
     void CommandHandler::CancelActionQueue(std::string info)
     {
         auto params = ParseParams(info);
-        for (int i = 0; i < params.size(); i++) {
+        for (int i = 0; i < params.size(); i++)
+        {
             Sburb::GetInstance()->RemoveActionQueueById(params[i]);
         }
     }
@@ -458,10 +558,10 @@ namespace SBURB {
     void CommandHandler::PauseActionQueueGroup(std::string info)
     {
         auto params = ParseParams(info);
-        for (int i = 0; i < params.size(); i++) {
-            Sburb::GetInstance()->ForEachActionQueueInGroup(params[i], [](std::shared_ptr<ActionQueue> queue) {
-                queue->SetPaused(true);
-            });
+        for (int i = 0; i < params.size(); i++)
+        {
+            Sburb::GetInstance()->ForEachActionQueueInGroup(params[i], [](std::shared_ptr<ActionQueue> queue)
+                                                            { queue->SetPaused(true); });
         }
     }
 
@@ -473,10 +573,10 @@ namespace SBURB {
     void CommandHandler::ResumeActionQueueGroup(std::string info)
     {
         auto params = ParseParams(info);
-        for (int i = 0; i < params.size(); i++) {
-            Sburb::GetInstance()->ForEachActionQueueInGroup(params[i], [](std::shared_ptr<ActionQueue> queue) {
-                queue->SetPaused(false);
-            });
+        for (int i = 0; i < params.size(); i++)
+        {
+            Sburb::GetInstance()->ForEachActionQueueInGroup(params[i], [](std::shared_ptr<ActionQueue> queue)
+                                                            { queue->SetPaused(false); });
         }
     }
 
@@ -488,7 +588,8 @@ namespace SBURB {
     void CommandHandler::CancelActionQueueGroup(std::string info)
     {
         auto params = ParseParams(info);
-        for (int i = 0; i < params.size(); i++) {
+        for (int i = 0; i < params.size(); i++)
+        {
             Sburb::GetInstance()->RemoveActionQueuesByGroup(params[i]);
         }
     }
@@ -528,7 +629,7 @@ namespace SBURB {
     void CommandHandler::AddWalkable(std::string info)
     {
         auto params = ParseParams(info);
-        std::shared_ptr<Path> path = AssetHandler::GetPathByName(params[0]);
+        std::shared_ptr<AssetPath> path = AssetManager::GetPathByName(params[0]);
         auto room = Sburb::GetInstance()->GetRoom(params[1]);
 
         room->AddWalkable(path);
@@ -537,7 +638,7 @@ namespace SBURB {
     void CommandHandler::AddUnwalkable(std::string info)
     {
         auto params = ParseParams(info);
-        std::shared_ptr<Path> path = AssetHandler::GetPathByName(params[0]);
+        std::shared_ptr<AssetPath> path = AssetManager::GetPathByName(params[0]);
         auto room = Sburb::GetInstance()->GetRoom(params[1]);
 
         room->AddUnwalkable(path);
@@ -546,19 +647,19 @@ namespace SBURB {
     void CommandHandler::AddMotionPath(std::string info)
     {
         auto params = ParseParams(info);
-        std::shared_ptr<Path> path = AssetHandler::GetPathByName(params[0]);
+        std::shared_ptr<AssetPath> path = AssetManager::GetPathByName(params[0]);
         auto room = Sburb::GetInstance()->GetRoom(params[7]);
 
         room->AddMotionPath(path,
-            stof(params[1]), stof(params[2]),
-            stof(params[3]), stof(params[4]),
-            stof(params[5]), stof(params[6]));
+                            stof(params[1]), stof(params[2]),
+                            stof(params[3]), stof(params[4]),
+                            stof(params[5]), stof(params[6]));
     }
 
     void CommandHandler::RemoveWalkable(std::string info)
     {
         auto params = ParseParams(info);
-        std::shared_ptr<Path> path = AssetHandler::GetPathByName(params[0]);
+        std::shared_ptr<AssetPath> path = AssetManager::GetPathByName(params[0]);
         auto room = Sburb::GetInstance()->GetRoom(params[1]);
 
         room->RemoveWalkable(path);
@@ -567,7 +668,7 @@ namespace SBURB {
     void CommandHandler::RemoveUnwalkable(std::string info)
     {
         auto params = ParseParams(info);
-        std::shared_ptr<Path> path = AssetHandler::GetPathByName(params[0]);
+        std::shared_ptr<AssetPath> path = AssetManager::GetPathByName(params[0]);
         auto room = Sburb::GetInstance()->GetRoom(params[1]);
 
         room->RemoveUnwalkable(path);
@@ -575,22 +676,27 @@ namespace SBURB {
 
     void CommandHandler::ToggleVolume()
     {
-        Sburb* game = Sburb::GetInstance();
+        Sburb *game = Sburb::GetInstance();
 
-        if (game->GetGlobalVolume() >= 1) {
+        if (game->GetGlobalVolume() >= 1)
+        {
             game->SetGlobalVolume(0);
         }
-        else if (game->GetGlobalVolume() >= 0.6) {
+        else if (game->GetGlobalVolume() >= 0.6)
+        {
             game->SetGlobalVolume(1);
         }
-        else if (game->GetGlobalVolume() >= 0.3) {
+        else if (game->GetGlobalVolume() >= 0.3)
+        {
             game->SetGlobalVolume(0.66);
         }
-        else {
+        else
+        {
             game->SetGlobalVolume(0.33);
         }
 
-        if (game->GetBGM()) {
+        if (game->GetBGM())
+        {
             game->GetBGM()->FixVolume();
         }
     }
@@ -616,8 +722,9 @@ namespace SBURB {
 
     void CommandHandler::ChangeRoomRemote(std::string info)
     {
-        if (Sburb::GetInstance()->GetLoadingRoom()) return;
-        Sburb::GetInstance()->SetLoadingRoom(true); //Only load one room at a time
+        if (Sburb::GetInstance()->GetLoadingRoom())
+            return;
+        Sburb::GetInstance()->SetLoadingRoom(true); // Only load one room at a time
 
         auto params = ParseParams(info);
         std::shared_ptr<Action> lastAction;
@@ -630,14 +737,15 @@ namespace SBURB {
         lastAction = lastAction->GetFollowUp();
 
         lastAction->SetFollowUp(Sburb::GetInstance()->GetQueue()->GetCurrentAction()->GetFollowUp());
-        
+
         Sburb::GetInstance()->PerformAction(newAction);
     }
 
     void CommandHandler::TeleportRemote(std::string info)
     {
-        if (Sburb::GetInstance()->GetLoadingRoom()) return;
-        Sburb::GetInstance()->SetLoadingRoom(true); //Only load one room at a time
+        if (Sburb::GetInstance()->GetLoadingRoom())
+            return;
+        Sburb::GetInstance()->SetLoadingRoom(true); // Only load one room at a time
         CommandHandler::ChangeRoomRemote(info);
 
         Sburb::GetInstance()->PlayEffect(Sburb::GetInstance()->GetEffect("teleportEffect"), Sburb::GetInstance()->GetCharacter()->GetX(), Sburb::GetInstance()->GetCharacter()->GetY());
@@ -714,11 +822,13 @@ namespace SBURB {
         bool local = params.size() > 0 && params[0] == "true";
         std::vector<std::shared_ptr<Action>> actions = {};
 
-        if (Sburb::GetInstance()->IsStateInStorage(false, local)) {
+        if (Sburb::GetInstance()->IsStateInStorage(false, local))
+        {
             actions.push_back(std::make_shared<Action>("load", "false, " + local, "Load " + Sburb::GetInstance()->GetStateDescription(false)));
         }
 
-        if (Sburb::GetInstance()->IsStateInStorage(true, local)) {
+        if (Sburb::GetInstance()->IsStateInStorage(true, local))
+        {
             actions.push_back(std::make_shared<Action>("load", "true, " + local, "Load " + Sburb::GetInstance()->GetStateDescription(true)));
         }
 
@@ -750,12 +860,14 @@ namespace SBURB {
     void CommandHandler::Try(std::string info)
     {
         std::vector<std::shared_ptr<Trigger>> triggers = Parser::ParseTriggerString(info);
-        
-        for (int i = 0; i < triggers.size(); i++) {
+
+        for (int i = 0; i < triggers.size(); i++)
+        {
             std::shared_ptr<Trigger> trigger = triggers[i];
             trigger->SetDetonate(true);
 
-            if (trigger->TryToTrigger()) {
+            if (trigger->TryToTrigger())
+            {
                 return;
             }
         }
@@ -767,13 +879,20 @@ namespace SBURB {
         auto character = std::static_pointer_cast<Character>(Parser::ParseCharacterString(params[0]));
         std::string dir = params[1];
 
-        if (dir == "Up") {
+        if (dir == "Up")
+        {
             character->MoveUp();
-        } else if (dir == "Down") {
+        }
+        else if (dir == "Down")
+        {
             character->MoveDown();
-        } else if (dir == "Left") {
+        }
+        else if (dir == "Left")
+        {
             character->MoveLeft();
-        } else if (dir == "Right") {
+        }
+        else if (dir == "Right")
+        {
             character->MoveRight();
         }
     }
@@ -783,11 +902,13 @@ namespace SBURB {
         auto params = ParseParams(info);
         std::string url = params[0];
         std::string text;
-        
-        if (params.size() >= 1 && params[1] != "") {
+
+        if (params.size() >= 1 && params[1] != "")
+        {
             text = params[1];
         }
-        else {
+        else
+        {
             text = url;
         }
 

@@ -3,14 +3,14 @@
 
 #include "Common.h"
 #include "Animation.h"
-#include "Path.h"
+#include "AssetPath.h"
 #include "Trigger.h"
 #include "Sprite.h"
 
 namespace SBURB
 {
 	struct MotionPath {
-		std::shared_ptr<Path> path;
+		std::shared_ptr<AssetPath> path;
 		int xtox;
 		int xtoy;
 		int ytox;
@@ -18,7 +18,7 @@ namespace SBURB
 		int dx;
 		int dy;
 
-		MotionPath(std::shared_ptr<Path> path, int xtox, int xtoy, int ytox, int ytoy, int dx, int dy) : path(path), xtox(xtox), xtoy(xtoy), ytox(ytox), ytoy(ytoy), dx(dx), dy(dy) {};
+		MotionPath(std::shared_ptr<AssetPath> path, int xtox, int xtoy, int ytox, int ytoy, int dx, int dy) : path(path), xtox(xtox), xtoy(xtoy), ytox(ytox), ytoy(ytoy), dx(dx), dy(dy) {};
 	};
 
     class Room : public sf::Drawable
@@ -33,13 +33,13 @@ namespace SBURB
 		void AddSprite(std::shared_ptr<Sprite> sprite);
 		bool RemoveSprite(std::shared_ptr<Sprite> sprite);
 
-		void AddMotionPath(std::shared_ptr<Path> path, int xtox, int xtoy, int ytox, int ytoy, int dx, int dy);
+		void AddMotionPath(std::shared_ptr<AssetPath> path, int xtox, int xtoy, int ytox, int ytoy, int dx, int dy);
 
-		void AddWalkable(std::shared_ptr<Path> path);
-		void RemoveWalkable(std::shared_ptr<Path> path);
+		void AddWalkable(std::shared_ptr<AssetPath> path);
+		void RemoveWalkable(std::shared_ptr<AssetPath> path);
 
-		void AddUnwalkable(std::shared_ptr<Path> path);
-		void RemoveUnwalkable(std::shared_ptr<Path> path);
+		void AddUnwalkable(std::shared_ptr<AssetPath> path);
+		void RemoveUnwalkable(std::shared_ptr<AssetPath> path);
 
 		void Enter();
 		void Exit();
@@ -65,8 +65,8 @@ namespace SBURB
 		void SetMapScale(int mapScale) { this->mapScale = mapScale; };
 		int GetMapScale() { return this->mapScale; };
 
-		void SetWalkableMap(std::shared_ptr<AssetTexture> walkableMap) { this->walkableMap = walkableMap; };
-		std::shared_ptr<AssetTexture> GetWalkableMap() { return this->walkableMap; };
+		void SetWalkableMap(std::shared_ptr<AssetGraphic> walkableMap) { this->walkableMap = walkableMap; };
+		std::shared_ptr<AssetGraphic> GetWalkableMap() { return this->walkableMap; };
 
 		void SetWidth(int width) { this->width = width; };
 		int GetWidth() { return this->width; };
@@ -80,11 +80,11 @@ namespace SBURB
 		int height;
 		std::vector<std::shared_ptr<Sprite>> sprites;
 		std::vector<std::shared_ptr<Animation>> effects;
-		std::vector<std::shared_ptr<Path>> walkables;
-		std::vector<std::shared_ptr<Path>> unwalkables;
+		std::vector<std::shared_ptr<AssetPath>> walkables;
+		std::vector<std::shared_ptr<AssetPath>> unwalkables;
 		std::vector<std::shared_ptr<MotionPath>> motionPaths;
 		std::vector<std::shared_ptr<Trigger>> triggers;
-		std::shared_ptr<AssetTexture> walkableMap;
+		std::shared_ptr<AssetGraphic> walkableMap;
 		std::shared_ptr<sf::Image> mapData;
 		int mapScale;
 

@@ -4,6 +4,7 @@
 #include "Common.h"
 #include "Action.h"
 #include "Sprite.h"
+#include "AssetGraphic.h"
 
 namespace SBURB
 {
@@ -23,7 +24,7 @@ namespace SBURB
         std::string Serialize(std::string output);
 
     protected:
-        std::shared_ptr<AssetTexture> sheet;
+        std::shared_ptr<AssetGraphic> sheet;
         bool pressed = false;
         bool mousePressed = false;
         bool clicked = false;

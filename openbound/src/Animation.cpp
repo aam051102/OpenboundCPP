@@ -1,10 +1,12 @@
 #include "Animation.h"
 #include "Serializer.h"
-#include "AssetHandler.h"
+#include "AssetManager.h"
 #include "BatchHandler.h"
 
-namespace SBURB {
-    Animation::Animation(std::string name, std::string sheetName, int x, int y, int colSize, int rowSize, int startPos, int length, std::string frameInterval, int loopNum, std::string followUp, bool flipX, bool flipY, bool sliced, int numCols, int numRows) {
+namespace SBURB
+{
+	Animation::Animation(std::string name, std::string sheetName, int x, int y, int colSize, int rowSize, int startPos, int length, std::string frameInterval, int loopNum, std::string followUp, bool flipX, bool flipY, bool sliced, int numCols, int numRows)
+	{
 		this->sheetName = sheetName;
 		this->sliced = sliced;
 		this->x = x;
@@ -20,17 +22,22 @@ namespace SBURB {
 		this->flipX = flipX;
 		this->flipY = flipY;
 
-		if (sliced) {
+		if (sliced)
+		{
 			this->numRows = numRows;
 			this->numCols = numCols;
 			this->sheets = {};
 
-			for (int colNum = 0; colNum < this->numCols; colNum++) {
-				for (int rowNum = 0; rowNum < this->numRows; rowNum++) {
-					std::shared_ptr<AssetTexture> texture = AssetHandler::GetTextureByName(sheetName + "_" + std::to_string(colNum) + "_" + std::to_string(rowNum));
+			for (int colNum = 0; colNum < this->numCols; colNum++)
+			{
+				for (int rowNum = 0; rowNum < this->numRows; rowNum++)
+				{
+					std::shared_ptr<AssetGraphic> texture = AssetManager::GetGraphicByName(sheetName + "_" + std::to_string(colNum) + "_" + std::to_string(rowNum));
 
-					if (texture) {
-						if (this->sheets.find(colNum) == this->sheets.end()) {
+					if (texture)
+					{
+						if (this->sheets.find(colNum) == this->sheets.end())
+						{
 							this->sheets[colNum] = {};
 						}
 
@@ -39,30 +46,38 @@ namespace SBURB {
 				}
 			}
 		}
-		else {
-			this->sheet = AssetHandler::GetTextureByName(sheetName);
-			this->numRows = this->sheet->getSize().y / this->rowSize;
-			this->numCols = this->sheet->getSize().x / this->colSize;
+		else
+		{
+			this->sheet = AssetManager::GetGraphicByName(sheetName);
+			this->numRows = this->sheet->GetAsset()->getSize().y / this->rowSize;
+			this->numCols = this->sheet->GetAsset()->getSize().x / this->colSize;
 		}
 
-		this->rowSize = rowSize ? rowSize : this->sheet->getSize().y;
-		this->colSize = colSize ? colSize : this->sheet->getSize().x;
+		this->rowSize = rowSize ? rowSize : this->sheet->GetAsset()->getSize().y;
+		this->colSize = colSize ? colSize : this->sheet->GetAsset()->getSize().x;
 
-		if (frameInterval == "") {
+		if (frameInterval == "")
+		{
 			this->frameInterval = 1;
-		} else {
-			if (frameInterval.find(":") == -1) {
+		}
+		else
+		{
+			if (frameInterval.find(":") == -1)
+			{
 				this->frameInterval = stoi(frameInterval);
 			}
-			else {
+			else
+			{
 				std::vector<std::string> intervals = split(frameInterval, ",");
 				this->frameIntervals = {};
 
-				for (int i = 0; i < intervals.size(); i++) {
+				for (int i = 0; i < intervals.size(); i++)
+				{
 					std::vector<std::string> pair = split(intervals[i], ":");
 					this->frameIntervals[stoi(pair[0])] = stoi(pair[1]);
 				}
-				if (!this->frameIntervals[0]) {
+				if (!this->frameIntervals[0])
+				{
 					this->frameIntervals[0] = 1;
 				}
 				this->frameInterval = this->frameIntervals[this->curFrame];
@@ -72,55 +87,68 @@ namespace SBURB {
 		// Set transform
 		setPosition(this->x, this->y);
 		setScale(this->flipX ? -1 : 1, this->flipY ? -1 : 1);
-    }
+	}
 
-    Animation::~Animation() {
+	Animation::~Animation()
+	{
+	}
 
-    }
-
-	void Animation::NextFrame() {
+	void Animation::NextFrame()
+	{
 		this->curFrame++;
 
-		if (this->curFrame >= this->length) {
-			if (this->curLoop == this->loopNum) {
+		if (this->curFrame >= this->length)
+		{
+			if (this->curLoop == this->loopNum)
+			{
 				this->curFrame = this->length - 1;
 			}
-			else {
+			else
+			{
 				this->curFrame = 0;
-				if (this->loopNum >= 0) {
+				if (this->loopNum >= 0)
+				{
 					this->curLoop++;
 				}
 			}
 		}
 
-		if (this->frameIntervals[this->curFrame]) {
+		if (this->frameIntervals[this->curFrame])
+		{
 			this->frameInterval = this->frameIntervals[this->curFrame];
 		}
 	}
 
-	void Animation::Update() {
+	void Animation::Update()
+	{
 		this->curInterval++;
 
-		while (this->curInterval > this->frameInterval) {
+		while (this->curInterval > this->frameInterval)
+		{
 			this->curInterval -= this->frameInterval;
 			NextFrame();
 		}
 	}
 
-	void Animation::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+	void Animation::draw(sf::RenderTarget &target, sf::RenderStates states) const
+	{
 		states.transform *= getTransform();
 
-		if (this->sliced) {
+		if (this->sliced)
+		{
 			// TODO: Keep inside of camera view for optimization??? May not be necessary.
 
-			for (int colNum = 0; colNum <= this->numCols; colNum++) {
-				for (int rowNum = 0; rowNum <= this->numRows; rowNum++) {
-					if (this->sheets.at(colNum).at(rowNum)) {
-						std::shared_ptr<AssetTexture> sheet = this->sheets.at(colNum).at(rowNum);
+			for (int colNum = 0; colNum <= this->numCols; colNum++)
+			{
+				for (int rowNum = 0; rowNum <= this->numRows; rowNum++)
+				{
+					if (this->sheets.at(colNum).at(rowNum))
+					{
+						std::shared_ptr<AssetGraphic> sheet = this->sheets.at(colNum).at(rowNum);
 						int frameX = 0;
 						int frameY = 0;
-						int drawWidth = sheet->getSize().x;
-						int drawHeight = sheet->getSize().y;
+						int drawWidth = sheet->GetAsset()->getSize().x;
+						int drawHeight = sheet->GetAsset()->getSize().y;
 						int offsetX = colNum * this->colSize;
 						int offsetY = rowNum * this->rowSize;
 
@@ -147,7 +175,8 @@ namespace SBURB {
 				}
 			}
 		}
-		else {
+		else
+		{
 			int colNum = ((this->startPos + this->curFrame) % this->numCols);
 			int rowNum = (floor((this->startPos + this->curFrame - colNum) / this->numCols));
 			int frameX = colNum * this->colSize;
@@ -155,7 +184,7 @@ namespace SBURB {
 			int drawWidth = this->colSize;
 			int drawHeight = this->rowSize;
 
-			sf::FloatRect transformRect({ 0, 0 }, sf::Vector2f(drawWidth, drawHeight));
+			sf::FloatRect transformRect({0, 0}, sf::Vector2f(drawWidth, drawHeight));
 			transformRect = states.transform.transformRect(transformRect);
 			sf::VertexArray arr(sf::Quads, 4);
 			arr[0].position = sf::Vector2f(transformRect.left, transformRect.top);
@@ -177,19 +206,24 @@ namespace SBURB {
 		}
 	}
 
-	void Animation::Reset() {
+	void Animation::Reset()
+	{
 		this->curFrame = 0;
 		this->curInterval = 0;
 		this->curLoop = 0;
 	}
 
-	bool Animation::HasPlayed() {
+	bool Animation::HasPlayed()
+	{
 		return this->curLoop == this->loopNum && this->curFrame == this->length - 1;
 	}
 
-	bool Animation::IsVisuallyUnder(int x, int y) {
-		if (x >= this->x && x <= this->x + this->colSize) {
-			if (y >= this->y && y <= this->y + this->rowSize) {
+	bool Animation::IsVisuallyUnder(int x, int y)
+	{
+		if (x >= this->x && x <= this->x + this->colSize)
+		{
+			if (y >= this->y && y <= this->y + this->rowSize)
+			{
 				return true;
 			}
 		}
@@ -197,43 +231,51 @@ namespace SBURB {
 		return false;
 	}
 
-	void Animation::SetColSize(int newSize) {
+	void Animation::SetColSize(int newSize)
+	{
 		this->colSize = newSize;
-		this->numCols = this->sheet->getSize().x / this->colSize;
+		this->numCols = this->sheet->GetAsset()->getSize().x / this->colSize;
 		Reset();
 	}
 
-	void Animation::SetRowSize(int newSize) {
+	void Animation::SetRowSize(int newSize)
+	{
 		this->rowSize = newSize;
-		this->numRows = this->sheet->getSize().y / this->rowSize;
+		this->numRows = this->sheet->GetAsset()->getSize().y / this->rowSize;
 		Reset();
 	}
 
-	void Animation::SetX(int newX) {
+	void Animation::SetX(int newX)
+	{
 		this->x = newX;
 		setPosition(this->x, this->y);
 	};
 
-	void Animation::SetY(int newY) {
+	void Animation::SetY(int newY)
+	{
 		this->y = newY;
 		setPosition(this->x, this->y);
 	};
 
-	void Animation::SetFlipX(bool newFlipX) {
+	void Animation::SetFlipX(bool newFlipX)
+	{
 		this->flipX = newFlipX;
 		setScale(this->flipX, this->flipY);
 	};
 
-	void Animation::SetFlipY(bool newFlipY) {
+	void Animation::SetFlipY(bool newFlipY)
+	{
 		this->flipY = newFlipY;
 		setScale(this->flipY, this->flipY);
 	};
 
-	Animation Animation::Clone(int x, int y) {
+	Animation Animation::Clone(int x, int y)
+	{
 		return Animation(this->name, this->sheetName, x + this->x, y + this->y, this->colSize, this->rowSize, this->startPos, this->length, std::to_string(this->frameInterval), this->loopNum, this->followUp, this->flipX, this->flipY, this->sliced, this->numCols, this->numRows);
 	}
 
-	std::string Animation::Serialize(std::string output) {
+	std::string Animation::Serialize(std::string output)
+	{
 		std::string frameInterval = "";
 		bool firstInterval = true;
 
@@ -241,7 +283,7 @@ namespace SBURB {
 		{
 			for (std::pair<int, int> interval : this->frameIntervals)
 			{
-				frameInterval = frameInterval + (firstInterval ? "" : ",") + std::to_string(interval.first )+ ":" + std::to_string(interval.second);
+				frameInterval = frameInterval + (firstInterval ? "" : ",") + std::to_string(interval.first) + ":" + std::to_string(interval.second);
 				firstInterval = false;
 			}
 		}
@@ -251,21 +293,21 @@ namespace SBURB {
 		}
 
 		output = output + "\n<animation " +
-			("sheet='" + this->sheetName + "' ") +
-			((this->name != "image") ? "name='" + this->name + "' " : "") +
-			Serializer::SerializeAttribute("x", this->x) +
-			Serializer::SerializeAttribute("y", this->y) +
-			((this->rowSize != this->sheet->getSize().y) ? "rowSize='" + std::to_string(this->rowSize) + "' " : "") +
-			((this->colSize != this->sheet->getSize().x) ? "colSize='" + std::to_string(this->colSize) + "' " : "") +
-			Serializer::SerializeAttribute("startPos", this->startPos) +
-			((this->length != 1) ? "length='" + std::to_string(this->length) + "' " : "") +
-			((frameInterval != "") ? "frameInterval='" + frameInterval + "' " : "") +
-			((this->loopNum != -1) ? "loopNum='" + std::to_string(this->loopNum) + "' " : "") +
-			Serializer::SerializeAttribute("followUp", this->followUp) +
-			Serializer::SerializeAttribute("flipX", this->flipX) +
-			Serializer::SerializeAttribute("flipY", this->flipY) +
-			(this->sliced ? ("sliced='true' numCols='" + std::to_string(this->numCols) + "' numRows='" + std::to_string(this->numRows) + "' ") : ("")) +
-			" />";
+				 ("sheet='" + this->sheetName + "' ") +
+				 ((this->name != "image") ? "name='" + this->name + "' " : "") +
+				 Serializer::SerializeAttribute("x", this->x) +
+				 Serializer::SerializeAttribute("y", this->y) +
+				 ((this->rowSize != this->sheet->GetAsset()->getSize().y) ? "rowSize='" + std::to_string(this->rowSize) + "' " : "") +
+				 ((this->colSize != this->sheet->GetAsset()->getSize().x) ? "colSize='" + std::to_string(this->colSize) + "' " : "") +
+				 Serializer::SerializeAttribute("startPos", this->startPos) +
+				 ((this->length != 1) ? "length='" + std::to_string(this->length) + "' " : "") +
+				 ((frameInterval != "") ? "frameInterval='" + frameInterval + "' " : "") +
+				 ((this->loopNum != -1) ? "loopNum='" + std::to_string(this->loopNum) + "' " : "") +
+				 Serializer::SerializeAttribute("followUp", this->followUp) +
+				 Serializer::SerializeAttribute("flipX", this->flipX) +
+				 Serializer::SerializeAttribute("flipY", this->flipY) +
+				 (this->sliced ? ("sliced='true' numCols='" + std::to_string(this->numCols) + "' numRows='" + std::to_string(this->numRows) + "' ") : ("")) +
+				 " />";
 
 		return output;
 	}

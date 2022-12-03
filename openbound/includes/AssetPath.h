@@ -1,23 +1,22 @@
-#ifndef SBURB_PATH_H
-#define SBURB_PATH_H
+#ifndef SBURB_ASSET_PATH_H
+#define SBURB_ASSET_PATH_H
 
 #include <Common.h>
+#include "Asset.h"
 
 namespace SBURB {
-    class Path {
+    class AssetPath : public Asset {
     public:
-        Path();
-        ~Path();
+        AssetPath(std::string name, std::vector<Vector2> points);
 
         void Push(Vector2 point);
         void QueryBatchPos(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results);
         void QueryBatchNeg(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results);
         bool Query(Vector2 point);
 
-        std::string GetName() { return this->name; };
+        std::vector<Vector2> GetPoints() { return this->points; };
 
     private:
-        std::string name;
         std::vector<Vector2> points;
 
     };

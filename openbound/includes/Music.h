@@ -1,15 +1,15 @@
-#ifndef SBURB_ASSET_MUSIC_H
-#define SBURB_ASSET_MUSIC_H
+#ifndef SBURB_MUSIC_H
+#define SBURB_MUSIC_H
 
 #include "Common.h"
 #include <SFML/Audio/Music.hpp>
 
 namespace SBURB
 {
-    class AssetMusic
+    class Music
     {
     public:
-        AssetMusic(std::string path, float startLoop = 0);
+        Music(std::string path, float startLoop = 0);
 
         void SetLoopPoints(float start);
         void Loop();

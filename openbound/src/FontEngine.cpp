@@ -1,5 +1,6 @@
 #include "FontEngine.h"
 #include "Sburb.h"
+#include "AssetManager.h"
 
 namespace SBURB {
     FontEngine::FontEngine(std::string text) {
@@ -81,7 +82,7 @@ namespace SBURB {
 		int lineStart = 0;
 
 		sf::Text textMeasurer;
-		textMeasurer.setFont(*Sburb::GetInstance()->GetFont(this->fontName));
+		textMeasurer.setFont(*AssetManager::GetFontByName(this->fontName)->GetAsset());
 		textMeasurer.setCharacterSize(this->fontSize);
 		textMeasurer.setStyle(this->fontStyle);
 
@@ -367,7 +368,7 @@ namespace SBURB {
 		int offsetX = 0;
 
 		sf::Text textWriter;
-		textWriter.setFont(*Sburb::GetInstance()->GetFont(this->fontName));
+		textWriter.setFont(*AssetManager::GetFontByName(this->fontName)->GetAsset());
 		textWriter.setCharacterSize(this->fontSize);
 
 		while (i < floor(this->height / this->lineHeight) && i < this->lines.size()) {

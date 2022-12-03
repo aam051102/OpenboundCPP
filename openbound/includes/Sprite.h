@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Common.h"
-#include "AssetTexture.h"
+#include "AssetGraphic.h"
 #include "Animation.h"
 #include "Action.h"
 #include "Room.h"

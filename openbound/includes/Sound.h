@@ -1,5 +1,5 @@
-#ifndef SBURB_ASSET_SOUND_H
-#define SBURB_ASSET_SOUND_H
+#ifndef SBURB_SOUND_H
+#define SBURB_SOUND_H
 
 #include "Common.h"
 #include <SFML/Audio/Sound.hpp>
@@ -7,10 +7,10 @@
 
 namespace SBURB
 {
-    class AssetSound
+    class Sound
     {
     public:
-        AssetSound(std::string path);
+        Sound(std::string name, std::shared_ptr<sf::SoundBuffer> buffer);
 
         void Play(float pos = 0);
         void Pause();
@@ -25,12 +25,10 @@ namespace SBURB
 
     private:
         std::string name;
-        std::string path;
         std::string type;
 
         sf::Sound asset;
-        sf::SoundBuffer buffer;
-
+        std::shared_ptr<sf::SoundBuffer> buffer;
     };
 }
 
