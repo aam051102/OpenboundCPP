@@ -282,6 +282,7 @@ namespace SBURB
 
 	std::shared_ptr<Character> Parser::ParseCharacter(pugi::xml_node node)
 	{
+		std::cout << node.name() << ": " << node.attribute("sheet").as_string() << std::endl;
 		auto newChar = std::make_shared<Character>(std::string(node.attribute("name").as_string()),
 									  node.attribute("x").as_int(),
 									  node.attribute("y").as_int(),
@@ -314,7 +315,8 @@ namespace SBURB
 			}
 		}
 
-		auto anims = node.children("animation");
+		auto anims = GetNestedChildren(&node, "animation");
+
 		for (auto anim : anims)
 		{
 			std::shared_ptr<Animation> newAnim = ParseAnimation(anim);
@@ -388,7 +390,7 @@ namespace SBURB
 		auto newSprite = std::make_shared<Fighter>(name, x, y, width, height);
 		newSprite->SetFacing(newFacing);
 
-		auto anims = node.children("animation");
+		auto anims = GetNestedChildren(&node, "animation");
 		for (pugi::xml_node anim : anims)
 		{
 			std::shared_ptr<Animation> newAnim = ParseAnimation(anim);
@@ -432,9 +434,9 @@ namespace SBURB
 			}
 		}
 
-		Serializer::SerialLoadRoomSprites(newRoom, node.children("sprite"));
-		Serializer::SerialLoadRoomSprites(newRoom, node.children("character"));
-		Serializer::SerialLoadRoomSprites(newRoom, node.children("fighter"));
+		Serializer::SerialLoadRoomSprites(newRoom, GetNestedChildren(&node, "sprite"));
+		Serializer::SerialLoadRoomSprites(newRoom, GetNestedChildren(&node, "character"));
+		Serializer::SerialLoadRoomSprites(newRoom, GetNestedChildren(&node, "fighter"));
 
 		auto paths = node.child("paths");
 		if (!paths)
@@ -466,7 +468,7 @@ namespace SBURB
 
 		auto newSprite = std::make_shared<Sprite>(name, x, y, width, height, dx, dy, depthing, collidable);
 
-		auto anims = node.children("animation");
+		auto anims = GetNestedChildren(&node, "animation");
 
 		for (pugi::xml_node anim : anims)
 		{

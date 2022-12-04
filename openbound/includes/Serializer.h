@@ -84,7 +84,7 @@ namespace SBURB {
 
         static void SerialLoadDialogSprites(pugi::xml_node dialogSprites);
         static void SerialLoadEffects(pugi::xml_node effectsNode);
-        static void SerialLoadRoomSprites(std::shared_ptr<Room> newRoom, pugi::xml_object_range<pugi::xml_named_node_iterator> roomSprites);
+        static void SerialLoadRoomSprites(std::shared_ptr<Room> newRoom, std::vector<pugi::xml_node> roomSprites);
         static void SerialLoadRoomPaths(std::shared_ptr<Room> newRoom, pugi::xml_node pathsNode);
         static void SerialLoadRoomTriggers(std::shared_ptr<Room> newRoom, pugi::xml_node triggersNode);
     };

@@ -15,6 +15,7 @@ namespace SBURB
     static std::map<std::string, pugi::xml_node> templateClasses;
     static int loadingDepth = 0;
     static std::vector<pugi::xml_node> loadQueue;
+    static pugi::xml_document templateDoc;
 
     std::string Serializer::Serialize()
     {
@@ -274,11 +275,11 @@ namespace SBURB
             return false;
         }
 
-        // NOTE: DOC NEEDS TO BE KEPT ALIVE!!
+        // NOTE: IS THIS DOC KEPT ALIVE? MAYBE? PLAUSIBLY?
         Serializer::LoadSerial(&doc, keepOld);
     }
 
-    // IS THIS DOC KEPT ALIVE? I DON'T KNOW.
+    // IS THIS DOC KEPT ALIVE? PROBABLY NOT!
     pugi::xml_document Serializer::ParseXML(std::string inText)
     {
         pugi::xml_document doc;
@@ -302,6 +303,7 @@ namespace SBURB
 
         if (!keepOld)
         {
+            templateDoc.reset();
             PurgeAssets();
             Sburb::GetInstance()->PurgeState();
         }
@@ -362,11 +364,14 @@ namespace SBURB
 
         if (dependenciesNode)
         {
-            auto dependencyNodes = dependenciesNode.children("dependency");
+            auto dependencyNodes = GetNestedChildren(&dependenciesNode, "dependency");
+
+            std::cout << "LOADING DEPENDENCIES:" << std::endl;
 
             for (pugi::xml_node dependencyNode : dependencyNodes)
             {
                 auto dependencyPath = dependencyNode.text().as_string();
+                std::cout << "dependency: " << dependencyPath << std::endl;
 
                 LoadSerialFromXML(trim(dependencyPath), true);
             }
@@ -391,7 +396,7 @@ namespace SBURB
 
         if (assetsNode)
         {
-            auto assetNodes = assetsNode.children("asset");
+            auto assetNodes = GetNestedChildren(&assetsNode, "asset");
 
             for (pugi::xml_node assetNode : assetNodes)
             {
@@ -472,9 +477,11 @@ namespace SBURB
         {
             pugi::xml_node input = loadQueue[0];
             loadQueue.erase(loadQueue.begin() + 0);
+
             // These two have to be first
             ParseTemplateClasses(input);
             ApplyTemplateClasses(input);
+
             ParseButtons(input);
             ParseSprites(input);
             ParseCharacters(input);
@@ -485,7 +492,7 @@ namespace SBURB
             ParseHud(input);
             ParseEffects(input);
 
-            // should be last
+            // Should be last
             ParseState(input);
 
             // Relies on Sburb.nextQueueId being set when no Id is provided
@@ -502,16 +509,18 @@ namespace SBURB
     {
         auto classes = node.child("classes");
 
-        if (!classes)
+        if (classes)
         {
             auto templates = classes.children();
+
             for (pugi::xml_node templateNode : templates)
             {
                 if (templateNode.name() != "#text" && templateNode.name() != "#comment")
                 {
                     ApplyTemplateClasses(templateNode);
 
-                    templateClasses[templateNode.attribute("class").as_string()] = templateNode;
+                    pugi::xml_node templateCopyNode = templateDoc.append_copy(templateNode);
+                    templateClasses[templateCopyNode.attribute("class").as_string()] = templateCopyNode;
                 }
             }
 
@@ -523,7 +532,7 @@ namespace SBURB
     {
         for (auto templateNode : templateClasses)
         {
-            auto candidates = node.children(templateNode.second.name());
+            auto candidates = GetNestedChildren(&node, templateNode.second.name());
 
             for (pugi::xml_node candidate : candidates)
             {
@@ -538,6 +547,7 @@ namespace SBURB
         std::string candClass = candidateNode.attribute("class").as_string();
         if (candClass != "" && candClass == templateClass)
         {
+            std::cout << "applied template " << templateClass << std::endl;
             Serializer::ApplyTemplate(templateNode, candidateNode);
         }
     }
@@ -549,9 +559,9 @@ namespace SBURB
 
         for (auto tempAttribute : templateNode.attributes())
         {
-            if (!candidateNode.attribute(tempAttribute.name()))
+            if (candidateNode.attribute(tempAttribute.name()).as_string() == "")
             {
-                candidateNode.attribute(tempAttribute.name()).set_value(tempAttribute.as_string());
+                candidateNode.append_attribute(tempAttribute.name()).set_value(tempAttribute.as_string());
             }
         }
 
@@ -559,11 +569,15 @@ namespace SBURB
         {
             candidateNode.append_copy(tempChild);
         }
+
+        std::ostringstream ss;
+        candidateNode.print(ss, "  ", pugi::format_raw);
+        std::cout << ss.str() << std::endl;
     }
 
     void Serializer::ParseButtons(pugi::xml_node node)
     {
-        auto newButtons = node.children("spritebutton");
+        auto newButtons = GetNestedChildren(&node, "spritebutton");
 
         for (pugi::xml_node curButton : newButtons)
         {
@@ -574,7 +588,7 @@ namespace SBURB
 
     void Serializer::ParseSprites(pugi::xml_node node)
     {
-        auto newSprites = node.children("sprite");
+        auto newSprites = GetNestedChildren(&node, "sprite");
 
         for (pugi::xml_node curSprite : newSprites)
         {
@@ -604,11 +618,12 @@ namespace SBURB
 
     void Serializer::ParseCharacters(pugi::xml_node node)
     {
-        auto newChars = node.children("character");
-        std::cout << "Parsing Chars:" << std::endl;
+        auto newChars = GetNestedChildren(&node, "character");
+
+        std::cout << "PARSING CHARS: " << std::endl;
         for (pugi::xml_node curChar : newChars)
         {
-            std::cout << "parsing char " << std::endl;
+            std::cout << "char: " << std::endl;
             auto newChar = Parser::ParseCharacter(curChar);
             Sburb::GetInstance()->SetSprite(newChar->GetName(), std::static_pointer_cast<Sprite>(newChar));
             ParseActions(curChar, *newChar);
@@ -617,7 +632,7 @@ namespace SBURB
 
     void Serializer::ParseFighters(pugi::xml_node node)
     {
-        auto newFighters = node.children("fighter");
+        auto newFighters = GetNestedChildren(&node, "fighter");
 
         for (pugi::xml_node curFighter : newFighters)
         {
@@ -629,7 +644,7 @@ namespace SBURB
 
     void Serializer::ParseRooms(pugi::xml_node node)
     {
-        auto newRooms = node.children("room");
+        auto newRooms = GetNestedChildren(&node, "room");
 
         for (pugi::xml_node curRoom : newRooms)
         {
@@ -640,7 +655,7 @@ namespace SBURB
 
     void Serializer::ParseGameState(pugi::xml_node node)
     {
-        auto newGameStates = node.children("gameState");
+        auto newGameStates = GetNestedChildren(&node, "gameState");
 
         for (pugi::xml_node curGameState : newGameStates)
         {
@@ -839,7 +854,7 @@ namespace SBURB
             dialoger->SetDialogSpriteRight(std::make_shared<Sprite>("dialogSprite", Sburb::GetInstance()->GetViewSize().x + 1000, Sburb::GetInstance()->GetViewSize().y, 0, 0));
         }
 
-        auto animations = dialogSprites.children("animation");
+        auto animations = GetNestedChildren(&dialogSprites, "animation");
         for (pugi::xml_node anim : animations)
         {
             dialoger->GetDialogSpriteLeft()->AddAnimation(Parser::ParseAnimation(anim));
@@ -849,7 +864,7 @@ namespace SBURB
 
     void Serializer::SerialLoadEffects(pugi::xml_node effectsNode)
     {
-        auto animations = effectsNode.children("animation");
+        auto animations = GetNestedChildren(&effectsNode, "animation");
         for (pugi::xml_node anim : animations)
         {
             auto newEffect = Parser::ParseAnimation(anim);
@@ -857,7 +872,7 @@ namespace SBURB
         }
     }
 
-    void Serializer::SerialLoadRoomSprites(std::shared_ptr<Room> newRoom, pugi::xml_object_range<pugi::xml_named_node_iterator> roomSprites)
+    void Serializer::SerialLoadRoomSprites(std::shared_ptr<Room> newRoom, std::vector<pugi::xml_node> roomSprites)
     {
         for (pugi::xml_node curSprite : roomSprites)
         {
@@ -868,19 +883,19 @@ namespace SBURB
 
     void Serializer::SerialLoadRoomPaths(std::shared_ptr<Room> newRoom, pugi::xml_node pathsNode)
     {
-        auto walkables = pathsNode.children("walkable");
+        auto walkables = GetNestedChildren(&pathsNode, "walkable");
         for (pugi::xml_node node : walkables)
         {
             newRoom->AddWalkable(AssetManager::GetPathByName(node.attribute("path").as_string()));
         }
 
-        auto unwalkables = pathsNode.children("unwalkable");
+        auto unwalkables = GetNestedChildren(&pathsNode, "unwalkable");
         for (pugi::xml_node node : unwalkables)
         {
             newRoom->AddUnwalkable(AssetManager::GetPathByName(node.attribute("path").as_string()));
         }
 
-        auto motionPaths = pathsNode.children("motionpath");
+        auto motionPaths = GetNestedChildren(&pathsNode, "motionpath");
         for (pugi::xml_node node : motionPaths)
         {
             newRoom->AddMotionPath(

@@ -8,6 +8,8 @@
 #include <iomanip>
 #include <sstream>
 #include <SFML/Graphics.hpp>
+#include <pugixml.hpp>
+#include <iostream>
 
 const std::map<char, bool> specialCharsIgnore = {
     {'a', true}
@@ -190,6 +192,25 @@ namespace SBURB
     static inline std::string replace(std::string s, std::string oldSubstr, std::string newSubstr) {
         // TODO
         return "";
+    }
+
+    static inline std::vector<pugi::xml_node> GetNestedChildren(pugi::xml_node* node, std::string tagName)
+    {
+        std::vector<pugi::xml_node> nodes = {};
+
+        for (auto child : node->children()) {
+            //std::cout << "child-" << child.name() << std::endl;
+            
+            if (child.name() == tagName) {
+                nodes.push_back(child);
+            }
+            else {
+                auto childsChildren = GetNestedChildren(&child, tagName);
+                nodes.insert(nodes.end(), childsChildren.begin(), childsChildren.end());
+            }
+        }
+
+        return nodes;
     }
 
 }
