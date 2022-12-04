@@ -12,7 +12,6 @@ namespace SBURB
     {
     public:
         Character(std::string name, int x, int y, int width, int height, int sx, int sy, int sWidth, int sHeight, std::string sheetName, bool bootstrap = false);
-        ~Character();
 
         void Update() override;
         void HandleFollowing();

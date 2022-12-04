@@ -20,7 +20,6 @@ namespace SBURB
 	std::vector<std::shared_ptr<Action>> Parser::ParseActionString(std::string str)
 	{
 		std::vector<std::shared_ptr<Action>> actions = {};
-		str = "<sburb>" + str + "</sburb>";
 
 		pugi::xml_document input = Serializer::ParseXML(str);
 
@@ -38,7 +37,6 @@ namespace SBURB
 	std::vector<std::shared_ptr<Trigger>> Parser::ParseTriggerString(std::string str)
 	{
 		std::vector<std::shared_ptr<Trigger>> triggers = {};
-		str = "<triggers>" + str + "</triggers>";
 
 		pugi::xml_document input = Serializer::ParseXML(str);
 

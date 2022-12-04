@@ -40,10 +40,6 @@ namespace SBURB {
 		this->BecomeNPC();
     }
 
-    Character::~Character() {
-
-    }
-
 	void Character::Update() {
 		this->HandleFollowing();
 
