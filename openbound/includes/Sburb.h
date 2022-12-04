@@ -160,6 +160,8 @@ namespace SBURB
 
         static std::string ResolvePath(std::string path);
 
+        void SetDimensions(float width, float height);
+
         Window window;
 
         std::string name;

@@ -338,15 +338,14 @@ namespace SBURB
         std::string width = rootNode.attribute("width").value();
         if (width != "")
         {
-            Sburb::GetInstance()->window.SetSize({stoi(width), Sburb::GetInstance()->window.GetSize().y});
+            Sburb::GetInstance()->SetDimensions(stoi(width), Sburb::GetInstance()->GetViewSize().y);
         }
 
         std::string height = rootNode.attribute("height").value();
         if (height != "")
         {
-            Sburb::GetInstance()->window.SetSize({Sburb::GetInstance()->window.GetSize().y, stoi(height)});
+            Sburb::GetInstance()->SetDimensions(Sburb::GetInstance()->GetViewSize().y, stoi(height));
         }
-
 
         loadingDepth++;
         LoadDependencies(rootNode);
@@ -366,12 +365,9 @@ namespace SBURB
         {
             auto dependencyNodes = GetNestedChildren(&dependenciesNode, "dependency");
 
-            std::cout << "LOADING DEPENDENCIES:" << std::endl;
-
             for (pugi::xml_node dependencyNode : dependencyNodes)
             {
                 auto dependencyPath = dependencyNode.text().as_string();
-                std::cout << "dependency: " << dependencyPath << std::endl;
 
                 LoadSerialFromXML(trim(dependencyPath), true);
             }
@@ -547,7 +543,6 @@ namespace SBURB
         std::string candClass = candidateNode.attribute("class").as_string();
         if (candClass != "" && candClass == templateClass)
         {
-            std::cout << "applied template " << templateClass << std::endl;
             Serializer::ApplyTemplate(templateNode, candidateNode);
         }
     }
@@ -569,10 +564,6 @@ namespace SBURB
         {
             candidateNode.append_copy(tempChild);
         }
-
-        std::ostringstream ss;
-        candidateNode.print(ss, "  ", pugi::format_raw);
-        std::cout << ss.str() << std::endl;
     }
 
     void Serializer::ParseButtons(pugi::xml_node node)
@@ -675,7 +666,7 @@ namespace SBURB
 
     void Serializer::ParseHud(pugi::xml_node node)
     {
-        pugi::xml_node hudNode = node.child("hud");
+        pugi::xml_node hudNode = GetNestedChild(&node, "hud");
 
         if (hudNode)
         {
@@ -697,7 +688,7 @@ namespace SBURB
 
     void Serializer::ParseDialoger(pugi::xml_node node)
     {
-        auto dialogerNode = node.child("dialoger");
+        auto dialogerNode = GetNestedChild(&node, "dialoger");
 
         if (dialogerNode)
         {

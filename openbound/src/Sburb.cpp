@@ -29,6 +29,9 @@ namespace SBURB
 
         this->curRoom = nullptr;
         this->queue = std::make_shared<ActionQueue>(nullptr, "__SBURB__");
+        this->playingMovie = false;
+
+        this->viewSize = Vector2(650, 450);
 
         this->view = sf::View(sf::FloatRect((float)viewPos.x, (float)viewPos.y, (float)viewSize.x, (float)viewSize.y));
 
@@ -348,7 +351,8 @@ namespace SBURB
 
     void Sburb::Render()
     {
-        if (!playingMovie)
+        std::cout << this->playingMovie << std::endl;
+        if (!this->playingMovie)
         {
             window->clear(sf::Color(0, 0, 0, 255));
 
@@ -389,7 +393,7 @@ namespace SBURB
     {
         // Create & initialize main window
         window.Init(name, {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar, icon); // Standard
-
+        
         if (!window.GetWin())
         {
             GlobalLogger->Log(Logger::Error, "Failed to create main game window.");
@@ -480,6 +484,12 @@ namespace SBURB
         }
 
         return path;
+    }
+
+    void Sburb::SetDimensions(float width, float height)
+    {
+        this->window->setSize(sf::Vector2u(width, height));
+        this->viewSize = Vector2(width, height);
     }
 
     std::shared_ptr<ActionQueue> Sburb::GetActionQueueById(std::string id)

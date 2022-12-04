@@ -334,6 +334,7 @@ namespace SBURB
 		Vector2 dimensions = Vector2();
 
 		dimensions.x = stoi(values[0]);
+		dimensions.y = stoi(values[1]);
 
 		return dimensions;
 	}

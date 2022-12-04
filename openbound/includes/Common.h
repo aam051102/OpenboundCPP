@@ -198,9 +198,7 @@ namespace SBURB
     {
         std::vector<pugi::xml_node> nodes = {};
 
-        for (auto child : node->children()) {
-            //std::cout << "child-" << child.name() << std::endl;
-            
+        for (auto child : node->children()) {            
             if (child.name() == tagName) {
                 nodes.push_back(child);
             }
@@ -213,6 +211,20 @@ namespace SBURB
         return nodes;
     }
 
+    static inline pugi::xml_node GetNestedChild(pugi::xml_node* node, std::string tagName)
+    {
+        for (auto child : node->children()) {
+            if (child.name() == tagName) {
+                return child;
+            }
+            else {
+                auto childData = GetNestedChild(&child, tagName);
+                if (childData) return childData;
+            }
+        }
+
+        return pugi::xml_node();
+    }
 }
 
 uint16_t swapbits(uint16_t src);

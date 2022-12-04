@@ -9,7 +9,7 @@ namespace SBURB
     class Animation : public sf::Drawable, public sf::Transformable
     {
     public:
-		Animation(std::string name, std::string sheetName, int x = 0, int y = 0, int colSize = 0, int rowSize = 0, int startPos = 0, int length = 1, std::string frameInterval = "", int loopNum = -1, std::string followUp = "", bool flipX = false, bool flipY = false, bool sliced = false, int numCols = 0, int numRows = 0);
+		Animation(std::string name, std::string sheetName, int x = 0, int y = 0, int colSize = 0, int rowSize = 0, int startPos = 0, int length = 1, std::string frameInterval = "", int loopNum = -1, std::string followUp = "", bool flipX = false, bool flipY = false, bool sliced = false, int numCols = 1, int numRows = 1);
         ~Animation();
 
         void NextFrame();

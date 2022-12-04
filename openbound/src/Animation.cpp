@@ -26,6 +26,8 @@ namespace SBURB
 		{
 			this->numRows = numRows;
 			this->numCols = numCols;
+			this->rowSize = rowSize;
+			this->colSize = colSize;
 			this->sheets = {};
 
 			for (int colNum = 0; colNum < this->numCols; colNum++)
@@ -49,12 +51,11 @@ namespace SBURB
 		else
 		{
 			this->sheet = AssetManager::GetGraphicByName(sheetName);
+			this->rowSize = rowSize ? rowSize : this->sheet->GetAsset()->getSize().y;
+			this->colSize = colSize ? colSize : this->sheet->GetAsset()->getSize().x;
 			this->numRows = this->sheet->GetAsset()->getSize().y / this->rowSize;
 			this->numCols = this->sheet->GetAsset()->getSize().x / this->colSize;
 		}
-
-		this->rowSize = rowSize ? rowSize : this->sheet->GetAsset()->getSize().y;
-		this->colSize = colSize ? colSize : this->sheet->GetAsset()->getSize().x;
 
 		if (frameInterval == "")
 		{
@@ -138,11 +139,11 @@ namespace SBURB
 		{
 			// TODO: Keep inside of camera view for optimization??? May not be necessary.
 
-			for (int colNum = 0; colNum <= this->numCols; colNum++)
+			for (int colNum = 0; colNum < this->numCols; colNum++)
 			{
-				for (int rowNum = 0; rowNum <= this->numRows; rowNum++)
+				for (int rowNum = 0; rowNum < this->numRows; rowNum++)
 				{
-					if (this->sheets.at(colNum).at(rowNum))
+					if (this->sheets.find(colNum) != this->sheets.end() && this->sheets.at(colNum).find(rowNum) != this->sheets.at(colNum).end())
 					{
 						std::shared_ptr<AssetGraphic> sheet = this->sheets.at(colNum).at(rowNum);
 						int frameX = 0;
@@ -170,7 +171,7 @@ namespace SBURB
 						arr[2].color = sf::Color::White;
 						arr[3].color = sf::Color::White;
 
-						BatchHandler::getInstance().DrawSpriteRect(this->sheetName, arr, target);
+						BatchHandler::getInstance().DrawSpriteRect(this->sheetName + "_" + std::to_string(colNum) + "_" + std::to_string(rowNum), arr, target);
 					}
 				}
 			}

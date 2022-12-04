@@ -32,7 +32,7 @@ namespace SBURB
 	}
 
 	void Room::AddSprite(std::shared_ptr<Sprite> sprite) {
-		if (!this>Contains(sprite)) {
+		if (!this->Contains(sprite)) {
 			this->sprites.push_back(sprite);
 		}
 	}
@@ -84,7 +84,7 @@ namespace SBURB
 
 	bool Room::Contains(std::shared_ptr<Sprite> sprite) {
 		for (int i = 0; i < this->sprites.size(); i++) {
-			if (this->sprites[i] == sprite) {
+			if (this->sprites[i].get() == sprite.get()) {
 				return true;
 			}
 		}
