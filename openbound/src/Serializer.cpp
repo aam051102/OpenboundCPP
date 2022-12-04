@@ -511,7 +511,7 @@ namespace SBURB
 
             for (pugi::xml_node templateNode : templates)
             {
-                if (templateNode.name() != "#text" && templateNode.name() != "#comment")
+                if (std::string(templateNode.name()) != "#text" && std::string(templateNode.name()) != "#comment")
                 {
                     ApplyTemplateClasses(templateNode);
 
@@ -594,7 +594,7 @@ namespace SBURB
         auto newActions = spriteNode.children();
         for (pugi::xml_node curAction : newActions)
         {
-            if (curAction.name() == "#text")
+            if (std::string(curAction.name()) == "#text")
             {
                 continue;
             }
@@ -672,7 +672,7 @@ namespace SBURB
 
             for (pugi::xml_node child : children)
             {
-                if (child.name() == "spritebutton")
+                if (std::string(child.name()) == "spritebutton")
                 {
                     std::string name = child.attribute("name").as_string();
                     Sburb::GetInstance()->SetHud(name, Sburb::GetInstance()->GetButton(name));
@@ -793,7 +793,7 @@ namespace SBURB
         {
             for (pugi::xml_node tmp : node.children())
             {
-                if (tmp.name() == "action" && tmp.attribute("name").as_string() == initActionName)
+                if (std::string(tmp.name()) == "action" && tmp.attribute("name").as_string() == initActionName)
                 {
                     initAction = Parser::ParseAction(tmp);
                     continue;
@@ -818,7 +818,7 @@ namespace SBURB
         auto newActionQueues = element.children();
         for (pugi::xml_node curActionQueues : newActionQueues)
         {
-            if (curActionQueues.name() == "#text")
+            if (std::string(curActionQueues.name()) == "#text")
             {
                 continue;
             }
@@ -903,7 +903,7 @@ namespace SBURB
         auto candidates = triggersNode.children();
         for (pugi::xml_node candidate : candidates)
         {
-            if (candidate.name() == "trigger")
+            if (std::string(candidate.name()) == "trigger")
             {
                 newRoom->AddTrigger(Parser::ParseTrigger(candidate));
             }

@@ -368,7 +368,7 @@ namespace SBURB {
 		int offsetX = 0;
 
 		sf::Text textWriter;
-		textWriter.setFont(*AssetManager::GetFontByName(this->fontName)->GetAsset());
+		textWriter.setFont(*AssetManager::GetFontByName(this->fontName)->GetAsset().get());
 		textWriter.setCharacterSize(this->fontSize);
 
 		while (i < floor(this->height / this->lineHeight) && i < this->lines.size()) {

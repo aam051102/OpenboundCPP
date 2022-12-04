@@ -103,8 +103,7 @@ namespace SBURB
 
         for (auto action : this->actions) {
             std::string desired = action->GetSprite();
-            if (desired == "" || desired == sprite->GetName()
-                || (desired[0] == '!' && desired.substr(1) != sprite->GetName())) {
+            if (desired == "" || desired == sprite->GetName() || (desired[0] == '!' && desired.substr(1) != sprite->GetName())) {
                 validActions.push_back(action);
             }
         }

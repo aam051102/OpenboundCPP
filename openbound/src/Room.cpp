@@ -147,7 +147,7 @@ namespace SBURB
 			
 			if (sprite != query && sprite->HitsPoint(x, y)) {
 				std::vector<std::shared_ptr<Action>> actions = sprite->GetActions(query);
-
+				
 				validActions.insert(validActions.end(), actions.begin(), actions.end());
 			}
 		}

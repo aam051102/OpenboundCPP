@@ -17,6 +17,10 @@ namespace SBURB
         {
             graphics.insert(std::pair(asset->GetName(), std::static_pointer_cast<AssetGraphic>(asset)));
         }
+        else if(asset->GetType() == "font")
+        {
+            fonts.insert(std::pair(asset->GetName(), std::static_pointer_cast<AssetFont>(asset)));
+        }
     }
 
     // Path

@@ -26,7 +26,7 @@ namespace SBURB
 
 		for (pugi::xml_node tmp : input.children())
 		{
-			if (tmp.name() == "action")
+			if (std::string(tmp.name()) == "action")
 			{
 				actions.push_back(Parser::ParseAction(tmp));
 			}
@@ -44,7 +44,7 @@ namespace SBURB
 
 		for (pugi::xml_node tmp : input.children())
 		{
-			if (tmp.name() == "trigger")
+			if (std::string(tmp.name()) == "trigger")
 			{
 				triggers.push_back(Parser::ParseTrigger(tmp));
 			}
@@ -76,9 +76,8 @@ namespace SBURB
 
 		for (pugi::xml_node child : node.children())
 		{
-			if (child.name() == "args")
+			if (std::string(child.name()) == "args")
 			{
-
 				std::string asset = child.attribute("body").as_string();
 				if (asset != "" && AssetManager::GetTextByName(asset))
 				{
@@ -101,7 +100,7 @@ namespace SBURB
 						return output;
 					}
 				}
-
+				
 				if (!child.text().empty())
 				{
 					return child.text().as_string();
@@ -176,7 +175,7 @@ namespace SBURB
 
 			for (pugi::xml_node child : oldNode->children())
 			{
-				if (child.name() == "action")
+				if (std::string(child.name()) == "action")
 				{
 					curNode = &child;
 					break;
@@ -201,11 +200,11 @@ namespace SBURB
 
 		for (pugi::xml_node child : node.children())
 		{
-			if (child.name() == "#text")
+			if (std::string(child.name()) == "#text")
 			{
 				continue;
 			}
-			if (child.name() == "action")
+			if (std::string(child.name()) == "action")
 			{
 				newAction = ParseAction(child);
 			}
@@ -526,7 +525,7 @@ namespace SBURB
 
 		for (pugi::xml_node child : node.children())
 		{
-			if (child.name() == "args")
+			if (std::string(child.name()) == "args")
 			{
 				for (pugi::xml_node subChild : child.children())
 				{
@@ -605,7 +604,7 @@ namespace SBURB
 
 			for (pugi::xml_node child : curNode->children())
 			{
-				if (child.name() == "trigger")
+				if (std::string(child.name()) == "trigger")
 				{
 					curNode = &child;
 					found = true;

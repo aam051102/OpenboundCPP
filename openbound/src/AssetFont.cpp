@@ -1,5 +1,6 @@
 #include "AssetFont.h"
 #include "Sburb.h"
+#include "Logger.h"
 
 namespace SBURB {
     AssetFont::AssetFont(std::string name, std::vector<std::string> sources) {
@@ -29,7 +30,11 @@ namespace SBURB {
 
                 if (format == "truetype" || format == "woff") {
                     // NOTE: UNSURE IF WOFF IS SUPPORTED?????
-                    this->asset->loadFromFile(Sburb::ResolvePath(path));
+
+                    if (!this->asset->loadFromFile(Sburb::ResolvePath(path))) {
+                        GlobalLogger->Log(Logger::Error, "Failed to create main game window.");
+                        return;
+                    }
                 }
             }
             else if (type == "local") {

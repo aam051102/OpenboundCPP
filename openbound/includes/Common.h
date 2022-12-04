@@ -66,8 +66,8 @@ namespace SBURB
     /*
     TODO
     */
-    static inline const char* unescape(std::string in) {
-        return "";
+    static inline const char* unescape(const std::string& in) {
+        return in.c_str();
         /*std::basic_ostringstream<unsigned char, std::char_traits<unsigned char>, std::allocator<unsigned char>> unescaped;
         unescaped.fill('0');
         unescaped << std::hex;
@@ -167,14 +167,14 @@ namespace SBURB
         int end = len - 1;
 
         for (int i = 0; i < len; i++) {
-            if (s[i] != ' ') {
+            if (s[i] != ' ' && s[i] != '\t' && s[i] != '\n') {
                 start = i;
                 break;
             }
         }
 
         for (int i = len - 1; i >= start; i--) {
-            if (s[i] != ' ') {
+            if (s[i] != ' ' && s[i] != '\t' && s[i] != '\n') {
                 end = i;
                 break;
             }
