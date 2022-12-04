@@ -17,6 +17,8 @@ namespace SBURB
         this->depthing = depthing;
         this->collidable = collidable;
         this->queries = {};
+
+        this->setPosition(this->x, this->y);
     }
 
     void Sprite::AddAnimation(std::shared_ptr<Animation> anim) {

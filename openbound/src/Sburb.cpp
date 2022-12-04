@@ -30,6 +30,7 @@ namespace SBURB
         this->curRoom = nullptr;
         this->queue = std::make_shared<ActionQueue>(nullptr, "__SBURB__");
         this->playingMovie = false;
+        this->loadingRoom = false;
 
         this->viewSize = Vector2(650, 450);
 
@@ -124,8 +125,9 @@ namespace SBURB
                 this->HandleInputs();
                 this->HandleHud();
 
-                if (this->curRoom && !this->loadingRoom)
+                if (this->curRoom && !this->loadingRoom) {
                     curRoom->Update();
+                }
 
                 this->FocusCamera();
                 this->HandleRoomChange();
@@ -351,7 +353,6 @@ namespace SBURB
 
     void Sburb::Render()
     {
-        std::cout << this->playingMovie << std::endl;
         if (!this->playingMovie)
         {
             window->clear(sf::Color(0, 0, 0, 255));
