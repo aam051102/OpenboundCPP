@@ -14,7 +14,7 @@ namespace SBURB
         SpriteButton(std::string name, int x, int y, int width, int height, std::string sheetName, std::shared_ptr<Action> action);
         ~SpriteButton();
 
-        void Update();
+        void Update() override;
         void UpdateMouse();
 
         void SetState(std::string state);

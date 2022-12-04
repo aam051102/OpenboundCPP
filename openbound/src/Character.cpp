@@ -50,12 +50,12 @@ namespace SBURB {
 
 		// what does this code block do????
 		// NOTE: These were originally this->handleInput, but the variable was never set, so I made the assumption that they were supposed to be this->handledInput. If you find issues with idling, it may be here.
-		if (this->handledInput > 0) {
+		/*if (this->handledInput > 0) {
 			--this->handledInput;
 			if (this->handledInput == 0) {
 				this->MoveNone();
 			}
-		}
+		}*/
 
 		this->TryToMove(this->vx, this->vy);
 
@@ -286,9 +286,7 @@ namespace SBURB {
 		}
 
 		std::shared_ptr<Room> room = Sburb::GetInstance()->GetCurrentRoom();
-
-		std::shared_ptr<Character> sharedThis(this);
-
+		
 		int minX = 1; // NOTE: originally Sburb.Stage.scaleX;
 		int minY = 1; // NOTE: originally Sburb.Stage.scaleY;
 
@@ -298,80 +296,81 @@ namespace SBURB {
 
 			if (abs(vx) >= minX) {
 				dx = round((minX)*vx / abs(vx));
-				this->x += dx;
+				this->SetX(this->x + dx);
 				vx -= dx;
 			}
 			if (abs(vy) >= minY) {
 				dy = round((minY)*vy / abs(vy));
-				this->y += dy;
+				this->SetY(this->y + dy);
 				vy -= dy;
 			}
 
 			if (!this->following) {
 				std::shared_ptr<Sprite> collision = nullptr;
-				if (collision = room->Collides(sharedThis)) {
+
+				if (collision = room->Collides(this)) {
 					bool fixed = false;
 					if (dx != 0) {
 						if (!this->Collides(collision, 0, minY)) {
 							dy += minY;
-							this->y += minY;
+							this->SetY(this->y + minY);
 							fixed = true;
 						}
 						else if (!this->Collides(collision, 0, -minY)) {
 							dy -= minY;
-							this->y -= minY;
+							this->SetY(this->y - minY);
 							fixed = true;
 						}
 					}
 					if (!fixed && dy != 0) {
 						if (!this->Collides(collision, minX, 0)) {
 							dx += minX;
-							this->x += minX;
+							this->SetX(this->x + minX);
 							fixed = true;
 						}
 						else if (!this->Collides(collision, -minX, 0)) {
 							dx -= minX;
-							this->x -= minX;
+							this->SetX(this->x - minX);
 							fixed = true;
 						}
 					}
-					if (!fixed || room->Collides(sharedThis)) {
-						this->x -= dx;
-						this->y -= dy;
+					if (!fixed || room->Collides(this)) {
+						this->SetX(this->x - dx);
+						this->SetY(this->y - dy);
 
 						return false;
 					}
 				}
 
-				if (!room->IsInBounds(sharedThis)) {
+				if (!room->IsInBounds(this)) {
 					bool fixed = false;
 					if (dx != 0) {
-						if (room->IsInBounds(sharedThis, 0, minY)) {
+						if (room->IsInBounds(this, 0, minY)) {
 							dy += minY;
-							this->y += minY;
+							this->SetY(this->y + minY);
 							fixed = true;
 						}
-						else if (room->IsInBounds(sharedThis, 0, -minY)) {
+						else if (room->IsInBounds(this, 0, -minY)) {
 							dy -= minY;
-							this->y -= minY;
+							this->SetY(this->y - minY);
 							fixed = true;
 						}
 					}
 					if (!fixed && dy != 0) {
-						if (room->IsInBounds(sharedThis, minX, 0)) {
+						if (room->IsInBounds(this, minX, 0)) {
 							dx += minX;
-							this->x += minX;
+							this->SetX(this->x + minX);
 							fixed = true;
 						}
-						else if (room->IsInBounds(sharedThis, -minX, 0)) {
+						else if (room->IsInBounds(this, -minX, 0)) {
 							dx -= minX;
-							this->x -= minX;
+							this->SetX(this->x - minX);
 							fixed = true;
 						}
 					}
-					if (!fixed || room->Collides(sharedThis)) {
-						this->x -= dx;
-						this->y -= dy;
+					if (!fixed || room->Collides(this)) {
+						this->SetX(this->x - dx);
+						this->SetY(this->y - dy);
 						return false;
 					}
 				}

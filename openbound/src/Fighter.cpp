@@ -167,9 +167,8 @@ namespace SBURB {
 		this->y += vy;
 
 		std::shared_ptr<Room> room = Sburb::GetInstance()->GetCurrentRoom();
-		std::shared_ptr<Fighter> sharedThis(this);
 
-		std::shared_ptr<Sprite> collides = room->Collides(sharedThis);
+		std::shared_ptr<Sprite> collides = room->Collides(this);
 		if (collides) {
 			float tx = 0;
 			float ty = 0;
@@ -180,7 +179,7 @@ namespace SBURB {
 				tx -= (dx - xOff) * 0.1;
 				ty -= (dy - yOff) * 0.1;
 			}
-			if (room->Collides(sharedThis, tx, ty)) {
+			if (room->Collides(this, tx, ty)) {
 				this->x -= dx;
 				this->y -= dy;
 				return false;
@@ -197,7 +196,9 @@ namespace SBURB {
 			this->vy *= 0.9;
 		}
 
-		std::map<std::string, bool> queries = room->IsInBoundsBatch(this->GetBoundaryQueries());
+		std::map<std::string, bool> queries;
+		room->IsInBoundsBatch(this->GetBoundaryQueries(), &queries);
+
 		float queryCount = 8;
 		bool collided = false;
 		float hitX = 0;
@@ -228,13 +229,13 @@ namespace SBURB {
 			float yOff = sin(theta);
 			int timeout = 0;
 
-			while (!room->IsInBounds(sharedThis, tx, ty) && timeout < 20) {
+			while (!room->IsInBounds(this, tx, ty) && timeout < 20) {
 				tx -= xOff * 2;
 				ty -= yOff * 2;
 				timeout++;
 			}
 			
-			if (timeout >= 20 || room->Collides(sharedThis, tx, ty)) {
+			if (timeout >= 20 || room->Collides(this, tx, ty)) {
 				this->x -= dx;
 				this->y -= dy;
 				return false;

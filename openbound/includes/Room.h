@@ -53,10 +53,10 @@ namespace SBURB
 		std::vector<std::shared_ptr<Action>> QueryActions(std::shared_ptr<Sprite> query, int x, int y);
 		std::vector<std::shared_ptr<Action>> QueryActionsVisual(std::shared_ptr<Sprite> query, int x, int y);
 
-		bool IsInBounds(std::shared_ptr<Sprite> sprite, int dx = 0, int dy = 0);
-		std::map<std::string, bool> IsInBoundsBatch(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results = nullptr);
+		bool IsInBounds(Sprite* sprite, int dx = 0, int dy = 0);
+		std::map<std::string, bool> IsInBoundsBatch(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results);
 
-		std::shared_ptr<Sprite> Collides(std::shared_ptr<Sprite> sprite, int dx = 0, int dy = 0);
+		std::shared_ptr<Sprite> Collides(Sprite* sprite, int dx = 0, int dy = 0);
 
 		std::string Serialize(std::string output);
 

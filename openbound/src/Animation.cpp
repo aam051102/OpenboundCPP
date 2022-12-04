@@ -86,8 +86,8 @@ namespace SBURB
 		}
 
 		// Set transform
-		setPosition(this->x, this->y);
-		setScale(this->flipX ? -1 : 1, this->flipY ? -1 : 1);
+		this->setPosition(this->x, this->y);
+		this->setScale(this->flipX ? -1 : 1, this->flipY ? -1 : 1);
 	}
 
 	Animation::~Animation()

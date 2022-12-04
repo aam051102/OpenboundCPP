@@ -8,6 +8,8 @@ namespace SBURB
     InputHandler::InputHandler()
     {
         this->mouseDown = false;
+        this->pressed = {};
+        this->pressedOrder = {};
 
         inputHandlerInst = this;
     }
@@ -37,7 +39,11 @@ namespace SBURB
     }
 
     void InputHandler::RemoveFromPressedOrder(sf::Keyboard::Key key) {
-        inputHandlerInst->pressedOrder.erase(std::find(inputHandlerInst->pressedOrder.begin(), inputHandlerInst->pressedOrder.end(), key));
+        auto pos = std::find(inputHandlerInst->pressedOrder.begin(), inputHandlerInst->pressedOrder.end(), key);
+
+        if (pos != inputHandlerInst->pressedOrder.end()) {
+            inputHandlerInst->pressedOrder.erase(pos);
+        }
     }
 
     void InputHandler::Update(sf::Event e, bool focused)
@@ -106,7 +112,7 @@ namespace SBURB
             }
         }
 
-        if (inputHandlerInst->GetPressed(key)) inputHandlerInst->AddToPressedOrder(key);
+        if (!inputHandlerInst->GetPressed(key)) inputHandlerInst->AddToPressedOrder(key);
         inputHandlerInst->SetPressed(key, true);
     }
 

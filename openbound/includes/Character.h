@@ -14,7 +14,7 @@ namespace SBURB
         Character(std::string name, int x, int y, int width, int height, int sx, int sy, int sWidth, int sHeight, std::string sheetName, bool bootstrap = false);
         ~Character();
 
-        void Update();
+        void Update() override;
         void HandleFollowing();
 
         void MoveUp(bool movingSideways = false);
@@ -64,9 +64,6 @@ namespace SBURB
         std::vector<Vector2> followBuffer;
         std::shared_ptr<Character> follower;
         Vector2 lastLeaderPos;
-
-    private:
-        //virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     };
 }

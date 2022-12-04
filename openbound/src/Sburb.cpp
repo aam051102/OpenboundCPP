@@ -23,18 +23,51 @@ namespace SBURB
         this->name = "Jterniabound";
         this->version = "1.0";
         this->icon = sf::Image();
+        this->description = "";
 
         this->FPS = 30;
         this->FPStimeObj = sf::Clock();
 
         this->curRoom = nullptr;
+        this->globalVolume = 1;
+        this->levelPath = "";
+        this->resourcePath = "";
         this->queue = std::make_shared<ActionQueue>(nullptr, "__SBURB__");
         this->playingMovie = false;
         this->loadingRoom = false;
-
+        this->inputDisabled = false;
+        
         this->viewSize = Vector2(650, 450);
 
         this->view = sf::View(sf::FloatRect((float)viewPos.x, (float)viewPos.y, (float)viewSize.x, (float)viewSize.y));
+        
+        this->destRoom = nullptr;
+        this->destFocus = nullptr;
+        this->bgm = nullptr;
+        this->camera = Vector2();
+
+        this->buttons = {};
+        this->actionQueues = {};
+        this->effects = {};
+        this->hud = {};
+        this->sprites = {};
+        this->rooms = {};
+        this->fonts = {};
+        
+        this->character = nullptr;
+        this->chooser = nullptr;
+        this->destX = 0;
+        this->destY = 0;
+        this->dialoger = nullptr;
+        this->focus = nullptr;
+        this->inputDisabledTrigger = nullptr;
+
+        this->lastMusicTime = sf::Time::Zero;
+        this->fading = false;
+        this->fade = 0;
+        this->fadeShape = sf::RectangleShape();
+        this->musicStoppedFor = 0;
+        this->nextQueueId = 0;
 
         if (gameInstance == nullptr)
         {
@@ -95,7 +128,7 @@ namespace SBURB
         sf::Event event;
         while (window->pollEvent(event))
         {
-            inputHandler.Update(event, !window->hasFocus());
+            inputHandler.Update(event, window->hasFocus());
 
             if (event.type == sf::Event::KeyPressed)
             {
@@ -121,7 +154,7 @@ namespace SBURB
             // Run main update method for all objects
             if (this->shouldUpdate)
             {
-                this->HandleAudio();
+                //this->HandleAudio();
                 this->HandleInputs();
                 this->HandleHud();
 

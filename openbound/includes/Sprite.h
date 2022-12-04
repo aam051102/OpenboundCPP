@@ -26,7 +26,7 @@ namespace SBURB
         std::map<std::string, std::shared_ptr<Animation>> GetAnimations() { return this->animations; };
         std::shared_ptr<Animation> GetAnimation() { return this->animation; };
         std::shared_ptr<Animation> GetAnimation(std::string name) { return this->animations[name]; };
-        void Update();
+        virtual void Update();
         
         bool IsBehind(std::shared_ptr<Sprite> other);
         bool Collides(std::shared_ptr<Sprite> other, int dx, int dy);

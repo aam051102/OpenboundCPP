@@ -169,11 +169,12 @@ namespace SBURB
 		return validActions;
 	}
 
-	bool Room::IsInBounds(std::shared_ptr<Sprite> sprite, int dx, int dy) {
+	bool Room::IsInBounds(Sprite* sprite, int dx, int dy) {
 		std::map<std::string, Vector2> queries = sprite->GetBoundaryQueries(dx, dy);
-		std::map<std::string, bool> result = this->IsInBoundsBatch(queries);
+		std::map<std::string, bool> results;
+		this->IsInBoundsBatch(queries, &results);
 
-		for (auto point : result) {
+		for (auto point : results) {
 			if (!point.second) {
 				return false;
 			}
@@ -183,12 +184,6 @@ namespace SBURB
 	}
 
 	std::map<std::string, bool> Room::IsInBoundsBatch(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results) {
-		// TODO: walkableMap/mapData probably needs to be a texture converted to an image to get the pixel value.
-
-		if (results == nullptr) {
-			results = &std::map<std::string, bool>();
-		}
-
 		if (this->walkableMap) {
 			for (auto query : queries) {
 				Vector2 pt = query.second;
@@ -199,9 +194,8 @@ namespace SBURB
 					(*results)[query.first] = false;
 				}
 				else {
-					// NOTE: Why multiplied by 4? Is this an error?
-					int mapX = round(pt.x / this->mapScale) * 4;
-					int mapY = round(pt.y / this->mapScale) * 4;
+					int mapX = round(pt.x / this->mapScale);
+					int mapY = round(pt.y / this->mapScale);
 
 					(*results)[query.first] = this->mapData->getPixel(mapX, mapY) == sf::Color::White;
 				}
@@ -219,11 +213,11 @@ namespace SBURB
 		return *results;
 	}
 
-	std::shared_ptr<Sprite> Room::Collides(std::shared_ptr<Sprite> sprite, int dx, int dy) {
+	std::shared_ptr<Sprite> Room::Collides(Sprite* sprite, int dx, int dy) {
 		for (int i = 0; i < this->sprites.size(); i++) {
 			std::shared_ptr<Sprite> curSprite = this->sprites[i];
 		
-			if (curSprite->GetCollidable() && sprite != curSprite) {
+			if (curSprite->GetCollidable() && sprite != curSprite.get()) {
 				if (sprite->Collides(curSprite, dx, dy)) {
 					return curSprite;
 				}
