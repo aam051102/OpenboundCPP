@@ -19,6 +19,7 @@ namespace SBURB {
 		this->handledInput = -1;
 		this->oldX = 0;
 		this->oldY = 0;
+		this->animations = {};
 
 		if (!bootstrap) { // Automagically generate standard animations
 			this->AddAnimation(std::make_shared<Animation>("idleFront", sheetName, sx, sy, sWidth, sHeight, 0, 1, "2"));

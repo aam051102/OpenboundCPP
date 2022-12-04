@@ -253,7 +253,8 @@ namespace SBURB
         Sburb::GetInstance()->HaltUpdateProcess();
         path = Sburb::GetInstance()->levelPath + path;
 
-        if (keepOld /* && Sburb::GetInstance()->loadedFiles[path]*/)
+        // TODO: Add loadedFiles back in - it'll DEFINITELY break without.
+        /*if (keepOld && Sburb::GetInstance()->loadedFiles[path])
         {
             Sburb::GetInstance()->StartUpdateProcess();
             return true;
@@ -261,7 +262,7 @@ namespace SBURB
         else
         {
             //Sburb::GetInstance()->loadedFiles[path] = true;
-        }
+        }*/
 
         pugi::xml_document doc;
         pugi::xml_parse_result initDocRes = doc.load_file(path.c_str());
@@ -305,7 +306,7 @@ namespace SBURB
             Sburb::GetInstance()->PurgeState();
         }
 
-        std::string levelPath = rootNode.attribute("levelPath").value();
+        std::string levelPath = rootNode.attribute("levelPath").as_string();
         if (levelPath != "")
         {
             if (levelPath[levelPath.length() - 1] == '/')
@@ -344,6 +345,7 @@ namespace SBURB
             Sburb::GetInstance()->window.SetSize({Sburb::GetInstance()->window.GetSize().y, stoi(height)});
         }
 
+
         loadingDepth++;
         LoadDependencies(rootNode);
         loadingDepth--;
@@ -366,7 +368,7 @@ namespace SBURB
             {
                 auto dependencyPath = dependencyNode.text().as_string();
 
-                LoadSerialFromXML(Sburb::GetInstance()->levelPath + trim(dependencyPath));
+                LoadSerialFromXML(trim(dependencyPath), true);
             }
         }
 
@@ -464,6 +466,7 @@ namespace SBURB
     void Serializer::LoadSerialState()
     {
         // NOTE: USED TO HAVE A BIG LOOP HERE. NOT SURE WHAT TO DO ABOUT IT???
+        // TODO: MAYBE ADD THE LOOP BACK?
 
         while (loadQueue.size() > 0)
         {
@@ -602,9 +605,10 @@ namespace SBURB
     void Serializer::ParseCharacters(pugi::xml_node node)
     {
         auto newChars = node.children("character");
-
+        std::cout << "Parsing Chars:" << std::endl;
         for (pugi::xml_node curChar : newChars)
         {
+            std::cout << "parsing char " << std::endl;
             auto newChar = Parser::ParseCharacter(curChar);
             Sburb::GetInstance()->SetSprite(newChar->GetName(), std::static_pointer_cast<Sprite>(newChar));
             ParseActions(curChar, *newChar);
@@ -826,6 +830,7 @@ namespace SBURB
         if (!dialoger)
         {
             Sburb::GetInstance()->SetDialoger(std::make_shared<Dialoger>(Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector4(0, 0, 0, 0), Vector4(0, 0, 0, 0), Vector4(0, 0, 0, 0), "standard"));
+            dialoger = Sburb::GetInstance()->GetDialoger();
         }
 
         if (!dialoger->GetDialogSpriteLeft())

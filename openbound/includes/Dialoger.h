@@ -42,7 +42,7 @@ namespace SBURB
         void SetDialogSpriteLeft(std::shared_ptr<Sprite> dialogSpriteLeft) { this->dialogSpriteLeft = dialogSpriteLeft;  };
         std::shared_ptr<Sprite> GetDialogSpriteLeft() { return this->dialogSpriteLeft; };
 
-        void SetDialogSpriteRight(std::shared_ptr<Sprite> dialogSpriteRigght) { this->dialogSpriteRight = dialogSpriteRight; };
+        void SetDialogSpriteRight(std::shared_ptr<Sprite> dialogSpriteRight) { this->dialogSpriteRight = dialogSpriteRight; };
         std::shared_ptr<Sprite> GetDialogSpriteRight() { return this->dialogSpriteRight; };
 
         bool GetTalking() { return this->talking; };
