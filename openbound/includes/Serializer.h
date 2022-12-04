@@ -68,7 +68,7 @@ namespace SBURB {
 
         static void ParseButtons(pugi::xml_node node);
         static void ParseSprites(pugi::xml_node node);
-        static void ParseActions(pugi::xml_node spriteNode, Sprite sprite);
+        static void ParseActions(pugi::xml_node spriteNode, std::shared_ptr<Sprite> sprite);
         static void ParseCharacters(pugi::xml_node node);
         static void ParseFighters(pugi::xml_node node);
         static void ParseRooms(pugi::xml_node node);

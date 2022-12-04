@@ -585,24 +585,24 @@ namespace SBURB
         {
             auto newSprite = Parser::ParseSprite(curSprite);
             Sburb::GetInstance()->SetSprite(newSprite->GetName(), newSprite);
-            ParseActions(curSprite, *newSprite);
+            ParseActions(curSprite, newSprite);
         }
     }
 
-    void Serializer::ParseActions(pugi::xml_node spriteNode, Sprite sprite)
+    void Serializer::ParseActions(pugi::xml_node spriteNode, std::shared_ptr<Sprite> sprite)
     {
         auto newActions = spriteNode.children();
-
         for (pugi::xml_node curAction : newActions)
         {
             if (curAction.name() == "#text")
             {
                 continue;
             }
-            if (curAction.name() == "action")
+
+            if (std::string(curAction.name()) == "action")
             {
                 auto newAction = Parser::ParseAction(curAction);
-                sprite.AddAction(newAction);
+                sprite->AddAction(newAction);
             }
         }
     }
@@ -611,13 +611,11 @@ namespace SBURB
     {
         auto newChars = GetNestedChildren(&node, "character");
 
-        std::cout << "PARSING CHARS: " << std::endl;
         for (pugi::xml_node curChar : newChars)
         {
-            std::cout << "char: " << std::endl;
             auto newChar = Parser::ParseCharacter(curChar);
             Sburb::GetInstance()->SetSprite(newChar->GetName(), std::static_pointer_cast<Sprite>(newChar));
-            ParseActions(curChar, *newChar);
+            ParseActions(curChar, newChar);
         }
     }
 
@@ -629,7 +627,7 @@ namespace SBURB
         {
             auto newFighter = Parser::ParseFighter(curFighter);
             Sburb::GetInstance()->SetSprite(newFighter->GetName(), std::static_pointer_cast<Sprite>(newFighter));
-            ParseActions(curFighter, *newFighter);
+            ParseActions(curFighter, newFighter);
         }
     }
 

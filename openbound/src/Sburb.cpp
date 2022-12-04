@@ -24,6 +24,7 @@ namespace SBURB
         this->version = "1.0";
         this->icon = sf::Image();
         this->description = "";
+        this->engineMode = "wander";
 
         this->FPS = 30;
         this->FPStimeObj = sf::Clock();

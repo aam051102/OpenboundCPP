@@ -282,7 +282,6 @@ namespace SBURB
 
 	std::shared_ptr<Character> Parser::ParseCharacter(pugi::xml_node node)
 	{
-		std::cout << node.name() << ": " << node.attribute("sheet").as_string() << std::endl;
 		auto newChar = std::make_shared<Character>(std::string(node.attribute("name").as_string()),
 									  node.attribute("x").as_int(),
 									  node.attribute("y").as_int(),

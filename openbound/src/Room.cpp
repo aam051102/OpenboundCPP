@@ -144,6 +144,7 @@ namespace SBURB
 
 		for (int i = 0; i < this->sprites.size(); i++) {
 			std::shared_ptr<Sprite> sprite = this->sprites[i];
+			
 			if (sprite != query && sprite->HitsPoint(x, y)) {
 				std::vector<std::shared_ptr<Action>> actions = sprite->GetActions(query);
 

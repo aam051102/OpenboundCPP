@@ -71,7 +71,7 @@ namespace SBURB
         std::shared_ptr<Animation> animation;
         std::string state;
         int lastTime;
-        std::map<std::string, std::shared_ptr<Action>> actions;
+        std::vector<std::shared_ptr<Action>> actions;
         std::map<std::string, Vector2> queries;
 
     private:

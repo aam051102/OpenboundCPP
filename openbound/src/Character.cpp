@@ -31,7 +31,6 @@ namespace SBURB {
 			this->AddAnimation(std::make_shared<Animation>("walkBack", sheetName, sx, sy, sWidth, sHeight, 8, 2, "4"));
 			this->AddAnimation(std::make_shared<Animation>("walkLeft", sheetName, sx, sy, sWidth, sHeight, 10, 2, "4"));
 
-
 			this->StartAnimation("walkFront");
 		}
 		else {
@@ -50,12 +49,12 @@ namespace SBURB {
 
 		// what does this code block do????
 		// NOTE: These were originally this->handleInput, but the variable was never set, so I made the assumption that they were supposed to be this->handledInput. If you find issues with idling, it may be here.
-		/*if (this->handledInput > 0) {
+		if (this->handledInput > 0) {
 			--this->handledInput;
 			if (this->handledInput == 0) {
 				this->MoveNone();
 			}
-		}*/
+		}
 
 		this->TryToMove(this->vx, this->vy);
 
@@ -473,7 +472,7 @@ namespace SBURB {
 		}
 
 		for (auto action : this->actions) {
-			output = action.second->Serialize(output);
+			output = action->Serialize(output);
 		}
 
 		output = output + "\n</character>";

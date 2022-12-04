@@ -86,21 +86,26 @@ namespace SBURB
     }
 
     void Sprite::AddAction(std::shared_ptr<Action> action) {
-        this->actions.insert(std::pair(action->GetName(), action));
+        this->actions.push_back(action);
     }
 
     void Sprite::RemoveAction(std::string name) {
-        this->actions.erase(name);
+        for (int i = 0; i < this->actions.size(); i++) {
+            if (this->actions[i]->GetName() == name) {
+                this->actions.erase(this->actions.begin() + i);
+                break;
+            }
+        }
     }
 
     std::vector<std::shared_ptr<Action>> Sprite::GetActions(std::shared_ptr<Sprite> sprite) {
         std::vector<std::shared_ptr<Action>> validActions = {};
 
-        for (auto action : (this->actions)) {
-            std::string desired = action.second->GetSprite();
+        for (auto action : this->actions) {
+            std::string desired = action->GetSprite();
             if (desired == "" || desired == sprite->GetName()
                 || (desired[0] == '!' && desired.substr(1) != sprite->GetName())) {
-                validActions.push_back(action.second);
+                validActions.push_back(action);
             }
         }
 
@@ -147,7 +152,7 @@ namespace SBURB
         }
 
         for (auto action : this->actions) {
-            output = action.second->Serialize(output);
+            output = action->Serialize(output);
         }
 
         output = output + "\n</sprite>";
@@ -163,7 +168,7 @@ namespace SBURB
         }
         
         for (auto action : this->actions) {
-            newSprite->AddAction(action.second->Clone());
+            newSprite->AddAction(action->Clone());
         }
         
         if (this->animation) {

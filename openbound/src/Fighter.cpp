@@ -276,7 +276,7 @@ namespace SBURB {
 		}
 
 		for (auto action : this->actions) {
-			output = action.second->Serialize(output);
+			output = action->Serialize(output);
 		}
 		
 		output = output + "</fighter>";
