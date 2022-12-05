@@ -42,7 +42,7 @@ namespace SBURB
         int GetOldX() { return this->oldX; };
         int GetOldY() { return this->oldY; };
 
-        void SetFacing(bool facing) { this->facing = facing; };
+        void SetFacing(std::string facing) { this->facing = facing; };
 
         void SetFollowBuffer(std::vector<Vector2> followBuffer) { this->followBuffer = followBuffer; };
 
@@ -50,8 +50,8 @@ namespace SBURB
 
     protected:
         int speed;
-        int vx;
-        int vy;
+        float vx;
+        float vy;
         std::string facing;
         bool npc;
         std::string spriteType;

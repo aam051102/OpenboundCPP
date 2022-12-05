@@ -29,6 +29,7 @@ namespace SBURB
         bool mousePressed = false;
         bool clicked = false;
         std::shared_ptr<Action> action;
+        std::string sheetName;
 
     };
 }

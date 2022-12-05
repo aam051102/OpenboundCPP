@@ -138,8 +138,8 @@ namespace SBURB {
 			this->vy = -this->speed;
 		}
 		else {
-			this->vx *= 2 / 3;
-			this->vy = -this->speed * 2 / 3;
+			this->vx *= 2.f / 3.f;
+			this->vy = -this->speed * 2.f / 3.f;
 		}
 	}
 	
@@ -151,8 +151,8 @@ namespace SBURB {
 			this->vy = this->speed;
 		}
 		else {
-			this->vx *= 2 / 3;
-			this->vy = this->speed * 2 / 3;
+			this->vx *= 2.f / 3.f;
+			this->vy = this->speed * 2.f / 3.f;
 		}
 	}
 
@@ -171,7 +171,8 @@ namespace SBURB {
 	}
 
 	void Character::MoveNone() {
-		if (this->animations["walkFront"]->GetFrameInterval()  == 4) {
+		if (this->animations["walkFront"]->GetFrameInterval() == 4) {
+			std::cout << this->name << " " << this->animation->GetName() << std::endl;
 			this->Idle();
 			this->vx = 0;
 			this->vy = 0;

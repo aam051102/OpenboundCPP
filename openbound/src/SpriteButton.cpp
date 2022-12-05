@@ -10,6 +10,11 @@ namespace SBURB
 		this->mousePressed = false;
 		this->clicked = false;
 		this->action = action;
+		this->x = x;
+		this->y = y;
+		this->width = width;
+		this->height = height;
+		this->sheetName = sheetName;
 
 		this->sheet = AssetManager::GetGraphicByName(sheetName);
 
@@ -19,6 +24,7 @@ namespace SBURB
 		}
 
 		this->StartAnimation("state0");
+		this->setPosition(x, y);
 	}
 
 	SpriteButton::~SpriteButton()
