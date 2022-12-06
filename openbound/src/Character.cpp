@@ -172,7 +172,6 @@ namespace SBURB {
 
 	void Character::MoveNone() {
 		if (this->animations["walkFront"]->GetFrameInterval() == 4) {
-			std::cout << this->name << " " << this->animation->GetName() << std::endl;
 			this->Idle();
 			this->vx = 0;
 			this->vy = 0;
@@ -264,17 +263,10 @@ namespace SBURB {
 	}
 
 	bool Character::TryToMove(int vx, int vy) {
-		// NOTE: Got rid of moveMap.
-		//var moveMap = room.getMoveFunction(this);
-		bool wasShifted = false;
-		/*if (moveMap) { //our motion could be modified somehow
-			l = moveMap(vx, vy);
-			if (vx != l.x || vy != l.y) {
-				wasShifted = true;
-			}
-			vx = l.x;
-			vy = l.y;
-		}*/
+		//our motion could be modified somehow  - NOTE: Used for stairs and such.
+		auto adjustedMovement = Sburb::GetInstance()->GetCurrentRoom()->GetAdjustedMovement(this, vx, vy);
+		vx = adjustedMovement.x;
+		vy = adjustedMovement.y;
 
 		if (vx != 0 || vy != 0) {
 			this->oldX = this->x;

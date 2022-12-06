@@ -439,7 +439,8 @@ namespace SBURB
         window.CenterWindow();
 
         // Initialize room
-        if (!Serializer::LoadSerialFromXML("./levels/init.xml"))
+        // TODO: Find out how to select XML.
+        if (!Serializer::LoadSerialFromXML("./levels/openbound/openbound.xml"))
             return false;
 
         // Start update loop

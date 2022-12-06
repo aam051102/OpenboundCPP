@@ -23,6 +23,21 @@ namespace SBURB
 
 	}
 
+	Vector2 Room::GetAdjustedMovement(Sprite* sprite, int ax, int ay) {
+		for (int i = 0; i < this->motionPaths.size(); i++) {
+			std::shared_ptr<MotionPath> motionPath = this->motionPaths[i];
+			bool shouldMove = motionPath->path->Query(Vector2(sprite->GetX(), sprite->GetY()));
+
+			if (shouldMove) {
+				int fx = (ax * motionPath->xtox + ay * motionPath->ytox + motionPath->dx);
+				int fy = (ax * motionPath->xtoy + ay * motionPath->ytoy + motionPath->dy);
+				return Vector2(fx, fy);
+			}
+		}
+
+		return Vector2(ax, ay);
+	}
+
 	void Room::AddEffect(std::shared_ptr<Animation> effect) {
 		this->effects.push_back(effect);
 	}
@@ -64,10 +79,8 @@ namespace SBURB
 		this->unwalkables.erase(std::find(this->unwalkables.begin(), this->unwalkables.end(), path));
 	}
 
-	void Room::AddMotionPath(std::shared_ptr<AssetPath> path, int xtox, int xtoy, int ytox, int ytoy, int dx, int dy) {
-		MotionPath motionPath = MotionPath(path, xtox, xtoy, ytox, ytoy, dx, dy);
-
-		this->motionPaths.push_back(std::make_shared<MotionPath>(motionPath));
+	void Room::AddMotionPath(std::shared_ptr<AssetPath> path, float xtox, float xtoy, float ytox, float ytoy, float dx, float dy) {
+		this->motionPaths.push_back(std::make_shared<MotionPath>(path, xtox, xtoy, ytox, ytoy, dx, dy));
 	}
 
 	void Room::Enter() {

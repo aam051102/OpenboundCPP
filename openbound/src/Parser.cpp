@@ -436,13 +436,13 @@ namespace SBURB
 		Serializer::SerialLoadRoomSprites(newRoom, GetNestedChildren(&node, "fighter"));
 
 		auto paths = node.child("paths");
-		if (!paths)
+		if (paths)
 		{
 			Serializer::SerialLoadRoomPaths(newRoom, paths);
 		}
 
 		auto triggers = node.child("triggers");
-		if (!triggers)
+		if (triggers)
 		{
 			Serializer::SerialLoadRoomTriggers(newRoom, triggers);
 		}
@@ -574,7 +574,7 @@ namespace SBURB
 				info[i] = unescape(info[i]);
 			}
 
-			auto action = curNode->child("action");
+			auto action = GetNestedChild(curNode, "action");
 
 			std::shared_ptr<Action> curAction = nullptr;
 			if (action && action.parent() == *curNode)
@@ -598,20 +598,13 @@ namespace SBURB
 			}
 			oldTrigger = trigger;
 
-			bool found = false;
+			auto child = GetNestedChild(curNode, "trigger");
 
-			for (pugi::xml_node child : curNode->children())
+			if (child)
 			{
-				if (std::string(child.name()) == "trigger")
-				{
-					curNode = &child;
-					found = true;
-					break;
-				}
+				curNode = &child;
 			}
-
-			if (!found)
-			{
+			else {
 				break;
 			}
 		} while (curNode);

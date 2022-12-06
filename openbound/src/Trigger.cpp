@@ -16,9 +16,8 @@ namespace SBURB {
         for (int i = 0; i < info.size(); i++) {
             std::string inf = trim(this->info[i]);
             std::vector<std::string> params = split(inf, ",");
-            std::string type = params[0];
 
-            this->events.push_back(EventFactory::CreateEvent(type, inf));
+            this->events.push_back(EventFactory::CreateEvent(inf));
         }
         this->Reset();
     }

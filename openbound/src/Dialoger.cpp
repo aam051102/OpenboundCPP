@@ -382,7 +382,7 @@ namespace SBURB
 		std::shared_ptr<SpriteButton> spadeButton;
 		std::shared_ptr<SpriteButton> heartButton;
 		std::shared_ptr<SpriteButton> bubbleButton;
-		std::shared_ptr<SpriteButton> hashTagBar;
+		std::shared_ptr<Sprite> hashTagBar;
 
 		if (this->type == "social")
 		{
@@ -390,7 +390,7 @@ namespace SBURB
 			spadeButton = Sburb::GetInstance()->GetButton("spadeButton");
 			heartButton = Sburb::GetInstance()->GetButton("heartButton");
 			bubbleButton = Sburb::GetInstance()->GetButton("bubbleButton");
-			hashTagBar = Sburb::GetInstance()->GetButton("hashTagBar");
+			hashTagBar = Sburb::GetInstance()->GetSprite("hashTagBar");
 		}
 
 		bool init = false;

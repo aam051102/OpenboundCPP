@@ -11,14 +11,14 @@ namespace SBURB
 {
 	struct MotionPath {
 		std::shared_ptr<AssetPath> path;
-		int xtox;
-		int xtoy;
-		int ytox;
-		int ytoy;
-		int dx;
-		int dy;
+		float xtox;
+		float xtoy;
+		float  ytox;
+		float ytoy;
+		float dx;
+		float dy;
 
-		MotionPath(std::shared_ptr<AssetPath> path, int xtox, int xtoy, int ytox, int ytoy, int dx, int dy) : path(path), xtox(xtox), xtoy(xtoy), ytox(ytox), ytoy(ytoy), dx(dx), dy(dy) {};
+		MotionPath(std::shared_ptr<AssetPath> path, float xtox, float xtoy, float ytox, float ytoy, float dx, float dy) : path(path), xtox(xtox), xtoy(xtoy), ytox(ytox), ytoy(ytoy), dx(dx), dy(dy) {};
 	};
 
     class Room : public sf::Drawable
@@ -27,13 +27,15 @@ namespace SBURB
         Room(std::string name, int width, int height);
 		~Room();
 
+		Vector2 Room::GetAdjustedMovement(Sprite* sprite, int ax, int ay);
+
 		void AddEffect(std::shared_ptr<Animation> effect);
 		void AddTrigger(std::shared_ptr<Trigger> trigger);
 
 		void AddSprite(std::shared_ptr<Sprite> sprite);
 		bool RemoveSprite(std::shared_ptr<Sprite> sprite);
 
-		void AddMotionPath(std::shared_ptr<AssetPath> path, int xtox, int xtoy, int ytox, int ytoy, int dx, int dy);
+		void AddMotionPath(std::shared_ptr<AssetPath> path, float xtox, float xtoy, float ytox, float ytoy, float dx, float dy);
 
 		void AddWalkable(std::shared_ptr<AssetPath> path);
 		void RemoveWalkable(std::shared_ptr<AssetPath> path);
