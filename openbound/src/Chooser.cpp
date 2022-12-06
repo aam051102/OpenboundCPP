@@ -39,18 +39,20 @@ namespace SBURB {
 		height = basis.GetLineHeight() * this->choices.size()  + 10;
 
 		Vector2 stageSize = Sburb::GetInstance()->GetViewSize();
+		Vector2 stagePos = Sburb::GetInstance()->GetViewPos();
 
-		if (x < 10) {
-			x = 10;
+
+		if (x < stagePos.x + 10) {
+			x = stagePos.x + 10;
 		}
-		if (y < 10) {
-			y = 10;
+		if (y < stagePos.y + 10) {
+			y = stagePos.y + 10;
 		}
-		if (x + width > stageSize.x - 10) {
-			x = stageSize.x - width - 10;
+		if (x + width > stagePos.x + stageSize.x - 10) {
+			x = stagePos.x + stageSize.x - width - 10;
 		}
-		if (y + height > stageSize.y - 10) {
-			y = stageSize.y - height - 10;
+		if (y + height > stagePos.y + stageSize.y - 10) {
+			y = stagePos.y + stageSize.y - height - 10;
 		}
 
 		this->choosing = true;
