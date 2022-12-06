@@ -20,7 +20,7 @@ namespace SBURB
 
 		for (int i = 0; i < (sheet->GetAsset()->getSize().x / this->width) * (sheet->GetAsset()->getSize().y / this->height); i++)
 		{
-			this->AddAnimation(std::make_shared<Animation>("state" + i, sheetName, 0, 0, width, height, i, 1, "1000"));
+			this->AddAnimation(std::make_shared<Animation>("state" + std::to_string(i), sheetName, 0, 0, width, height, i, 1, "1000"));
 		}
 
 		this->StartAnimation("state0");

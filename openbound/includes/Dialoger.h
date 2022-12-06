@@ -26,7 +26,7 @@ namespace SBURB
         Vector2 StartOnSide(std::string side);
         Vector2 EndOnSide(std::string side);
 
-        bool MoveToward(Vector2 startPos, Vector2 endPos, int speed = 100);
+        bool MoveToward(Vector2& startPos, Vector2 endPos, int speed = 100);
         bool MoveToward(std::shared_ptr<Sprite> sprite, Vector2 pos, int speed = 100);
         void Update();
         Vector4 DecideDialogDimensions();

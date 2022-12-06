@@ -184,6 +184,7 @@ namespace SBURB
 			std::string resource = prefix.substr(firstIndex + 1, lastIndex - (firstIndex + 1));
 			prefix = prefix.substr(0, firstIndex) + prefix.substr(lastIndex);
 
+			std::cout << "GRAPHIC LOAD" << std::endl;
 			this->graphic = Sburb::GetInstance()->GetSprite(resource);
 
 			if (!this->graphic)
@@ -330,7 +331,7 @@ namespace SBURB
 		}
 	}
 
-	bool Dialoger::MoveToward(Vector2 startPos, Vector2 endPos, int speed)
+	bool Dialoger::MoveToward(Vector2& startPos, Vector2 endPos, int speed)
 	{
 		if (abs(startPos.x - endPos.x) > speed)
 		{
@@ -580,7 +581,7 @@ namespace SBURB
 		{
 			std::shared_ptr<AssetGraphic> boxAsset = AssetManager::GetGraphicByName(box);
 
-			dialogBox = std::make_shared<Sprite>(std::string("dialogBox"), Sburb::GetInstance()->window->getSize().x + 1, 1000, boxAsset->GetAsset()->getSize().x, boxAsset->GetAsset()->getSize().y, 0, 0, 0);
+			dialogBox = std::make_shared<Sprite>(std::string("dialogBox"), Sburb::GetInstance()->GetViewSize().x + 1, 1000, boxAsset->GetAsset()->getSize().x, boxAsset->GetAsset()->getSize().y, 0, 0, 0);
 			dialogBox->AddAnimation(std::make_shared<Animation>(std::string("image"), boxAsset->GetName(), 0, 0, boxAsset->GetAsset()->getSize().x, boxAsset->GetAsset()->getSize().y, 0, 1, "1"));
 			dialogBox->StartAnimation("image");
 		}
@@ -626,7 +627,7 @@ namespace SBURB
 			target.draw(*Sburb::GetInstance()->GetSprite("hashTagBar"), states);
 		}
 
-		target.draw(*this->box, states);
+ 		target.draw(*this->box, states);
 
 		if (this->graphic)
 		{
