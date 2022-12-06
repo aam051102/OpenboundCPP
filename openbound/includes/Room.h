@@ -27,7 +27,8 @@ namespace SBURB
         Room(std::string name, int width, int height);
 		~Room();
 
-		Vector2 Room::GetAdjustedMovement(Sprite* sprite, int ax, int ay);
+		sf::Vector2f Room::GetAdjustedMovement(Sprite* sprite, float ax, float ay);
+		sf::Vector2f Room::GetInverseAdjustedMovement(Sprite* sprite, float ax, float ay);
 
 		void AddEffect(std::shared_ptr<Animation> effect);
 		void AddTrigger(std::shared_ptr<Trigger> trigger);

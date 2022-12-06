@@ -135,10 +135,10 @@ namespace SBURB
 
         output = output + "\n<sprite " +
             Serializer::SerializeAttribute("name", this->name) +
-            Serializer::SerializeAttribute("x", this->x) +
-            Serializer::SerializeAttribute("y", this->y) +
-            Serializer::SerializeAttribute("dx", this->dx) +
-            Serializer::SerializeAttribute("dy", this->dy) +
+            Serializer::SerializeAttribute("x", (int)this->x) +
+            Serializer::SerializeAttribute("y", (int)this->y) +
+            Serializer::SerializeAttribute("dx", (int)this->dx) +
+            Serializer::SerializeAttribute("dy", (int)this->dy) +
             Serializer::SerializeAttribute("width", this->width) +
             Serializer::SerializeAttribute("height", this->height) +
             Serializer::SerializeAttribute("depthing", this->depthing) +

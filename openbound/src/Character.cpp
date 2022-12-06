@@ -84,14 +84,8 @@ namespace SBURB {
 
 				std::vector<sf::Keyboard::Key> keys = {};
 
-				/*if (moveMap) {
-					delta = moveMap(destPos.x - this.x, destPos.y - this.y);
-				}
-				else {*/
-				// NOTE: Got rid of moveMap for now.
-				Vector2 delta = Vector2(destPos.x - this->x, destPos.y - this->y);
-				//}
-
+				sf::Vector2f delta = Sburb::GetInstance()->GetCurrentRoom()->GetInverseAdjustedMovement(this, destPos.x - this->x, destPos.y - this->y);
+				
 				if (abs(delta.x) >= this->speed / 1.9) {
 					if (delta.x > 0) {
 						keys.push_back(sf::Keyboard::Right);

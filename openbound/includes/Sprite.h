@@ -59,12 +59,12 @@ namespace SBURB
 
     protected:
         std::string name;
-        int x;
-        int y;
+        float x;
+        float y;
         int width;
         int height;
-        int dx;
-        int dy;
+        float dx;
+        float dy;
         int depthing;
         bool collidable;
         std::map<std::string, std::shared_ptr<Animation>> animations;

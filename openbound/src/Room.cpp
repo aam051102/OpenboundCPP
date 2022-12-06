@@ -23,19 +23,43 @@ namespace SBURB
 
 	}
 
-	Vector2 Room::GetAdjustedMovement(Sprite* sprite, int ax, int ay) {
+	sf::Vector2f Room::GetAdjustedMovement(Sprite* sprite, float ax, float ay) {
 		for (int i = 0; i < this->motionPaths.size(); i++) {
 			std::shared_ptr<MotionPath> motionPath = this->motionPaths[i];
 			bool shouldMove = motionPath->path->Query(Vector2(sprite->GetX(), sprite->GetY()));
 
 			if (shouldMove) {
-				int fx = (ax * motionPath->xtox + ay * motionPath->ytox + motionPath->dx);
-				int fy = (ax * motionPath->xtoy + ay * motionPath->ytoy + motionPath->dy);
-				return Vector2(fx, fy);
+				float fx = (ax * motionPath->xtox + ay * motionPath->ytox + motionPath->dx);
+				float fy = (ax * motionPath->xtoy + ay * motionPath->ytoy + motionPath->dy);
+				return sf::Vector2f(fx, fy);
 			}
 		}
 
-		return Vector2(ax, ay);
+		return sf::Vector2f(ax, ay);
+	}
+
+	sf::Vector2f Room::GetInverseAdjustedMovement(Sprite* sprite, float ax, float ay) {
+		for (int i = 0; i < this->motionPaths.size(); i++) {
+			std::shared_ptr<MotionPath> motionPath = this->motionPaths[i];
+			bool shouldMove = motionPath->path->Query(Vector2(sprite->GetX(), sprite->GetY()));
+
+			if (shouldMove) {
+				ax -= motionPath->dx;
+				ay -= motionPath->dy;
+
+				float fx, fy;
+				float det = motionPath->xtox * motionPath->ytoy - motionPath->xtoy * motionPath->ytox;
+
+				if (det) {
+					fx = (ax * motionPath->ytoy - ay * motionPath->ytox) / det;
+					fy = (-ax * motionPath->xtoy + ay * motionPath->xtox) / det;
+					return sf::Vector2f(fx, fy);
+				}
+				else {
+					return sf::Vector2f(0, 0);
+				}
+			}
+		}
 	}
 
 	void Room::AddEffect(std::shared_ptr<Animation> effect) {

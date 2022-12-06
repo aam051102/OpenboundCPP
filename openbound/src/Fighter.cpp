@@ -263,8 +263,8 @@ namespace SBURB {
 
 		output = output + "<fighter " +
 			Serializer::SerializeAttribute("name", this->name) +
-			Serializer::SerializeAttribute("x", this->x) +
-			Serializer::SerializeAttribute("y", this->y) +
+			Serializer::SerializeAttribute("x", (int)this->x) +
+			Serializer::SerializeAttribute("y", (int)this->y) +
 			Serializer::SerializeAttribute("width", this->width) +
 			Serializer::SerializeAttribute("height", this->height) + 
 			Serializer::SerializeAttribute("facing", this->facing) +
