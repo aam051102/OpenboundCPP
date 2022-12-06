@@ -393,25 +393,28 @@ namespace SBURB
 
             BatchHandler::getInstance().Reset();
 
-            // NOTE: Some sort of translation is usually done between these renders. It may be necessary to add them back later.
-
             // Render all objects
             if (this->curRoom)
                 window->draw(*curRoom);
 
+            // The following elements are rendered relative to the current view position. (i.e. screen space / fixed on screen)
+            sf::RenderStates viewState;
+            viewState.transform.translate(sf::Vector2f(this->viewPos.x, this->viewPos.y));
+
             if (this->fade > 0.1)
             {
-                window->draw(fadeShape);
+                window->draw(fadeShape, viewState);
             }
 
             if (dialoger)
-                window->draw(*dialoger);
+                window->draw(*dialoger, viewState);
 
             for (auto hudElement : hud)
             {
-                window->draw(*hudElement.second);
+                window->draw(*hudElement.second, viewState);
             }
 
+            // From here, things are rendered relative to 0, 0. (i.e. world space)
             if (chooser)
                 window->draw(*chooser);
 

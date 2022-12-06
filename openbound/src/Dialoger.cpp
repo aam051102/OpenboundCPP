@@ -379,6 +379,8 @@ namespace SBURB
 
 	void Dialoger::Update()
 	{
+		this->setPosition(Sburb::GetInstance()->GetViewPos().x, Sburb::GetInstance()->GetViewPos().y);
+
 		std::shared_ptr<SpriteButton> closeButton;
 		std::shared_ptr<SpriteButton> spadeButton;
 		std::shared_ptr<SpriteButton> heartButton;
