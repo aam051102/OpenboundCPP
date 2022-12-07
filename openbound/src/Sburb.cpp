@@ -309,6 +309,15 @@ namespace SBURB
             this->fade = std::max(0.01f, this->fade - FADE_RATE);
             // apparently alpha 0 is buggy? - NOTE: Alpha 0 probably isn't buggy in C++, but lets keep it anyway.
         }
+
+        if (this->fade > 0.01) {
+            float limitedFade = this->fade;
+            if (this->fade > 1) limitedFade = 1;
+            if (this->fade < 0) limitedFade = 0;
+
+            this->fadeShape.setFillColor(sf::Color(0, 0, 0, 255 / 1 * limitedFade));
+            this->fadeShape.setSize(sf::Vector2f(this->viewSize.x, this->viewSize.y));
+        }
     }
 
     void Sburb::ChainAction()
@@ -459,6 +468,9 @@ namespace SBURB
             if (this->curRoom)
                 window->draw(*curRoom);
 
+            if (BatchHandler::getInstance().BatchExists())
+                BatchHandler::getInstance().DrawBatch();
+
             // The following elements are rendered relative to the current view position. (i.e. screen space / fixed on screen)
             sf::RenderStates viewState;
             viewState.transform.translate(sf::Vector2f(this->viewPos.x, this->viewPos.y));
@@ -481,9 +493,6 @@ namespace SBURB
                 window->draw(*chooser);
 
             // Debugger is usually drawn here, but I don't have one.
-
-            if (BatchHandler::getInstance().BatchExists())
-                BatchHandler::getInstance().DrawBatch();
 
             window->display();
         }
