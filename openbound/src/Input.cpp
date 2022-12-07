@@ -50,6 +50,10 @@ namespace SBURB
     {
         if (!focused) return;
 
+        // Get mouse position within window bounds
+        inputHandlerInst->realMousePosition = sf::Mouse::getPosition(*Sburb::GetInstance()->window.GetRenderWindow());
+
+        // Get mouse and key states
         if (e.type == sf::Event::MouseButtonPressed) {
             if (e.mouseButton.button == sf::Mouse::Left) {
                 inputHandlerInst->OnMouseDown();
@@ -149,7 +153,7 @@ namespace SBURB
     }
 
     sf::Vector2i InputHandler::GetMousePosition() {
-        return sf::Mouse::getPosition();
+        return inputHandlerInst->realMousePosition;
     }
 
     bool InputHandler::GetMouseDown()

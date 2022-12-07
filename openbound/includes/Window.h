@@ -44,6 +44,8 @@ namespace SBURB
         sf::Vector2i GetSize();
         void SetSize(sf::Vector2i size);
 
+        sf::RenderWindow* GetRenderWindow() { return this->win; };
+
     private:
         sf::RenderWindow *win;
         std::string title;

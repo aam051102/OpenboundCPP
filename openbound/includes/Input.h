@@ -44,6 +44,7 @@ namespace SBURB
         std::vector<sf::Keyboard::Key> pressedOrder;
         std::map<sf::Keyboard::Key, bool> pressed;
         bool mouseDown;
+        sf::Vector2i realMousePosition;
     };
 }
 
