@@ -66,7 +66,7 @@ namespace SBURB
 				if (this->HitsPoint(x - this->width / 2, y - this->height / 2))
 				{
 					this->clicked = true;
-					std::string nextState = "state" + (stoi(this->animation->GetName().substr(5)) + 1);
+					std::string nextState = "state" + std::to_string(stoi(this->animation->GetName().substr(5)) + 1);
 
 					if (this->animations[nextState])
 					{
