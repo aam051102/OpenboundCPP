@@ -180,6 +180,9 @@ namespace SBURB
             {
                 Render();
             }
+            else {
+                RenderPreloader();
+            }
         }
     }
 
@@ -383,6 +386,65 @@ namespace SBURB
                 this->inputDisabled = false;
             }
         }
+    }
+
+    void Sburb::RenderPreloader() {
+        // TODO: Actually make this render by making asset loading async.
+        sf::RectangleShape blankBG(sf::Vector2f((float)this->viewSize.x, (float)this->viewSize.y));
+        blankBG.setPosition(0, 0);
+        window->draw(blankBG);
+
+        auto preloaderBG = AssetManager::GetGraphicByName("preloaderBG");
+        if (preloaderBG) {
+            sf::Sprite preloaderBGSprite;
+            preloaderBGSprite.setPosition(0, 0);
+            preloaderBGSprite.setTexture(*preloaderBG->GetAsset());
+            window->draw(preloaderBGSprite);
+        }
+
+        /*Sburb.stage.fillStyle = "rgb(255,255,255)";
+        Sburb.stage.font = "10px Verdana";
+        Sburb.stage.textAlign = "center";
+
+        var percent = 0;
+        if (this.totalSize && this.totalMeta >= this.totalAssets) {
+            percent = Math.floor((this.loadedSize / this.totalSize) * 100);
+        }
+        else {
+            percent = Math.floor((this.totalLoaded / this.totalAssets) * 100);
+        }
+        Sburb.stage.fillText(
+            percent + "%",
+            Sburb.Stage.width / 2,
+            Sburb.Stage.height - 50
+        );*/
+        
+        /*if (this->error.length) {
+            Sburb.stage.textAlign = "left";
+            for (var i = 0; i < this.error.length; i++)
+                Sburb.stage.fillText(
+                    "Error: " + this.error[i],
+                    10,
+                    20 + 15 * i
+                );
+            Sburb.stage.textAlign = "center";
+            if (this.failed.length) {
+                if (this.refresh) {
+                    this.error = ["Refreshing..."];
+                    for (var i = 0; i < this.failed.length; i++)
+                        this.assets[this.failed[i]].reload();
+                    this.failed = [];
+                }
+                else {
+                    Sburb.stage.font = "18px Verdana";
+                    Sburb.stage.fillText(
+                        "Press SPACE to reload failed assets",
+                        Sburb.Stage.width / 2,
+                        Sburb.Stage.height - 70
+                    );
+                }
+            }
+        }*/
     }
 
     void Sburb::Render()

@@ -27,6 +27,7 @@ namespace SBURB
 
         void Update();
         void Render();
+        void RenderPreloader();
 
         void PurgeState();
 

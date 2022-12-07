@@ -9,7 +9,10 @@ namespace SBURB {
         this->followUp = followUp;
         this->shouldRestart = shouldRestart;
         this->shouldDetonate = shouldDetonate;
+
+        if (op == "") op = "AND";
         this->op = op;
+        
         this->waitFor = NULL;
 
         this->events = {};

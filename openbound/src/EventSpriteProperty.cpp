@@ -4,6 +4,7 @@
 namespace SBURB {
     EventSpriteProperty::EventSpriteProperty(std::string spriteName, std::string query) {
         this->canSerialize = false;
+        this->spriteName = spriteName;
 
         this->token = "";
         if (query.find(">") != -1) this->token = ">";
