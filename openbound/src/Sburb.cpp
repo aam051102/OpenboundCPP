@@ -39,7 +39,6 @@ namespace SBURB
         this->inputDisabled = false;
         
         this->viewSize = Vector2(650, 450);
-
         this->view = sf::View(sf::FloatRect((float)viewPos.x, (float)viewPos.y, (float)viewSize.x, (float)viewSize.y));
         
         this->destRoom = nullptr;
@@ -67,6 +66,7 @@ namespace SBURB
         this->fading = false;
         this->fade = 0;
         this->fadeShape = sf::RectangleShape();
+        this->fadeShape.setSize(sf::Vector2f(this->viewSize.x, this->viewSize.y));
         this->musicStoppedFor = 0;
         this->nextQueueId = 0;
 
@@ -316,7 +316,6 @@ namespace SBURB
             if (this->fade < 0) limitedFade = 0;
 
             this->fadeShape.setFillColor(sf::Color(0, 0, 0, 255 / 1 * limitedFade));
-            this->fadeShape.setSize(sf::Vector2f(this->viewSize.x, this->viewSize.y));
         }
     }
 
@@ -492,6 +491,10 @@ namespace SBURB
             if (chooser)
                 window->draw(*chooser);
 
+
+            if (BatchHandler::getInstance().BatchExists())
+                BatchHandler::getInstance().DrawBatch();
+
             // Debugger is usually drawn here, but I don't have one.
 
             window->display();
@@ -600,6 +603,7 @@ namespace SBURB
     {
         this->window->setSize(sf::Vector2u(width, height));
         this->viewSize = Vector2(width, height);
+        this->fadeShape.setSize(sf::Vector2f(this->viewSize.x, this->viewSize.y));
     }
 
     std::shared_ptr<ActionQueue> Sburb::GetActionQueueById(std::string id)
