@@ -2,6 +2,7 @@
 #include "Serializer.h"
 #include "AssetManager.h"
 #include "Sburb.h"
+#include "BatchHandler.h"
 
 namespace SBURB
 {
@@ -158,7 +159,7 @@ namespace SBURB
 
 	void Dialoger::NextDialog()
 	{
-		std::string nextDialog = trim(this->queue.front());
+		std::string nextDialog = trim(this->queue.back());
 		this->queue.pop_back();
 
 		this->dialog->SetText(nextDialog);
@@ -184,7 +185,6 @@ namespace SBURB
 			std::string resource = prefix.substr(firstIndex + 1, lastIndex - (firstIndex + 1));
 			prefix = prefix.substr(0, firstIndex) + prefix.substr(lastIndex);
 
-			std::cout << "GRAPHIC LOAD" << std::endl;
 			this->graphic = Sburb::GetInstance()->GetSprite(resource);
 
 			if (!this->graphic)
@@ -631,6 +631,10 @@ namespace SBURB
 
  		target.draw(*this->box, states);
 
+		// Force box render
+		if (BatchHandler::getInstance().BatchExists())
+			BatchHandler::getInstance().DrawBatch();
+		
 		if (this->graphic)
 		{
 			target.draw(*this->graphic, states);

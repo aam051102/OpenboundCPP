@@ -129,7 +129,7 @@ namespace SBURB {
 	}
 
 	void FontEngine::ParseEscapes() {
-		int index;
+		size_t index;
 		int escapeLocation = 0;
 
 		do {
@@ -159,7 +159,11 @@ namespace SBURB {
 				}
 			}
 
-			this->text = this->text.substr(0, index) + this->text.substr(index + 1, this->text.size());
+			if (index == std::string::npos) {
+				break;
+			}
+
+			this->text = this->text.substr(0, index) + this->text.substr(index + 1);
 		} while (index >= 0);
 	}
 
@@ -182,7 +186,7 @@ namespace SBURB {
 
 	void FontEngine::ParseUnderlines() {
 		int escapePoint = 0;
-		int index = 0;
+		size_t index = 0;
 		int count = 0;
 		while (true) {
 			while (true) {
@@ -196,7 +200,7 @@ namespace SBURB {
 				}
 			}
 			
-			if (index == -1) {
+			if (index == std::string::npos) {
 				break;
 			}
 
@@ -243,7 +247,7 @@ namespace SBURB {
 
 	void FontEngine::ParseColors() {
 		int escapePoint = 0;
-		int index = 0;
+		size_t index = 0;
 		int count = 0;
 
 		while (true) {
@@ -258,7 +262,7 @@ namespace SBURB {
 				}
 			}
 
-			if (index == -1) {
+			if (index == std::string::npos) {
 				break;
 			}
 
@@ -276,7 +280,7 @@ namespace SBURB {
 			}
 			else {
 				this->AddToFormatQueue(FormatRange(index, 999999, "colour", HexToColor(this->text.substr(index + 1, index + 7 - (index + 1)))));
-				this->text = this->text.substr(0, index) + this->text.substr(index + 7, this->text.size());
+				this->text = this->text.substr(0, index) + this->text.substr(index + 7, this->text.size() - (index + 7));
 				this->RealignFormatQueue(index, 7);
 			}
 		}
@@ -455,7 +459,7 @@ namespace SBURB {
 				int startX = this->x + offsetX;
 				int startY = this->y + i * this->lineHeight;
 
-				textWriter.setColor(curColor);
+				textWriter.setFillColor(curColor);
 				textWriter.setPosition(startX, startY);
 				textWriter.setString(curLine.substr(strStart, strEnd - strStart));
 				

@@ -7,12 +7,12 @@ namespace SBURB {
         this->spriteName = spriteName;
 
         this->token = "";
-        if (query.find(">") != -1) this->token = ">";
-        else if (query.find("GREATER") != -1) this->token = "GREATER";
-        else if (query.find("<") != -1) this->token = "<";
-        else if (query.find("LESS") != -1) this->token = "LESS";
-        else if (query.find("!=") != -1) this->token = "!=";
-        else if (query.find("=") != -1) this->token = "=";
+        if (query.find(">") != std::string::npos) this->token = ">";
+        else if (query.find("GREATER") != std::string::npos) this->token = "GREATER";
+        else if (query.find("<") != std::string::npos) this->token = "<";
+        else if (query.find("LESS") != std::string::npos) this->token = "LESS";
+        else if (query.find("!=") != std::string::npos) this->token = "!=";
+        else if (query.find("=") != std::string::npos) this->token = "=";
 
         auto queryParts = split(query, this->token);
 

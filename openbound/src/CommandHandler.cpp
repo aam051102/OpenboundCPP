@@ -183,7 +183,7 @@ namespace SBURB
         auto dialoger = Sburb::GetInstance()->GetDialoger();
         dialoger->StartDialog(info);
 
-        int randomNum = floor(rand() * (dialoger->GetQueue().size() + 1));
+        int randomNum = floor(((rand() % 100) / 100.0f) * (dialoger->GetQueue().size() + 1));
         if (randomNum)
         {
             dialoger->SetQueue({dialoger->GetQueueItem(randomNum - 1)});
@@ -297,7 +297,7 @@ namespace SBURB
     void CommandHandler::AddAction(std::string info)
     {
         auto params = ParseParams(info);
-        int firstComma = info.find(",");
+        size_t firstComma = info.find(",");
         auto sprite = Parser::ParseCharacterString(params[0]);
         std::string actionString = info.substr(firstComma + 1, info.size());
 
