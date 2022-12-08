@@ -51,7 +51,7 @@ namespace SBURB {
 				this->MoveNone();
 			}
 		}
-
+		
 		this->TryToMove(this->vx, this->vy);
 
 		this->Sprite::Update();

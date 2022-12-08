@@ -191,7 +191,7 @@ namespace SBURB
 
     static inline std::string replace(std::string s, std::string oldSubstr, std::string newSubstr) {
         // TODO
-        return "";
+        return s;
     }
 
     static inline std::vector<pugi::xml_node> GetNestedChildren(pugi::xml_node* node, std::string tagName)

@@ -186,6 +186,7 @@ namespace SBURB
 
 			sf::FloatRect transformRect(0, 0, drawWidth, drawHeight);
 			transformRect = states.transform.transformRect(transformRect);
+
 			sf::VertexArray arr(sf::Quads, 4);
 			
 			arr[0].position = sf::Vector2f(transformRect.left, transformRect.top);

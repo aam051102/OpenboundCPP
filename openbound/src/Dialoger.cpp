@@ -233,7 +233,7 @@ namespace SBURB
 			this->extraArgs = resource;
 			if (this->type == "social")
 			{
-				this->hashes->SetText(trim(replace(replace(this->extraArgs, " #  ", " #"), " - ", " ")));
+				this->hashes->SetText(trim(replace(replace(this->extraArgs, "#", " #"), "-", " ")));
 			}
 		}
 		else
