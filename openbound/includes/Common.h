@@ -190,7 +190,13 @@ namespace SBURB
     }
 
     static inline std::string replace(std::string s, std::string oldSubstr, std::string newSubstr) {
-        // TODO
+        size_t pos = 0;
+        
+        while ((pos = s.find(oldSubstr, pos)) != std::string::npos) {
+            s.replace(s.begin() + pos, s.begin() + pos + oldSubstr.size(), newSubstr.c_str());
+            pos += newSubstr.size();
+        }
+
         return s;
     }
 
