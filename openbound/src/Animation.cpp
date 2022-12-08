@@ -9,8 +9,6 @@ namespace SBURB
 	{
 		this->sheetName = sheetName;
 		this->sliced = sliced;
-		this->x = x;
-		this->y = y;
 		this->startPos = startPos;
 		this->length = length;
 		this->curInterval = 0;
@@ -19,8 +17,6 @@ namespace SBURB
 		this->loopNum = loopNum;
 		this->curLoop = 0;
 		this->followUp = followUp;
-		this->flipX = flipX;
-		this->flipY = flipY;
 
 		if (sliced)
 		{
@@ -85,9 +81,11 @@ namespace SBURB
 			}
 		}
 
-		// Set transform
-		this->setPosition(this->x, this->y);
-		this->setScale(this->flipX ? -1 : 1, this->flipY ? -1 : 1);
+		this->SetX(x);
+		this->SetY(y);
+
+		this->SetFlipX(flipX);
+		this->SetFlipY(flipY);
 	}
 
 	Animation::~Animation()
@@ -138,6 +136,7 @@ namespace SBURB
 		if (this->sliced)
 		{
 			// TODO: Keep inside of camera view for optimization??? May not be necessary.
+			// TODO: Support flipped slices
 
 			for (int colNum = 0; colNum < this->numCols; colNum++)
 			{
@@ -188,15 +187,16 @@ namespace SBURB
 			sf::FloatRect transformRect(0, 0, drawWidth, drawHeight);
 			transformRect = states.transform.transformRect(transformRect);
 			sf::VertexArray arr(sf::Quads, 4);
+			
 			arr[0].position = sf::Vector2f(transformRect.left, transformRect.top);
 			arr[1].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top);
 			arr[2].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top + transformRect.height);
 			arr[3].position = sf::Vector2f(transformRect.left, transformRect.top + transformRect.height);
 
-			arr[0].texCoords = sf::Vector2f(frameX, frameY);
-			arr[1].texCoords = sf::Vector2f(frameX + drawWidth, frameY);
-			arr[2].texCoords = sf::Vector2f(frameX + drawWidth, frameY + drawHeight);
-			arr[3].texCoords = sf::Vector2f(frameX, frameY + drawHeight);
+			arr[0].texCoords = sf::Vector2f(this->flipX ? (frameX + drawWidth) : frameX, this->flipY ? (frameY + drawHeight) : frameY);
+			arr[1].texCoords = sf::Vector2f(this->flipX ? (frameX) : (frameX + drawWidth), this->flipY ? (frameY + drawHeight) : frameY);
+			arr[2].texCoords = sf::Vector2f(this->flipX ? (frameX) : (frameX + drawWidth), this->flipY ? frameY : (frameY + drawHeight));
+			arr[3].texCoords = sf::Vector2f(this->flipX ? (frameX + drawWidth) : frameX, this->flipY ? frameY : (frameY + drawHeight));
 
 			arr[0].color = sf::Color::White;
 			arr[1].color = sf::Color::White;
@@ -249,25 +249,23 @@ namespace SBURB
 	void Animation::SetX(int newX)
 	{
 		this->x = newX;
-		setPosition(this->x, this->y);
+		this->setPosition(this->x, this->y);
 	};
 
 	void Animation::SetY(int newY)
 	{
 		this->y = newY;
-		setPosition(this->x, this->y);
+		this->setPosition(this->x, this->y);
 	};
 
 	void Animation::SetFlipX(bool newFlipX)
 	{
 		this->flipX = newFlipX;
-		setScale(this->flipX, this->flipY);
 	};
 
 	void Animation::SetFlipY(bool newFlipY)
 	{
 		this->flipY = newFlipY;
-		setScale(this->flipY, this->flipY);
 	};
 
 	std::shared_ptr<Animation> Animation::Clone(int x, int y)
