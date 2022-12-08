@@ -26,25 +26,25 @@ namespace SBURB {
 		this->formatQueue = {};
 
         this->prefixColours = {
-            { "aa", 0xa10000 }, { "aradia", 0xa10000 },
-            { "ac", 0x416600 }, { "nepeta", 0x416600 },
-            { "ag", 0x005682 }, { "vriska", 0x005682 },
-            { "at", 0xa15000 }, { "tavros", 0xa15000 },
-            { "ca", 0x6a006a }, { "eridan", 0x6a006a },
-            { "cc", 0x77003c }, { "feferi", 0x77003c },
-            { "cg", 0x626262 }, { "karkat", 0x626262 },
-            { "ct", 0x000056 }, { "equius", 0x000056 },
-            { "ga", 0x008141 }, { "kanaya", 0x008141 },
-            { "gc", 0x008282 }, { "terezi", 0x008282 },
-            { "ta", 0xa1a100 }, { "sollux", 0xa1a100 },
-            { "tc", 0x2b0057 }, { "gamzee", 0x2b0057 },
-            { "dave", 0xe00707 },
-            { "meenah", 0x77003c },
-            { "rose", 0xb536da },
-            { "aranea", 0x005682 },
-            { "kankri", 0xff0000 },
-            { "porrum", 0x008141 },
-            { "latula", 0x008282 },
+            { "aa", 0xa10000ff }, { "aradia", 0xa10000ff },
+            { "ac", 0x416600ff }, { "nepeta", 0x416600ff },
+            { "ag", 0x005682ff }, { "vriska", 0x005682ff },
+            { "at", 0xa15000ff }, { "tavros", 0xa15000ff },
+            { "ca", 0x6a006aff }, { "eridan", 0x6a006aff },
+            { "cc", 0x77003cff }, { "feferi", 0x77003cff },
+            { "cg", 0x626262ff }, { "karkat", 0x626262ff },
+            { "ct", 0x000056ff }, { "equius", 0x000056ff },
+            { "ga", 0x008141ff }, { "kanaya", 0x008141ff },
+            { "gc", 0x008282ff }, { "terezi", 0x008282ff },
+            { "ta", 0xa1a100ff }, { "sollux", 0xa1a100ff },
+            { "tc", 0x2b0057ff }, { "gamzee", 0x2b0057ff },
+            { "dave", 0xe00707ff },
+            { "meenah", 0x77003cff },
+            { "rose", 0xb536daff },
+            { "aranea", 0x005682ff },
+            { "kankri", 0xff0000ff },
+            { "porrum", 0x008141ff },
+            { "latula", 0x008282ff },
         };
     }
 
@@ -317,11 +317,10 @@ namespace SBURB {
 	}
 
 	sf::Color FontEngine::PrefixColouration(std::string prefix) {
-		std::string lowercasePrefix;
 		std::transform(prefix.begin(), prefix.end(), prefix.begin(), [](unsigned char c) { return std::tolower(c); });
 
-		if (this->prefixColours[lowercasePrefix]) {
-			return sf::Color(this->prefixColours[lowercasePrefix]);
+		if (this->prefixColours[prefix]) {
+			return sf::Color(this->prefixColours[prefix]);
 		}
 		else {
 			return sf::Color::Black;
