@@ -2,6 +2,7 @@
 #include "Serializer.h"
 #include "AssetManager.h"
 #include "BatchHandler.h"
+#include "Sburb.h"
 
 namespace SBURB
 {
@@ -186,6 +187,12 @@ namespace SBURB
 
 			sf::FloatRect transformRect(0, 0, drawWidth, drawHeight);
 			transformRect = states.transform.transformRect(transformRect);
+
+			if (this->flipX) {
+				transformRect.left += -this->x;
+				transformRect.left += -this->x;
+				transformRect.left -= transformRect.width;
+			}
 
 			sf::VertexArray arr(sf::Quads, 4);
 			

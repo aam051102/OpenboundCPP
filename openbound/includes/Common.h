@@ -80,7 +80,11 @@ namespace SBURB
     Source 2: https://stackoverflow.com/questions/23689733/convert-string-from-utf-8-to-iso-8859-1
     */
     static inline std::string escape(const char* in) {
-        std::ostringstream escaped;
+        // NOTE: function is complete, but incompatible with unescape, which is incomplete, and therefore commented out until unescape is complete.
+        return in;
+
+        
+        /*std::ostringstream escaped;
         escaped.fill('0');
         escaped << std::hex;
         if (in == NULL)
@@ -139,7 +143,7 @@ namespace SBURB
             }
         }
 
-        return escaped.str();
+        return escaped.str();*/
     }
 
     /*

@@ -415,6 +415,7 @@ namespace SBURB
 			}
 
 			init = false;
+
 			if (this->MoveToward(this->pos, desiredPos, 110) && ready)
 			{
 
