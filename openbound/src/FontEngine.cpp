@@ -472,7 +472,9 @@ namespace SBURB {
 					textWriter.setOrigin(sf::Vector2f(0, 0));
 				}
 				
-				textWriter.setPosition(textWriter.getPosition().x, textWriter.getPosition().y - textWriter.getLocalBounds().top);
+				// NOTE: An unfortunate, hardcoded solution to match browser behavior. May be subject to betterment.
+				textWriter.setPosition(textWriter.getPosition().x, textWriter.getPosition().y - 2); 
+
 				target.draw(textWriter, states);
 
 				offsetX += textWriter.getGlobalBounds().width;
