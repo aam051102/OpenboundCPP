@@ -192,10 +192,10 @@ namespace SBURB
             return this->name;
         }
         else if (prop == "x") {
-            return std::to_string(this->x);
+            return std::to_string((int)this->x);
         }
         else if (prop == "y") {
-            return std::to_string(this->y);
+            return std::to_string((int)this->y);
         }
         else if (prop == "state") {
             return this->state;

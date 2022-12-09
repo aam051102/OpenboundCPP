@@ -40,6 +40,10 @@ namespace SBURB {
             entity = Sburb::GetInstance()->GetCharacter();
         }
 
+        /*if (this->prop == "y") {
+            std::cout << this->spriteName << ", " << token << ", " << this->prop << ": " << entity->GetProp(this->prop) << ", " << target;
+        }*/
+
         if (token == ">" || token == "GREATER") {
             return std::stoi(entity->GetProp(this->prop)) > std::stoi(target);
         }
