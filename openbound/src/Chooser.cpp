@@ -1,5 +1,6 @@
 #include "Chooser.h"
 #include "Sburb.h"
+#include "AssetManager.h"
 
 constexpr int MIN_WIDTH = 160;
 
@@ -104,11 +105,20 @@ namespace SBURB {
 			x = this->dialogs[0].GetX();
 			y = this->dialogs[0].GetY() - 1;
 
+			sf::Text textMeasurer;
 			for (i = 0; i < this->dialogs.size(); i++) {
-				width = std::max(width, (int)this->dialogs[i].GetLine(0).size() * this->dialogs[i].GetCharWidth() + 10);
+				textMeasurer.setFont(*AssetManager::GetFontByName(this->dialogs[i].GetFontName())->GetAsset().get());
+				textMeasurer.setCharacterSize(this->dialogs[i].GetFontSize());
+				textMeasurer.setStyle(this->dialogs[i].GetFontStyle());
+				textMeasurer.setString(this->dialogs[i].GetLine(0));
+				
+				width = std::max(width, (int)textMeasurer.getLocalBounds().width + 10);
+				
+				//width = std::max(width, (int)this->dialogs[i].GetLine(0).size() * this->dialogs[i].GetCharWidth() + 10);
 			}
 
 			height = this->dialogs[0].GetLineHeight() * this->dialogs.size();
+
 
 			// NOTE: Not super efficient; may be optimized later.
 			sf::RectangleShape orangeRectShape(sf::Vector2f(width + 12, height + 13));

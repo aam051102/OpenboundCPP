@@ -461,7 +461,7 @@ namespace SBURB {
 				textWriter.setFillColor(curColor);
 				textWriter.setPosition(startX, startY);
 				textWriter.setString(curLine.substr(strStart, strEnd - strStart));
-				
+
 				if (this->align == "center") {
 					textWriter.setOrigin(sf::Vector2f(textWriter.getLocalBounds().width / 2, 0));
 				}
@@ -471,7 +471,8 @@ namespace SBURB {
 				else {
 					textWriter.setOrigin(sf::Vector2f(0, 0));
 				}
-
+				
+				textWriter.setPosition(textWriter.getPosition().x, textWriter.getPosition().y - textWriter.getLocalBounds().top);
 				target.draw(textWriter, states);
 
 				offsetX += textWriter.getGlobalBounds().width;

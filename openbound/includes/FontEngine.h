@@ -71,6 +71,10 @@ namespace SBURB {
         int GetLineHeight() const { return this->lineHeight; };
         int GetCharWidth() const { return this->charWidth; };
 
+        std::string GetFontName() const { return this->fontName; };
+        int GetFontSize() const { return this->fontSize; };
+        sf::Uint32 GetFontStyle() const { return this->fontStyle; };
+
         const std::string GetLine(int index) const { return this->lines[index]; };
 
     private:
