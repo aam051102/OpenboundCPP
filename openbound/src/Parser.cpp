@@ -125,7 +125,7 @@ namespace SBURB
 
 		do
 		{
-			if (curNode->attribute("sprite").as_string() != "null")
+			if (std::string(curNode->attribute("sprite").as_string()) != "null")
 			{
 				targSprite = curNode->attribute("sprite").as_string();
 			}
@@ -577,6 +577,7 @@ namespace SBURB
 			auto action = GetNestedChild(curNode, "action");
 
 			std::shared_ptr<Action> curAction = nullptr;
+
 			if (action && action.parent() == *curNode)
 			{
 				curAction = ParseAction(action);

@@ -695,14 +695,18 @@ namespace SBURB
                 this->actionQueues.push_back(queue);
             }
         }
-
+        
         if (queue && (queue != this->queue))
         {
             this->PerformActionInQueue(action, queue);
             return queue;
         }
 
-        if (((this->queue->GetCurrentAction() && this->queue->GetCurrentAction()->GetFollowUp() != action && this->queue->GetCurrentAction() != action) || !this->HasControl()) && action->GetSoft())
+        if (((this->queue->GetCurrentAction() &&
+            this->queue->GetCurrentAction()->GetFollowUp() != action &&
+            this->queue->GetCurrentAction() != action) || 
+            !this->HasControl()) &&
+            action->GetSoft())
         {
             return nullptr;
         }
@@ -726,7 +730,10 @@ namespace SBURB
             std::shared_ptr<Trigger> result = CommandHandler::PerformActionSilent(queue->GetCurrentAction());
             HandleCommandResult(queue, result);
             looped = true;
-        } while (queue->GetCurrentAction() && queue->GetCurrentAction()->GetTimes() <= 0 && queue->GetCurrentAction()->GetFollowUp() && queue->GetCurrentAction()->GetFollowUp()->GetNoDelay());
+        } while (queue->GetCurrentAction() &&
+            queue->GetCurrentAction()->GetTimes() <= 0 &&
+            queue->GetCurrentAction()->GetFollowUp() &&
+            queue->GetCurrentAction()->GetFollowUp()->GetNoDelay());
     }
 
     void Sburb::HandleCommandResult(std::shared_ptr<ActionQueue> queue, std::shared_ptr<Trigger> result)

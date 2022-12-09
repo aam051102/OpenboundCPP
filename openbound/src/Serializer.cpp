@@ -541,6 +541,7 @@ namespace SBURB
     {
         std::string templateClass = templateNode.attribute("class").as_string();
         std::string candClass = candidateNode.attribute("class").as_string();
+
         if (candClass != "" && candClass == templateClass)
         {
             Serializer::ApplyTemplate(templateNode, candidateNode);
@@ -549,12 +550,13 @@ namespace SBURB
 
     void Serializer::ApplyTemplate(pugi::xml_node templateNode, pugi::xml_node candidateNode)
     {
+
         auto tempChildren = templateNode.children();
         auto candChildren = candidateNode.children();
 
         for (auto tempAttribute : templateNode.attributes())
         {
-            if (candidateNode.attribute(tempAttribute.name()).as_string() == "")
+            if (std::string(candidateNode.attribute(tempAttribute.name()).as_string()) == "")
             {
                 candidateNode.append_attribute(tempAttribute.name()).set_value(tempAttribute.as_string());
             }

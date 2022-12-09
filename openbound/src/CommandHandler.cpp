@@ -13,7 +13,7 @@
 
 namespace SBURB
 {
-    std::shared_ptr<Trigger> CommandHandler::PerformActionSilent(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue)
+    std::shared_ptr<Trigger> CommandHandler::PerformActionSilent(std::shared_ptr<Action> action)
     {
         action->SetTimes(action->GetTimes() - 1);
 

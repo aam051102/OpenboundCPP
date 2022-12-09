@@ -209,13 +209,12 @@ namespace SBURB
         std::vector<pugi::xml_node> nodes = {};
 
         for (auto child : node->children()) {            
-            if (child.name() == tagName) {
+            if (std::string(child.name()) == tagName) {
                 nodes.push_back(child);
             }
-            else {
-                auto childsChildren = GetNestedChildren(&child, tagName);
-                nodes.insert(nodes.end(), childsChildren.begin(), childsChildren.end());
-            }
+
+            auto childsChildren = GetNestedChildren(&child, tagName);
+            nodes.insert(nodes.end(), childsChildren.begin(), childsChildren.end());
         }
 
         return nodes;
@@ -224,7 +223,7 @@ namespace SBURB
     static inline pugi::xml_node GetNestedChild(pugi::xml_node* node, std::string tagName)
     {
         for (auto child : node->children()) {
-            if (child.name() == tagName) {
+            if (std::string(child.name()) == tagName) {
                 return child;
             }
             else {
