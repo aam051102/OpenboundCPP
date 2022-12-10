@@ -12,6 +12,8 @@
 #include "Parser.h"
 #include "CommandHandler.h"
 
+#include <thread>
+
 constexpr float FADE_RATE = 0.1;
 
 namespace SBURB
@@ -398,17 +400,17 @@ namespace SBURB
 
     void Sburb::RenderPreloader() {
         // TODO: Actually make this render by making asset loading async.
-        sf::RectangleShape blankBG(sf::Vector2f((float)this->viewSize.x, (float)this->viewSize.y));
-        blankBG.setPosition(0, 0);
-        window->draw(blankBG);
+        window->clear(sf::Color(0, 0, 0, 255));
 
         auto preloaderBG = AssetManager::GetGraphicByName("preloaderBG");
+
         if (preloaderBG) {
             sf::Sprite preloaderBGSprite;
             preloaderBGSprite.setPosition(0, 0);
             preloaderBGSprite.setTexture(*preloaderBG->GetAsset());
             window->draw(preloaderBGSprite);
         }
+
 
         /*Sburb.stage.fillStyle = "rgb(255,255,255)";
         Sburb.stage.font = "10px Verdana";
@@ -426,7 +428,31 @@ namespace SBURB
             Sburb.Stage.width / 2,
             Sburb.Stage.height - 50
         );*/
+
+        int percent = 0;
+        /*if (this.totalSize && this.totalMeta >= this.totalAssets) {
+            percent = floor((this.loadedSize / this.totalSize) * 100);
+        }
+        else {
+            percent = floor((this.totalLoaded / this.totalAssets) * 100);
+        }*/
+
+        auto font = AssetManager::GetFontByName("SburbFont");
+        if (font) {
+            sf::Text textWriter;
+            textWriter.setString(std::to_string(percent) + "%");
+            textWriter.setColor(sf::Color::White);
+            textWriter.setFont(*font->GetAsset());
+            textWriter.setCharacterSize(14);
+            textWriter.setStyle(sf::Text::Style::Bold);
+            textWriter.setOrigin(sf::Vector2f(textWriter.getLocalBounds().width / 2.0f, 0));
+            textWriter.setPosition(this->viewSize.x / 2, this->viewSize.y - 50);
+
+            window->draw(textWriter);
+        }
         
+        window->display();
+
         /*if (this->error.length) {
             Sburb.stage.textAlign = "left";
             for (var i = 0; i < this.error.length; i++)
@@ -516,15 +542,15 @@ namespace SBURB
         window.CenterWindow();
 
         // Initialize room
-        // TODO: Find out how to select XML.
-        if (!Serializer::LoadSerialFromXML("./levels/openbound/openbound.xml"))
-            return false;
+        std::thread t1(Serializer::LoadSerialFromXML, "./levels/openbound/openbound.xml", false);
 
         // Start update loop
         while (window->isOpen())
         {
             Update();
         }
+
+        t1.join();
 
         return true;
     }

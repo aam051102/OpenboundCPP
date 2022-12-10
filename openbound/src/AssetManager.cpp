@@ -2,6 +2,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include <mutex>
+
 namespace SBURB
 {
     static std::unordered_map<std::string, std::shared_ptr<AssetGraphic>> graphics;
@@ -11,11 +13,16 @@ namespace SBURB
     static std::unordered_map<std::string, std::shared_ptr<AssetMovie>> movies;
     static std::unordered_map<std::string, std::shared_ptr<AssetText>> text;
 
+    static std::mutex graphicsMutex;
+    static std::mutex fontMutex;
+
     void AssetManager::LoadAsset(std::shared_ptr<Asset> asset)
     {
         if (asset->GetType() == "graphic")
         {
+            graphicsMutex.lock();
             graphics.insert(std::pair(asset->GetName(), std::static_pointer_cast<AssetGraphic>(asset)));
+            graphicsMutex.unlock();
         }
         else if (asset->GetType() == "path")
         {
@@ -23,7 +30,9 @@ namespace SBURB
         }
         else if(asset->GetType() == "font")
         {
+            fontMutex.lock();
             fonts.insert(std::pair(asset->GetName(), std::static_pointer_cast<AssetFont>(asset)));
+            fontMutex.unlock();
         }
     }
 
@@ -46,17 +55,32 @@ namespace SBURB
     // Graphic
     std::shared_ptr<AssetGraphic> AssetManager::GetGraphicByName(const std::string &name)
     {
-        return graphics[name];
+        graphicsMutex.lock();
+
+        // Ensure that item exists to prevent preload issues.
+        if (graphics.find(name) == graphics.end()) {
+            graphicsMutex.unlock();
+            return nullptr;
+        }
+
+        auto result = graphics[name];
+        graphicsMutex.unlock();
+
+        return result;
     }
 
     void AssetManager::ClearGraphics()
     {
+        graphicsMutex.lock();
+
         for (auto graphic : graphics)
         {
             graphic.second.reset();
         }
 
         graphics.clear();
+
+        graphicsMutex.unlock();
     }
 
     // Audio
@@ -78,17 +102,30 @@ namespace SBURB
     // Font
     std::shared_ptr<AssetFont> AssetManager::GetFontByName(const std::string &name)
     {
-        return fonts[name];
+        fontMutex.lock();
+
+        if (fonts.find(name) == fonts.end()) {
+            fontMutex.unlock();
+            return nullptr;
+        }
+
+        auto result = fonts[name];
+        fontMutex.unlock();
+        return result;;
     }
 
     void AssetManager::ClearFonts()
     {
+        fontMutex.lock();
+
         for (auto font : fonts)
         {
             font.second.reset();
         }
 
         fonts.clear();
+
+        fontMutex.unlock();
     }
 
     // Movie
