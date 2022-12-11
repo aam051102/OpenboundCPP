@@ -204,13 +204,15 @@ namespace SBURB
 
     void Sburb::HandleInputs()
     {
-        if (this->HasControl() && !this->inputDisabled)
-        {
-            this->character->HandleInputs(InputHandler::GetPressedOrder());
-        }
-        else
-        {
-            this->character->MoveNone();
+        if (this->character) {
+            if (this->HasControl() && !this->inputDisabled)
+            {
+                this->character->HandleInputs(InputHandler::GetPressedOrder());
+            }
+            else
+            {
+                this->character->MoveNone();
+            }
         }
 
         // NOTE: Debugger not implemented

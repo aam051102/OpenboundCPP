@@ -13,13 +13,13 @@ namespace SBURB {
 
 	void AssetPath::QueryBatchPos(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results) {
 		for (auto query : queries) {
-			(*results)[query.first] = this->Query(query.second);
+			(*results)[query.first] = (*results)[query.first] || this->Query(query.second);
 		}
 	}
 
 	void AssetPath::QueryBatchNeg(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results) {
 		for (auto query : queries) {
-			(*results)[query.first] = !this->Query(query.second);
+			(*results)[query.first] = (*results)[query.first] && !this->Query(query.second);
 		}
 	}
 
@@ -31,7 +31,7 @@ namespace SBURB {
 			Vector2 pointB = this->points[j];
 
 			if ((pointA.y <= point.y && point.y < pointB.y) || (pointB.y <= point.y && point.y < pointA.y)) {
-				if (point.x < (pointB.x - pointA.x) * (point.y - pointA.y) / (pointB.y - pointA.y) + pointA.x) {
+				if (point.x < (pointB.x - pointA.x) * (point.y - pointA.y) / (float)(pointB.y - pointA.y) + pointA.x) {
 					isOnPath = !isOnPath;
 				}
 			}
