@@ -92,7 +92,7 @@ namespace SBURB
 
         void ChangeRoom(std::shared_ptr<Room> room, int newX, int newY);
         void PlayEffect(std::shared_ptr<Animation> effect, int x, int y);
-        void PlaySound(std::shared_ptr<Sound> sound);
+        void PlaySound(std::string name);
         void PlayMovie();
         void SetCurRoomOf(std::shared_ptr<Character> sprite);
         void MoveSprite(std::shared_ptr<Character> sprite, std::shared_ptr<Room> oldRoom, std::shared_ptr<Room> newRoom);
@@ -211,6 +211,7 @@ namespace SBURB
         std::map<std::string, std::string> gameState;
         std::map<std::string, std::shared_ptr<Room>> rooms;
         std::map<std::string, std::shared_ptr<Sprite>> sprites;
+        std::map<std::string, std::shared_ptr<Sound>> sounds;
         std::map<std::string, std::shared_ptr<SpriteButton>> buttons;
         std::map<std::string, std::shared_ptr<sf::Font>> fonts;
         std::map<std::string, std::shared_ptr<Animation>> effects;

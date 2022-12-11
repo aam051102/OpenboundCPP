@@ -51,6 +51,10 @@ namespace SBURB
             fonts.insert(std::pair(asset->GetName(), std::static_pointer_cast<AssetFont>(asset)));
             fontMutex.unlock();
         }
+        else if (asset->GetType() == "audio")
+        {
+            audio.insert(std::pair(asset->GetName(), std::static_pointer_cast<AssetAudio>(asset)));
+        }
     }
 
     // Path

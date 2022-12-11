@@ -37,6 +37,6 @@ namespace SBURB
 
     void Sound::FixVolume()
     {
-        this->asset.setVolume(Sburb::GetInstance()->GetGlobalVolume());
+        this->asset.setVolume(Sburb::GetInstance()->GetGlobalVolume() * 100);
     }
 }

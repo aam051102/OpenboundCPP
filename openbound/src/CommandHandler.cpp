@@ -272,7 +272,7 @@ namespace SBURB
 
     void CommandHandler::PlaySound(std::string info)
     {
-        Sburb::GetInstance()->PlaySound(std::make_shared<Sound>(trim(info), AssetManager::GetAudioByName(trim(info))));
+        Sburb::GetInstance()->PlaySound(trim(info));
     }
 
     void CommandHandler::PlayEffect(std::string info)

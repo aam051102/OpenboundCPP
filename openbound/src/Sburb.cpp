@@ -60,6 +60,7 @@ namespace SBURB
         this->sprites = {};
         this->rooms = {};
         this->fonts = {};
+        this->sounds = {};
         
         this->character = nullptr;
         this->chooser = nullptr;
@@ -95,19 +96,17 @@ namespace SBURB
 
     void Sburb::PurgeState()
     {
-        this->rooms = {};
-
-        this->sprites = {};
-
         if (this->bgm)
         {
             this->bgm->Stop();
             this->bgm = nullptr;
         }
 
+        this->rooms = {};
         this->gameState = {};
         this->globalVolume = 1;
         this->hud = {};
+        this->sounds = {};
         this->sprites = {};
         this->buttons = {};
         this->effects = {};
@@ -164,7 +163,7 @@ namespace SBURB
             {
                 this->mouseCursor = sf::Cursor::Arrow;
 
-                //this->HandleAudio();
+                this->HandleAudio();
                 this->HandleInputs();
                 this->HandleHud();
 
@@ -220,6 +219,7 @@ namespace SBURB
 
     void Sburb::HandleAudio()
     {
+        return;
         if (this->bgm && this->bgm->GetAsset())
         {
             if (this->bgm->Ended())
@@ -791,8 +791,13 @@ namespace SBURB
         this->curRoom->AddEffect(effect->Clone(x, y));
     }
 
-    void Sburb::PlaySound(std::shared_ptr<Sound> sound)
+    void Sburb::PlaySound(std::string name)
     {
+        if (!this->sounds[name]) {
+            this->sounds[name] = std::make_shared<Sound>(name, AssetManager::GetAudioByName(name));
+        }
+
+        auto sound = this->sounds[name];
         sound->Stop();
         sound->Play();
     }
