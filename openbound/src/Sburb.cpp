@@ -174,8 +174,8 @@ namespace SBURB
                 this->FocusCamera();
                 this->HandleRoomChange();
 
-                this->chooser->Update();
-                this->dialoger->Update();
+                if(this->chooser) this->chooser->Update();
+                if(this->dialoger) this->dialoger->Update();
 
                 this->ChainAction();
                 this->UpdateWait();
@@ -282,8 +282,10 @@ namespace SBURB
             this->destFocus = nullptr;
         }
 
-        this->viewPos.x = std::max(0, std::min((int)round(this->camera.x / this->scale.x) * this->scale.x, this->curRoom->GetWidth() - this->viewSize.x));
-        this->viewPos.y = std::max(0, std::min((int)round(this->camera.y / this->scale.y) * this->scale.y, this->curRoom->GetHeight() - this->viewSize.y));
+        if (this->curRoom) {
+            this->viewPos.x = std::max(0, std::min((int)round(this->camera.x / this->scale.x) * this->scale.x, this->curRoom->GetWidth() - this->viewSize.x));
+            this->viewPos.y = std::max(0, std::min((int)round(this->camera.y / this->scale.y) * this->scale.y, this->curRoom->GetHeight() - this->viewSize.y));
+        }
 
         // Move view
         this->view.setCenter(sf::Vector2f(this->viewPos.x + this->viewSize.x / 2, this->viewPos.y + this->viewSize.y / 2));

@@ -19,11 +19,13 @@ namespace SBURB {
 
     void Chooser::NextChoice()
     {
+		if (this->choices.size() == 0) return;
         this->choice = (this->choice + 1) % this->choices.size();
     }
 
     void Chooser::PrevChoice()
     {
+		if (this->choices.size() == 0) return;
         this->choice = (this->choice - 1 + this->choices.size()) % this->choices.size();
     }
 
@@ -96,7 +98,7 @@ namespace SBURB {
 
     void Chooser::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-		if (this->choosing) {
+		if (this->choosing && this->dialogs.size() > 0) {
 			int x = 0;
 			int y = 0;
 			int width = MIN_WIDTH;

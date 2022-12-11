@@ -169,7 +169,7 @@ namespace SBURB
 
         for (auto templateNode : templateClasses)
         {
-            serializeStream.clear();
+            serializeStream.str("");
             templateNode.second.print(serializeStream, "", pugi::format_raw);
             output += serializeStream.str();
         }

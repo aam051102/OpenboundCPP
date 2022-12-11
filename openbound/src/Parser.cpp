@@ -90,11 +90,12 @@ namespace SBURB
 
 						for (pugi::xml_node subSubChild : child.children())
 						{
-							serializeStream.clear();
+							serializeStream.str(std::string());
 							subSubChild.print(serializeStream, "", pugi::format_raw);
 							output += serializeStream.str();
-						}
 
+						}
+						
 						return output;
 					}
 				}
@@ -530,9 +531,9 @@ namespace SBURB
 					if (subChild.first_child())
 					{
 						std::string output = "";
-						for (pugi::xml_node subSubChild : subChild.children())
+						for (pugi::xml_node subSubChild : child.children())
 						{
-							serializeStream.clear();
+							serializeStream.str(std::string());
 							subSubChild.print(serializeStream, "", pugi::format_raw);
 							output += serializeStream.str();
 						}
