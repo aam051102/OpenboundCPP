@@ -162,6 +162,8 @@ namespace SBURB
             // Run main update method for all objects
             if (this->shouldUpdate)
             {
+                this->mouseCursor = sf::Cursor::Arrow;
+
                 //this->HandleAudio();
                 this->HandleInputs();
                 this->HandleHud();
@@ -178,6 +180,14 @@ namespace SBURB
 
                 this->ChainAction();
                 this->UpdateWait();
+
+                // Update mouse cursor
+                // TODO: Preload cursors.
+                sf::Cursor cursor;
+                if (cursor.loadFromSystem(this->mouseCursor))
+                {
+                    window.GetWin()->setMouseCursor(cursor);
+                }
             }
 
             this->window->setView(this->view);
@@ -195,7 +205,6 @@ namespace SBURB
 
     void Sburb::HandleInputs()
     {
-        this->SetMouseCursor(sf::Cursor::Arrow);
         if (this->HasControl() && !this->inputDisabled)
         {
             this->character->HandleInputs(InputHandler::GetPressedOrder());
@@ -416,9 +425,9 @@ namespace SBURB
             window->draw(preloaderBGSprite);
         }
 
-        // Uses SburbFont instead of Verdana because I don't wanna include Verdana in my project.
+        // Check if Verdana is defined - use SburbFont otherwise
         auto font = AssetManager::GetFontByName("Verdana");
-        if(!font) AssetManager::GetFontByName("SburbFont");
+        if(!font) font = AssetManager::GetFontByName("SburbFont");
 
         if (font) {
             int percent = floor((AssetManager::GetTotalLoaded() / (float)AssetManager::GetTotalAssets()) * 100);
@@ -428,7 +437,7 @@ namespace SBURB
             textWriter.setColor(sf::Color::White);
             textWriter.setFont(*font->GetAsset());
             textWriter.setCharacterSize(10);
-            //textWriter.setStyle(sf::Text::Style::Bold);
+            textWriter.setStyle(font->GetStyle());
             textWriter.setOrigin(sf::Vector2f(textWriter.getLocalBounds().width / 2.0f, 0));
             textWriter.setPosition(this->viewSize.x / 2, this->viewSize.y - 50);
 
@@ -596,6 +605,7 @@ namespace SBURB
 
     bool Sburb::HasControl()
     {
+        if (!this->dialoger || !this->chooser) return false;
         return !this->dialoger->GetTalking() && !this->chooser->GetChoosing() && !this->destRoom && !this->fading && !this->destFocus;
     }
 
@@ -766,11 +776,7 @@ namespace SBURB
 
     void Sburb::SetMouseCursor(sf::Cursor::Type newCursor)
     {
-        sf::Cursor cursor;
-        if (cursor.loadFromSystem(newCursor))
-        {
-            window.GetWin()->setMouseCursor(cursor);
-        }
+        this->mouseCursor = newCursor;
     }
 
     void Sburb::ChangeRoom(std::shared_ptr<Room> room, int newX, int newY)

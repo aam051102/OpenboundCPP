@@ -73,7 +73,6 @@ namespace SBURB {
 
         std::string GetFontName() const { return this->fontName; };
         int GetFontSize() const { return this->fontSize; };
-        sf::Uint32 GetFontStyle() const { return this->fontStyle; };
 
         const std::string GetLine(int index) const { return this->lines[index]; };
 
@@ -82,7 +81,6 @@ namespace SBURB {
 
         std::map<char, std::map<int, bool>> escaped;
         std::string fontName;
-        sf::Uint32 fontStyle;
         int fontSize;
         sf::Color color;
         int start;

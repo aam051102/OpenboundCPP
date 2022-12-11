@@ -6,7 +6,6 @@ namespace SBURB {
     FontEngine::FontEngine(std::string text) {
 		this->fontName = "SburbFont";
 		this->fontSize = 14;
-		this->fontStyle = sf::Text::Bold;
 		this->color = sf::Color::Black;
 		this->text = text;
 		this->x = 0;
@@ -82,9 +81,10 @@ namespace SBURB {
 		int lineStart = 0;
 
 		sf::Text textMeasurer;
-		textMeasurer.setFont(*AssetManager::GetFontByName(this->fontName)->GetAsset());
+		auto font = AssetManager::GetFontByName(this->fontName);
+		textMeasurer.setFont(*font->GetAsset());
 		textMeasurer.setCharacterSize(this->fontSize);
-		textMeasurer.setStyle(this->fontStyle);
+		textMeasurer.setStyle(font->GetStyle());
 
 		for (i = 0; i < this->text.size(); i++) {
 			if (this->text[i] == ' ') {
@@ -371,12 +371,13 @@ namespace SBURB {
 		int offsetX = 0;
 
 		sf::Text textWriter;
-		textWriter.setFont(*AssetManager::GetFontByName(this->fontName)->GetAsset().get());
+		auto font = AssetManager::GetFontByName(this->fontName);
+		textWriter.setFont(*font->GetAsset().get());
 		textWriter.setCharacterSize(this->fontSize);
 
 		while (i < floor(this->height / this->lineHeight) && i < this->lines.size()) {
 			textWriter.setFillColor(this->color);
-			textWriter.setStyle(this->fontStyle);
+			textWriter.setStyle(font->GetStyle());
 			
 			curLine = this->lines[i];
 
@@ -405,7 +406,7 @@ namespace SBURB {
 					underlining = true;
 				}
 				else if (currentFormats[k].type == "italic") {
-					textWriter.setStyle(sf::Text::Italic | this->fontStyle);
+					textWriter.setStyle(sf::Text::Italic | textWriter.getStyle());
 				}
 			}
 

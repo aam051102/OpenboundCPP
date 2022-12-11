@@ -312,7 +312,7 @@ namespace SBURB
             std::string fontVerdanaPath = "";
 
 #if defined(_WIN32) || defined(WIN32)
-            fontVerdanaPath = "C:/Windows/Fonts/Verdana.ttf"; // TODO: LOAD FONT
+            fontVerdanaPath = "C:/Windows/Fonts/Verdana.ttf";
 #endif
 
             if (fontVerdanaPath != "") {

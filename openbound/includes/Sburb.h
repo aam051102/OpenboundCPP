@@ -171,6 +171,7 @@ namespace SBURB
         std::string resourcePath;
 
     private:
+        sf::Cursor::Type mouseCursor;
         std::string description;
 
         bool shouldUpdate;

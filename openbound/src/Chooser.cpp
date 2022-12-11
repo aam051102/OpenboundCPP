@@ -107,18 +107,16 @@ namespace SBURB {
 
 			sf::Text textMeasurer;
 			for (i = 0; i < this->dialogs.size(); i++) {
-				textMeasurer.setFont(*AssetManager::GetFontByName(this->dialogs[i].GetFontName())->GetAsset().get());
+				auto font = AssetManager::GetFontByName(this->dialogs[i].GetFontName());
+				textMeasurer.setFont(*font->GetAsset().get());
 				textMeasurer.setCharacterSize(this->dialogs[i].GetFontSize());
-				textMeasurer.setStyle(this->dialogs[i].GetFontStyle());
+				textMeasurer.setStyle(font->GetStyle());
 				textMeasurer.setString(this->dialogs[i].GetLine(0));
 				
 				width = std::max(width, (int)textMeasurer.getLocalBounds().width + 10);
-				
-				//width = std::max(width, (int)this->dialogs[i].GetLine(0).size() * this->dialogs[i].GetCharWidth() + 10);
 			}
 
 			height = this->dialogs[0].GetLineHeight() * this->dialogs.size();
-
 
 			// NOTE: Not super efficient; may be optimized later.
 			sf::RectangleShape orangeRectShape(sf::Vector2f(width + 12, height + 13));

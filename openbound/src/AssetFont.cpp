@@ -8,6 +8,7 @@ namespace SBURB {
         this->name = name;
         this->sources = sources;
         this->asset = std::make_shared<sf::Font>();
+        this->style = sf::Text::Style::Regular;
 
         for (int i = 0; i < sources.size(); i++) {
             auto values = split(sources[i], ":", 1);
@@ -41,8 +42,9 @@ namespace SBURB {
                 //ret.sources.push("local('" + path + "')");
             }
             else if (type == "weight") {
-                // Probably find some way to transfer this?
-                //ret.extra += "font-weight:" + path + "; "
+                if (path == "bold") {
+                    this->style = sf::Text::Style::Bold;
+                }
             }
         }
     }

@@ -15,9 +15,12 @@ namespace SBURB
 
         std::vector<std::string> GetSources() { return this->sources; };
 
+        sf::Text::Style GetStyle() { return this->style; };
+
     private:
         std::vector<std::string> sources;
         std::shared_ptr<sf::Font> asset;
+        sf::Text::Style style;
 
     };
 }
