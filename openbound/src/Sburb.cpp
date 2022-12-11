@@ -14,6 +14,11 @@
 
 #include <thread>
 
+#if defined(_WIN32) || defined(WIN32)
+#include <dwrite.h>
+#undef PlaySound
+#endif
+
 constexpr float FADE_RATE = 0.1;
 
 namespace SBURB
@@ -411,40 +416,19 @@ namespace SBURB
             window->draw(preloaderBGSprite);
         }
 
+        // Uses SburbFont instead of Verdana because I don't wanna include Verdana in my project.
+        auto font = AssetManager::GetFontByName("Verdana");
+        if(!font) AssetManager::GetFontByName("SburbFont");
 
-        /*Sburb.stage.fillStyle = "rgb(255,255,255)";
-        Sburb.stage.font = "10px Verdana";
-        Sburb.stage.textAlign = "center";
-
-        var percent = 0;
-        if (this.totalSize && this.totalMeta >= this.totalAssets) {
-            percent = Math.floor((this.loadedSize / this.totalSize) * 100);
-        }
-        else {
-            percent = Math.floor((this.totalLoaded / this.totalAssets) * 100);
-        }
-        Sburb.stage.fillText(
-            percent + "%",
-            Sburb.Stage.width / 2,
-            Sburb.Stage.height - 50
-        );*/
-
-        int percent = 0;
-        /*if (this.totalSize && this.totalMeta >= this.totalAssets) {
-            percent = floor((this.loadedSize / this.totalSize) * 100);
-        }
-        else {
-            percent = floor((this.totalLoaded / this.totalAssets) * 100);
-        }*/
-
-        auto font = AssetManager::GetFontByName("SburbFont");
         if (font) {
+            int percent = floor((AssetManager::GetTotalLoaded() / (float)AssetManager::GetTotalAssets()) * 100);
+
             sf::Text textWriter;
             textWriter.setString(std::to_string(percent) + "%");
             textWriter.setColor(sf::Color::White);
             textWriter.setFont(*font->GetAsset());
-            textWriter.setCharacterSize(14);
-            textWriter.setStyle(sf::Text::Style::Bold);
+            textWriter.setCharacterSize(10);
+            //textWriter.setStyle(sf::Text::Style::Bold);
             textWriter.setOrigin(sf::Vector2f(textWriter.getLocalBounds().width / 2.0f, 0));
             textWriter.setPosition(this->viewSize.x / 2, this->viewSize.y - 50);
 
@@ -642,6 +626,8 @@ namespace SBURB
                 return queue;
             }
         }
+
+        return nullptr;
     }
 
     void Sburb::RemoveActionQueueById(std::string id)

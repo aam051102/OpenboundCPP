@@ -10,6 +10,8 @@
 #include "AssetFont.h"
 #include "AssetText.h"
 
+#include <thread>
+
 namespace SBURB
 {
     static std::map<std::string, pugi::xml_node> templateClasses;
@@ -275,7 +277,6 @@ namespace SBURB
             return false;
         }
 
-        // NOTE: IS THIS DOC KEPT ALIVE? MAYBE? PLAUSIBLY?
         Serializer::LoadSerial(&doc, keepOld);
     }
 
@@ -306,6 +307,18 @@ namespace SBURB
             templateDoc.reset();
             PurgeAssets();
             Sburb::GetInstance()->PurgeState();
+
+            // Load Verdana, if it exists.
+            std::string fontVerdanaPath = "";
+
+#if defined(_WIN32) || defined(WIN32)
+            fontVerdanaPath = "C:/Windows/Fonts/Verdana.ttf"; // TODO: LOAD FONT
+#endif
+
+            if (fontVerdanaPath != "") {
+                auto fontVerdana = std::make_shared<AssetFont>("Verdana", std::vector({ "url:" + fontVerdanaPath }));
+                AssetManager::LoadAsset(fontVerdana);
+            }
         }
 
         std::string levelPath = rootNode.attribute("levelPath").as_string();
@@ -393,6 +406,7 @@ namespace SBURB
         if (assetsNode)
         {
             auto assetNodes = GetNestedChildren(&assetsNode, "asset");
+            AssetManager::AddToTotalAssets(assetNodes.size());
 
             for (pugi::xml_node assetNode : assetNodes)
             {
@@ -409,6 +423,7 @@ namespace SBURB
     void Serializer::LoadSerialAsset(pugi::xml_node node)
     {
         auto newAsset = ParseSerialAsset(node);
+
         AssetManager::LoadAsset(newAsset);
     }
 
@@ -427,6 +442,7 @@ namespace SBURB
         }
 
         std::shared_ptr<Asset> asset;
+
         if (type == "graphic")
         {
             asset = std::make_shared<AssetGraphic>(name, value);

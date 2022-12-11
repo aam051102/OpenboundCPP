@@ -10,12 +10,12 @@ namespace SBURB {
         this->asset = std::make_shared<sf::Font>();
 
         for (int i = 0; i < sources.size(); i++) {
-            auto values = split(sources[i], ":");
+            auto values = split(sources[i], ":", 1);
             auto type = trim(values[0]);
             auto path = trim(values[1]);
 
             if (type == "url") {
-                auto extension = path.substr(path.find(".") + 1, path.size() - (path.find(".") + 1));
+                auto extension = path.substr(path.find_last_of(".") + 1, path.size() - (path.find_last_of(".") + 1));
                 auto format = "";
 
                 if (extension == "ttf") {
@@ -30,9 +30,8 @@ namespace SBURB {
 
                 if (format == "truetype" || format == "woff") {
                     // NOTE: UNSURE IF WOFF IS SUPPORTED?????
-
                     if (!this->asset->loadFromFile(Sburb::ResolvePath(path))) {
-                        GlobalLogger->Log(Logger::Error, "Failed to create main game window.");
+                        GlobalLogger->Log(Logger::Error, "Font does not exist.");
                         return;
                     }
                 }

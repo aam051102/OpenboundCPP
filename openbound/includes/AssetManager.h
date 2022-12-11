@@ -16,6 +16,10 @@ namespace SBURB
     class AssetManager
     {
     public:
+        static void AddToTotalAssets(int val);
+        static int GetTotalAssets();
+        static int GetTotalLoaded();
+
         static void LoadAsset(std::shared_ptr<Asset> asset);
 
         // Path

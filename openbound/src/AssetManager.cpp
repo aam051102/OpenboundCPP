@@ -6,6 +6,9 @@
 
 namespace SBURB
 {
+    static int totalLoaded = 0;
+    static int totalAssets = 0;
+
     static std::unordered_map<std::string, std::shared_ptr<AssetGraphic>> graphics;
     static std::unordered_map<std::string, std::shared_ptr<AssetAudio>> audio;
     static std::unordered_map<std::string, std::shared_ptr<AssetFont>> fonts;
@@ -16,8 +19,22 @@ namespace SBURB
     static std::mutex graphicsMutex;
     static std::mutex fontMutex;
 
+    void AssetManager::AddToTotalAssets(int val) {
+        totalAssets += val;
+    }
+
+    int AssetManager::GetTotalLoaded() {
+        return totalLoaded;
+    }
+
+    int AssetManager::GetTotalAssets() {
+        return totalAssets;
+    }
+
     void AssetManager::LoadAsset(std::shared_ptr<Asset> asset)
     {
+        totalLoaded++;
+
         if (asset->GetType() == "graphic")
         {
             graphicsMutex.lock();
@@ -111,7 +128,7 @@ namespace SBURB
 
         auto result = fonts[name];
         fontMutex.unlock();
-        return result;;
+        return result;
     }
 
     void AssetManager::ClearFonts()
