@@ -1,14 +1,15 @@
 #include "Music.h"
 #include "Sburb.h"
+#include "AssetManager.h"
 
 namespace SBURB {
-    Music::Music(std::string path, float startLoop) {
+    Music::Music(std::string name, float startLoop) {
         this->type = "music";
         this->path = path;
         this->startLoop = startLoop;
 
         this->asset = std::make_shared<sf::Music>();
-        this->asset->openFromFile(Sburb::ResolvePath(path));
+        this->asset->openFromFile(AssetManager::GetFilePathByName(name));
        
         this->SetLoopPoints(startLoop);
     }

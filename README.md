@@ -12,7 +12,7 @@ Example data can be found in the official Openbound engine repository or in the 
 
 ## TODO:
 
-- Add music support.
+- Fix music loop points.
 - Add save/load support.
 - Search for "CheckIsLoaded", uncomment everything and implement it.
 - (Plausibly) Integrate Lightspark or some other Flash emulator to support "movies" (i.e. Flash).

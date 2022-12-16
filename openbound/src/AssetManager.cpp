@@ -15,6 +15,7 @@ namespace SBURB
     static std::unordered_map<std::string, std::shared_ptr<AssetPath>> paths;
     static std::unordered_map<std::string, std::shared_ptr<AssetMovie>> movies;
     static std::unordered_map<std::string, std::shared_ptr<AssetText>> text;
+    static std::unordered_map<std::string, std::string> filePaths;
 
     static std::mutex graphicsMutex;
     static std::mutex fontMutex;
@@ -55,6 +56,24 @@ namespace SBURB
         {
             audio.insert(std::pair(asset->GetName(), std::static_pointer_cast<AssetAudio>(asset)));
         }
+    }
+
+    // File paths
+    std::string AssetManager::GetFilePathByName(const std::string& name) {
+        if (filePaths.find(name) == filePaths.end()) {
+            return "";
+        }
+
+        auto result = filePaths[name];
+        return result;
+    }
+
+    void AssetManager::AddFilePath(const std::string& name, const std::string path) {
+        filePaths.insert(std::pair(name, path));
+    }
+
+    void AssetManager::ClearFilePaths() {
+        filePaths.clear();
     }
 
     // Path

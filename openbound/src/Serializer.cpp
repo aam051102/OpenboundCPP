@@ -296,6 +296,7 @@ namespace SBURB
         AssetManager::ClearGraphics();
         AssetManager::ClearText();
         AssetManager::ClearMovies();
+        AssetManager::ClearFilePaths();
     }
 
     bool Serializer::LoadSerial(pugi::xml_document *doc, bool keepOld)

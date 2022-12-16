@@ -21,6 +21,11 @@ namespace SBURB
         static int GetTotalLoaded();
 
         static void LoadAsset(std::shared_ptr<Asset> asset);
+        
+        // File paths
+        static std::string GetFilePathByName(const std::string& name);
+        static void AddFilePath(const std::string& name, const std::string path);
+        static void ClearFilePaths();
 
         // Path
         static std::shared_ptr<AssetPath> GetPathByName(const std::string &name);

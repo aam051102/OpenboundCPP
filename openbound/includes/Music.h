@@ -9,7 +9,7 @@ namespace SBURB
     class Music
     {
     public:
-        Music(std::string path, float startLoop = 0);
+        Music(std::string name, float startLoop = 0);
 
         void SetLoopPoints(float start);
         void Loop();
