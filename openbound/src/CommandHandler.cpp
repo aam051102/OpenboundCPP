@@ -257,7 +257,7 @@ namespace SBURB
     {
         auto params = ParseParams(info);
 
-        Sburb::GetInstance()->ChangeBGM(std::make_shared<Music>(params[0], stof(params.size() == 2 ? params[1] : "0")));
+        Sburb::GetInstance()->ChangeBGM(std::make_shared<Music>(params[0], stod(params.size() == 2 ? params[1] : "0") * 1000));
     }
 
     void CommandHandler::BecomeNPC(std::string info)

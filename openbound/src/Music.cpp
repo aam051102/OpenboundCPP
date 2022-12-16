@@ -3,10 +3,11 @@
 #include "AssetManager.h"
 
 namespace SBURB {
-    Music::Music(std::string name, float startLoop) {
+    Music::Music(std::string name, double startLoop) {
         this->type = "music";
         this->path = path;
         this->startLoop = startLoop;
+        this->name = name;
 
         this->asset = std::make_shared<sf::Music>();
         this->asset->openFromFile(AssetManager::GetFilePathByName(name));
@@ -14,23 +15,21 @@ namespace SBURB {
         this->SetLoopPoints(startLoop);
     }
 
-    void Music::SetLoopPoints(float start)
+    void Music::SetLoopPoints(double start)
     {
         this->startLoop = start;
-        this->asset->setLoopPoints(sf::Music::TimeSpan(sf::seconds(start), this->asset->getDuration()));
+        this->asset->setLoopPoints(sf::Music::TimeSpan(sf::milliseconds(start), this->asset->getDuration() - sf::milliseconds(start)));
+        this->asset->setLoop(true);
     }
 
     void Music::Loop()
     {
-        this->asset->setLoop(true);
-        this->asset->setPlayingOffset(sf::seconds(this->startLoop));
-        this->asset->play();
+        this->Play(this->startLoop);
     }
 
-    void Music::Play(float pos)
+    void Music::Play(double pos)
     {
-        this->asset->setLoop(false);
-        this->asset->setPlayingOffset(sf::seconds(pos));
+        this->asset->setPlayingOffset(sf::milliseconds(pos));
         this->asset->play();
     }
 

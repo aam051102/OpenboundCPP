@@ -802,7 +802,7 @@ namespace SBURB
         if (bgm != "")
         {
             std::vector<std::string> params = split(bgm, ",");
-            Sburb::GetInstance()->ChangeBGM(std::make_shared<Music>(params[0], std::stof(params.size() > 1 ? params[1] : "0")));
+            Sburb::GetInstance()->ChangeBGM(std::make_shared<Music>(params[0], std::stod(params.size() > 1 ? params[1] : "0") * 1000));
         }
 
         std::shared_ptr<Action> initAction;
