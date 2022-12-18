@@ -680,21 +680,21 @@ namespace SBURB
     {
         Sburb *game = Sburb::GetInstance();
 
-        if (game->GetGlobalVolume() >= 1)
+        if (game->GetGlobalVolume() >= 100)
         {
             game->SetGlobalVolume(0);
         }
-        else if (game->GetGlobalVolume() >= 0.6)
+        else if (game->GetGlobalVolume() >= 66)
         {
-            game->SetGlobalVolume(1);
+            game->SetGlobalVolume(100);
         }
-        else if (game->GetGlobalVolume() >= 0.3)
+        else if (game->GetGlobalVolume() >= 33)
         {
-            game->SetGlobalVolume(0.66);
+            game->SetGlobalVolume(66);
         }
         else
         {
-            game->SetGlobalVolume(0.33);
+            game->SetGlobalVolume(33);
         }
 
         if (game->GetBGM())

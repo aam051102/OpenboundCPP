@@ -37,17 +37,17 @@ namespace SBURB
         this->FPStimeObj = sf::Clock();
 
         this->curRoom = nullptr;
-        this->globalVolume = 1;
+        this->globalVolume = 100;
         this->levelPath = "";
         this->resourcePath = "";
         this->queue = std::make_shared<ActionQueue>(nullptr, "__SBURB__");
         this->playingMovie = false;
         this->loadingRoom = false;
         this->inputDisabled = false;
-        
+
         this->viewSize = Vector2(650, 450);
         this->view = sf::View(sf::FloatRect((float)viewPos.x, (float)viewPos.y, (float)viewSize.x, (float)viewSize.y));
-        
+
         this->destRoom = nullptr;
         this->destFocus = nullptr;
         this->bgm = nullptr;
@@ -61,7 +61,7 @@ namespace SBURB
         this->rooms = {};
         this->fonts = {};
         this->sounds = {};
-        
+
         this->character = nullptr;
         this->chooser = nullptr;
         this->destX = 0;
@@ -104,7 +104,7 @@ namespace SBURB
 
         this->rooms = {};
         this->gameState = {};
-        this->globalVolume = 1;
+        this->globalVolume = 100;
         this->hud = {};
         this->sounds = {};
         this->sprites = {};
@@ -167,15 +167,18 @@ namespace SBURB
                 this->HandleInputs();
                 this->HandleHud();
 
-                if (this->curRoom && !this->loadingRoom) {
+                if (this->curRoom && !this->loadingRoom)
+                {
                     curRoom->Update();
                 }
 
                 this->FocusCamera();
                 this->HandleRoomChange();
 
-                if(this->chooser) this->chooser->Update();
-                if(this->dialoger) this->dialoger->Update();
+                if (this->chooser)
+                    this->chooser->Update();
+                if (this->dialoger)
+                    this->dialoger->Update();
 
                 this->ChainAction();
                 this->UpdateWait();
@@ -196,7 +199,8 @@ namespace SBURB
             {
                 Render();
             }
-            else {
+            else
+            {
                 RenderPreloader();
             }
         }
@@ -204,7 +208,8 @@ namespace SBURB
 
     void Sburb::HandleInputs()
     {
-        if (this->character) {
+        if (this->character)
+        {
             if (this->HasControl() && !this->inputDisabled)
             {
                 this->character->HandleInputs(InputHandler::GetPressedOrder());
@@ -282,7 +287,8 @@ namespace SBURB
             this->destFocus = nullptr;
         }
 
-        if (this->curRoom) {
+        if (this->curRoom)
+        {
             this->viewPos.x = std::max(0, std::min((int)round(this->camera.x / this->scale.x) * this->scale.x, this->curRoom->GetWidth() - this->viewSize.x));
             this->viewPos.y = std::max(0, std::min((int)round(this->camera.y / this->scale.y) * this->scale.y, this->curRoom->GetHeight() - this->viewSize.y));
         }
@@ -330,10 +336,13 @@ namespace SBURB
             // apparently alpha 0 is buggy? - NOTE: Alpha 0 probably isn't buggy in C++, but lets keep it anyway.
         }
 
-        if (this->fade > 0.01) {
+        if (this->fade > 0.01)
+        {
             float limitedFade = this->fade;
-            if (this->fade > 1) limitedFade = 1;
-            if (this->fade < 0) limitedFade = 0;
+            if (this->fade > 1)
+                limitedFade = 1;
+            if (this->fade < 0)
+                limitedFade = 0;
 
             this->fadeShape.setFillColor(sf::Color(0, 0, 0, 255 / 1 * limitedFade));
         }
@@ -416,13 +425,14 @@ namespace SBURB
         }
     }
 
-    void Sburb::RenderPreloader() {
-        // TODO: Actually make this render by making asset loading async.
+    void Sburb::RenderPreloader()
+    {
         window->clear(sf::Color(0, 0, 0, 255));
 
         auto preloaderBG = AssetManager::GetGraphicByName("preloaderBG");
 
-        if (preloaderBG) {
+        if (preloaderBG)
+        {
             sf::Sprite preloaderBGSprite;
             preloaderBGSprite.setPosition(0, 0);
             preloaderBGSprite.setTexture(*preloaderBG->GetAsset());
@@ -431,9 +441,11 @@ namespace SBURB
 
         // Check if Verdana is defined - use SburbFont otherwise
         auto font = AssetManager::GetFontByName("Verdana");
-        if(!font) font = AssetManager::GetFontByName("SburbFont");
+        if (!font)
+            font = AssetManager::GetFontByName("SburbFont");
 
-        if (font) {
+        if (font)
+        {
             int percent = floor((AssetManager::GetTotalLoaded() / (float)AssetManager::GetTotalAssets()) * 100);
 
             sf::Text textWriter;
@@ -447,7 +459,7 @@ namespace SBURB
 
             window->draw(textWriter);
         }
-        
+
         window->display();
 
         /*if (this->error.length) {
@@ -514,7 +526,6 @@ namespace SBURB
             if (chooser)
                 window->draw(*chooser);
 
-
             if (BatchHandler::getInstance().BatchExists())
                 BatchHandler::getInstance().DrawBatch();
 
@@ -528,7 +539,7 @@ namespace SBURB
     {
         // Create & initialize main window
         window.Init(name, {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar, icon); // Standard
-        
+
         if (!window.GetWin())
         {
             GlobalLogger->Log(Logger::Error, "Failed to create main game window.");
@@ -609,14 +620,16 @@ namespace SBURB
 
     bool Sburb::HasControl()
     {
-        if (!this->dialoger || !this->chooser) return false;
+        if (!this->dialoger || !this->chooser)
+            return false;
         return !this->dialoger->GetTalking() && !this->chooser->GetChoosing() && !this->destRoom && !this->fading && !this->destFocus;
     }
 
     std::string Sburb::ResolvePath(std::string path)
     {
         // NOTE: Used to have ?version=[version] added
-        if (path.find(gameInstance->resourcePath) == std::string::npos) {
+        if (path.find(gameInstance->resourcePath) == std::string::npos)
+        {
             return gameInstance->resourcePath + "/" + path;
         }
 
@@ -721,7 +734,7 @@ namespace SBURB
                 this->actionQueues.push_back(queue);
             }
         }
-        
+
         if (queue && (queue != this->queue))
         {
             this->PerformActionInQueue(action, queue);
@@ -729,9 +742,9 @@ namespace SBURB
         }
 
         if (((this->queue->GetCurrentAction() &&
-            this->queue->GetCurrentAction()->GetFollowUp() != action &&
-            this->queue->GetCurrentAction() != action) || 
-            !this->HasControl()) &&
+              this->queue->GetCurrentAction()->GetFollowUp() != action &&
+              this->queue->GetCurrentAction() != action) ||
+             !this->HasControl()) &&
             action->GetSoft())
         {
             return nullptr;
@@ -757,9 +770,9 @@ namespace SBURB
             HandleCommandResult(queue, result);
             looped = true;
         } while (queue->GetCurrentAction() &&
-            queue->GetCurrentAction()->GetTimes() <= 0 &&
-            queue->GetCurrentAction()->GetFollowUp() &&
-            queue->GetCurrentAction()->GetFollowUp()->GetNoDelay());
+                 queue->GetCurrentAction()->GetTimes() <= 0 &&
+                 queue->GetCurrentAction()->GetFollowUp() &&
+                 queue->GetCurrentAction()->GetFollowUp()->GetNoDelay());
     }
 
     void Sburb::HandleCommandResult(std::shared_ptr<ActionQueue> queue, std::shared_ptr<Trigger> result)
@@ -797,7 +810,8 @@ namespace SBURB
 
     void Sburb::PlaySound(std::string name)
     {
-        if (!this->sounds[name]) {
+        if (!this->sounds[name])
+        {
             this->sounds[name] = std::make_shared<Sound>(name, AssetManager::GetAudioByName(name));
         }
 

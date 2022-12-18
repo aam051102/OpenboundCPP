@@ -16,7 +16,7 @@ namespace SBURB
         std::string Serialize(std::string output);
 
         void SetFollowUp(std::shared_ptr<Action> followUp) { this->followUp = followUp; };
-      
+
         std::string GetSprite() { return this->sprite; };
         std::string GetName() { return this->name; };
 
@@ -30,11 +30,14 @@ namespace SBURB
 
         bool GetNoDelay() { return this->noDelay; };
 
-        void SetSilent(std::string silent) {
-            if (silent == "" || silent == "false") {
+        void SetSilent(std::string silent)
+        {
+            if (silent == "" || silent == "false")
+            {
                 this->silent = false;
             }
-            else {
+            else
+            {
                 this->silent = true;
             }
 
@@ -56,11 +59,10 @@ namespace SBURB
         std::string command;
         bool noWait;
         bool noDelay;
-        uint16_t times;
+        int times;
         bool soft;
         bool silent;
         std::string silentCause;
-
     };
 }
 #endif

@@ -118,8 +118,8 @@ namespace SBURB
 
         void SetDestFocus(std::shared_ptr<Sprite> destFocus) { this->destFocus = destFocus; };
 
-        float GetGlobalVolume() { return this->globalVolume; };
-        void SetGlobalVolume(float globalVolume) { this->globalVolume = globalVolume; };
+        int GetGlobalVolume() { return this->globalVolume; };
+        void SetGlobalVolume(int globalVolume) { this->globalVolume = globalVolume; };
 
         void SetEngineMode(std::string engineMode) { this->engineMode = engineMode; };
         std::string GetEngineMode() { return this->engineMode; };
@@ -192,7 +192,7 @@ namespace SBURB
 
         sf::View view;
 
-        float globalVolume;
+        int globalVolume;
         std::string engineMode;
 
         sf::RectangleShape fadeShape;

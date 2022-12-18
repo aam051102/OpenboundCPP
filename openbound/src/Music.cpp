@@ -2,8 +2,10 @@
 #include "Sburb.h"
 #include "AssetManager.h"
 
-namespace SBURB {
-    Music::Music(std::string name, double startLoop) {
+namespace SBURB
+{
+    Music::Music(std::string name, double startLoop)
+    {
         this->type = "music";
         this->path = path;
         this->startLoop = startLoop;
@@ -11,7 +13,7 @@ namespace SBURB {
 
         this->asset = std::make_shared<sf::Music>();
         this->asset->openFromFile(AssetManager::GetFilePathByName(name));
-       
+
         this->SetLoopPoints(startLoop);
     }
 

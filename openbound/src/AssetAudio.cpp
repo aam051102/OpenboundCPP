@@ -9,7 +9,7 @@ namespace SBURB {
         this->sources = sources;
         this->asset = std::make_shared<sf::SoundBuffer>();
         this->asset->loadFromFile(Sburb::ResolvePath(sources[0]));
-        std::cout << name << ", " << Sburb::ResolvePath(sources[0]) << std::endl;
+
         AssetManager::AddFilePath(name, Sburb::ResolvePath(sources[0]));
     }
 }
