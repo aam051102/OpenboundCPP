@@ -32,7 +32,6 @@ namespace SBURB
     {
         this->name = "Jterniabound";
         this->version = "1.0";
-        this->icon = sf::Image();
         this->description = "";
         this->engineMode = "wander";
 
@@ -626,7 +625,7 @@ namespace SBURB
     bool Sburb::Start()
     {
         // Create & initialize main window
-        window.Init(name, {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar, icon); // Standard
+        window.Init(name, {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar); // Standard
         
         if (!window.GetWin())
         {
@@ -684,6 +683,7 @@ namespace SBURB
             Update();
         }
 
+        // Ensure that asset thread is in the clear
         t1.join();
 
         return true;

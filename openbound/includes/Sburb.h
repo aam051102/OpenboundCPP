@@ -228,8 +228,6 @@ namespace SBURB
 
         InputHandler inputHandler;
 
-        sf::Image icon;
-
         sf::Int32 FPS;
         sf::Clock FPStimeObj;
 
