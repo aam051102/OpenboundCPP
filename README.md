@@ -7,6 +7,8 @@ NOTE: There is not currently a way to define the initialization XML file, meanin
 ## Usage
 1. Copy `/levels` and `/resources` directories to the same place as the executable (and any other necessary files).
 2. Run the executable.
+3. You will be presented with a file selector dialog. Find the initialization XML file for the game. If the game abides by good practice, it will be in `/levels` and will probably be named either `init.xml` or the name of the project. For Openbound part 1, for example, it is `/levels/openbound/openbound.xml`.
+4. Profit!
 
 ## Setup
 Clone repository.

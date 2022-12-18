@@ -644,7 +644,7 @@ namespace SBURB
 #endif
 
         // Fallback path
-        if (initFilePath == "") initFilePath = "levels/openbound/openbound.xml";
+        if (initFilePath == "") initFilePath = "levels/init.xml";
 
         // Initialize room
         std::thread t1(Serializer::LoadSerialFromXML, initFilePath, false);
