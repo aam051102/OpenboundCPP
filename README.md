@@ -2,8 +2,6 @@
 A C++ port of the [Openbound engine](https://github.com/WhatPumpkin/Sburb) by WhatPumpkin. No affiliation.
 This project is fully usable for the Openbound games, as far as I'm aware (with the exception of saving and loading). Please report any issues you come across.
 
-NOTE: There is not currently a way to define the initialization XML file, meaning that is must be in /levels/openbound/openbound.xml.
-
 ## Usage
 1. Copy `/levels` and `/resources` directories to the same place as the executable (and any other necessary files).
 2. Run the executable.
@@ -20,7 +18,6 @@ Example data can be found in the official Openbound engine repository or in the 
 
 ## TODO
 
-- Allow user to change init XML file.
 - Add save/load support.
 - Search for "CheckIsLoaded", uncomment everything and implement it.
 - (Plausibly) Integrate Lightspark or Gnash or some other Flash emulator to support "movies" (i.e. Flash)?
