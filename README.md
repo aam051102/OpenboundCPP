@@ -18,6 +18,11 @@ Example data can be found in the official Openbound engine repository or in the 
 
 ## TODO
 
+### Releases:
+- Make full release of packaged all 3 Openbound parts, packaged as one game. Preferably as a single executable. Why? Because why not?
+---
+### Engine:
+- Link icon resource in build file. Possibly replace Premake5 with CMake for this purpose, if CMake supports it.
 - Add save/load support.
 - Search for "CheckIsLoaded", uncomment everything and implement it.
 - (Plausibly) Integrate Lightspark or Gnash or some other Flash emulator to support "movies" (i.e. Flash)?
