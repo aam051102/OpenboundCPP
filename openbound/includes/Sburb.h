@@ -13,6 +13,8 @@
 #include "ActionQueue.h"
 #include "Dialoger.h"
 
+#include <SFML/Window/Cursor.hpp>
+
 #include <pugixml.hpp>
 
 namespace SBURB
@@ -89,6 +91,7 @@ namespace SBURB
         void HandleCommandResult(std::shared_ptr<ActionQueue> queue, std::shared_ptr<Trigger> result);
 
         void SetMouseCursor(sf::Cursor::Type newCursor);
+        void LoadMouseCursor(sf::Cursor::Type newCursor);
 
         void ChangeRoom(std::shared_ptr<Room> room, int newX, int newY);
         void PlayEffect(std::shared_ptr<Animation> effect, int x, int y);
@@ -184,6 +187,8 @@ namespace SBURB
         std::shared_ptr<Music> bgm;
         std::shared_ptr<Sprite> focus;
         std::shared_ptr<Sprite> destFocus;
+
+        std::unordered_map<sf::Cursor::Type, std::shared_ptr<sf::Cursor>> cursors;
 
         Vector2 camera;
         Vector2 viewSize;

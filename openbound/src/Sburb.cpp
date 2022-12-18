@@ -78,6 +78,10 @@ namespace SBURB
         this->musicStoppedFor = 0;
         this->nextQueueId = 0;
 
+        this->cursors = {};
+        this->LoadMouseCursor(sf::Cursor::Arrow);
+        this->LoadMouseCursor(sf::Cursor::Hand);
+
         if (gameInstance == nullptr)
         {
             gameInstance = this;
@@ -102,16 +106,16 @@ namespace SBURB
             this->bgm = nullptr;
         }
 
-        this->rooms = {};
-        this->gameState = {};
+        this->rooms.clear();
+        this->gameState.clear();
         this->globalVolume = 100;
-        this->hud = {};
-        this->sounds = {};
-        this->sprites = {};
-        this->buttons = {};
-        this->effects = {};
+        this->hud.clear();
+        this->sounds.clear();
+        this->sprites.clear();
+        this->buttons.clear();
+        this->effects.clear();
         this->queue->SetCurrentAction(nullptr);
-        this->actionQueues = {};
+        this->actionQueues.clear();
         this->chooser = std::make_shared<Chooser>();
         this->dialoger = nullptr;
         this->curRoom = nullptr;
@@ -119,6 +123,15 @@ namespace SBURB
         this->resourcePath = "";
         this->levelPath = "";
         this->nextQueueId = 0;
+
+        for (auto cursor : this->cursors) {
+            cursor.second.reset();
+        }
+
+        this->cursors.clear();
+
+        this->LoadMouseCursor(sf::Cursor::Arrow);
+        this->LoadMouseCursor(sf::Cursor::Hand);
     }
 
     void Sburb::BeginChoosing()
@@ -184,12 +197,7 @@ namespace SBURB
                 this->UpdateWait();
 
                 // Update mouse cursor
-                // TODO: Preload cursors.
-                sf::Cursor cursor;
-                if (cursor.loadFromSystem(this->mouseCursor))
-                {
-                    window.GetWin()->setMouseCursor(cursor);
-                }
+                window.GetWin()->setMouseCursor(*cursors[this->mouseCursor]);
             }
 
             this->window->setView(this->view);
@@ -794,6 +802,18 @@ namespace SBURB
     void Sburb::SetMouseCursor(sf::Cursor::Type newCursor)
     {
         this->mouseCursor = newCursor;
+
+        this->LoadMouseCursor(newCursor);
+    }
+
+    void Sburb::LoadMouseCursor(sf::Cursor::Type newCursor) {
+        if (cursors.find(newCursor) == cursors.end()) {
+            std::shared_ptr<sf::Cursor> cursor = std::make_shared<sf::Cursor>();
+
+            if (cursor->loadFromSystem(newCursor)) {
+                this->cursors.insert(std::pair(newCursor, cursor));
+            }
+        }
     }
 
     void Sburb::ChangeRoom(std::shared_ptr<Room> room, int newX, int newY)
