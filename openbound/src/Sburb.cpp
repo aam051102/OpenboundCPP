@@ -627,12 +627,42 @@ namespace SBURB
     {
         // Create & initialize main window
         window.Init(name, {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar, icon); // Standard
-
+        
         if (!window.GetWin())
         {
             GlobalLogger->Log(Logger::Error, "Failed to create main game window.");
             return false;
         }
+
+        // Load and set icon
+#if defined(_WIN32) || defined(WIN32)
+        HRSRC hIconInfo = FindResourceEx(nullptr, RT_ICON, MAKEINTRESOURCE(1), MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL));
+
+        if (hIconInfo != NULL) {
+            HGLOBAL hMemory = LoadResource(nullptr, hIconInfo);
+
+            if (hMemory != NULL) {
+                DWORD hMemorySize = SizeofResource(nullptr, hIconInfo);
+
+                if (hMemorySize != NULL) {
+                    char* cBuffer = new char[hMemorySize];
+                    cBuffer = (char*)LockResource(hMemory);
+
+                    if (cBuffer != NULL) {
+                        sf::Image icon;
+                        if (icon.loadFromMemory(cBuffer, hMemorySize))
+                        {
+                            std::cout << icon.getSize().x << " by " << icon.getSize().y << std::endl;
+                            window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+                        }
+                        else {
+                            GlobalLogger->Log(Logger::Error, "Failed to load icon.");
+                        }
+                    }
+                }
+            }
+        }
+#endif
 
         // Center window
         window.CenterWindow();
