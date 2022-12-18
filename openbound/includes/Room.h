@@ -9,26 +9,27 @@
 
 namespace SBURB
 {
-	struct MotionPath {
+	struct MotionPath
+	{
 		std::shared_ptr<AssetPath> path;
 		float xtox;
 		float xtoy;
-		float  ytox;
+		float ytox;
 		float ytoy;
 		float dx;
 		float dy;
 
-		MotionPath(std::shared_ptr<AssetPath> path, float xtox, float xtoy, float ytox, float ytoy, float dx, float dy) : path(path), xtox(xtox), xtoy(xtoy), ytox(ytox), ytoy(ytoy), dx(dx), dy(dy) {};
+		MotionPath(std::shared_ptr<AssetPath> path, float xtox, float xtoy, float ytox, float ytoy, float dx, float dy) : path(path), xtox(xtox), xtoy(xtoy), ytox(ytox), ytoy(ytoy), dx(dx), dy(dy){};
 	};
 
-    class Room : public sf::Drawable
-    {
-    public:
-        Room(std::string name, int width, int height);
+	class Room : public sf::Drawable
+	{
+	public:
+		Room(std::string name, int width, int height);
 		~Room();
 
-		sf::Vector2f Room::GetAdjustedMovement(Sprite* sprite, float ax, float ay);
-		sf::Vector2f Room::GetInverseAdjustedMovement(Sprite* sprite, float ax, float ay);
+		sf::Vector2f Room::GetAdjustedMovement(Sprite *sprite, float ax, float ay);
+		sf::Vector2f Room::GetInverseAdjustedMovement(Sprite *sprite, float ax, float ay);
 
 		void AddEffect(std::shared_ptr<Animation> effect);
 		void AddTrigger(std::shared_ptr<Trigger> trigger);
@@ -56,10 +57,10 @@ namespace SBURB
 		std::vector<std::shared_ptr<Action>> QueryActions(std::shared_ptr<Sprite> query, int x, int y);
 		std::vector<std::shared_ptr<Action>> QueryActionsVisual(std::shared_ptr<Sprite> query, int x, int y);
 
-		bool IsInBounds(Sprite* sprite, int dx = 0, int dy = 0);
-		std::map<std::string, bool> IsInBoundsBatch(std::map<std::string, sf::Vector2f> queries, std::map<std::string, bool>* results);
+		bool IsInBounds(Sprite *sprite, int dx = 0, int dy = 0);
+		std::map<std::string, bool> IsInBoundsBatch(std::map<std::string, sf::Vector2f> queries, std::map<std::string, bool> *results);
 
-		std::shared_ptr<Sprite> Collides(Sprite* sprite, int dx = 0, int dy = 0);
+		std::shared_ptr<Sprite> Collides(Sprite *sprite, int dx = 0, int dy = 0);
 
 		std::string Serialize(std::string output);
 
@@ -77,7 +78,7 @@ namespace SBURB
 		void SetHeight(int height) { this->height = height; };
 		int GetHeight() { return this->height; };
 
-    private:
+	private:
 		std::string name;
 		int width;
 		int height;
@@ -92,9 +93,8 @@ namespace SBURB
 		int mapScale;
 
 	private:
-		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-
-    };
+		virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
+	};
 }
 
 #endif
