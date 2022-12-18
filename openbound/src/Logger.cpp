@@ -3,6 +3,7 @@
 
 #include <ctime>
 #include <sstream>
+#include <filesystem>
 
 const char *LevelToString(SBURB::Logger::LogLevel level)
 {
@@ -25,17 +26,40 @@ namespace SBURB
     static Logger globalLogger{};
 
     Logger::Logger()
-        : logFile(GetExecutableDirectory() + "/engine.log", std::ios::app)
     {
-    }
-
-    Logger::Logger(std::string logfile)
-        : logFile(GetExecutableDirectory() + "/" + logfile, std::ios::app)
-    {
+        
     }
 
     Logger::~Logger()
     {
+    }
+
+    void Logger::OpenLogFile() {
+        if (!logFile.is_open()) {
+            std::string appdataDir = std::getenv("APPDATA");
+            std::string baseDir = appdataDir;
+
+            if (appdataDir == "")
+                baseDir = GetExecutableDirectory();
+
+            // Define path
+            std::filesystem::path filePath(baseDir);
+            if (appdataDir != "")
+                filePath /= "OpenboundCPP";
+
+            filePath /= "logs";
+
+            // Create directories
+            std::filesystem::create_directories(filePath);
+
+            // Append filename
+            auto duration = std::chrono::system_clock::now().time_since_epoch();
+            auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+            filePath /= std::to_string(millis) + ".txt";
+
+            logFile.open(filePath.string(), std::ios::app);
+        }
     }
 
     Logger *Logger::GetGlobalLogger()
@@ -45,8 +69,11 @@ namespace SBURB
 
     void Logger::_unique_Log(LogLevel level, std::string message, const char *calling, const char *file, int line)
     {
+        this->OpenLogFile();
+
         std::time_t t = std::time(0);
         std::tm *now = std::localtime(&t);
+        
         std::stringstream out;
         // "2019-7-7@15:55 [INFO | main] This is a test log"
         out << now->tm_year + 1900 << '-'

@@ -11,7 +11,6 @@ namespace SBURB
     {
     public:
         Logger();
-        Logger(std::string logfile);
         ~Logger();
 
         enum LogLevel
@@ -21,6 +20,8 @@ namespace SBURB
             Debug,
             Warning
         };
+
+        void OpenLogFile();
         void _unique_Log(LogLevel level, std::string message, const char *calling, const char *file, int line);
         static Logger *GetGlobalLogger();
 

@@ -47,7 +47,6 @@ namespace SBURB
         bool Start();
 
         double GetFPS();
-        std::string GetName();
 
         void SetCurrentRoom(std::shared_ptr<Room> curRoom) { this->curRoom = curRoom; };
         std::shared_ptr<Room> GetCurrentRoom();
@@ -166,14 +165,18 @@ namespace SBURB
 
         void SetDimensions(float width, float height);
 
+        std::string GetName() { return this->name; };
+        void SetName(std::string name);
+
         Window window;
 
-        std::string name;
         std::string levelPath;
         std::string version;
         std::string resourcePath;
 
     private:
+        std::string name;
+
         sf::Cursor::Type mouseCursor;
         std::string description;
 

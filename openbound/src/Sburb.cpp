@@ -577,11 +577,6 @@ namespace SBURB
         return this->FPS;
     }
 
-    std::string Sburb::GetName()
-    {
-        return name;
-    }
-
     std::shared_ptr<Room> Sburb::GetCurrentRoom()
     {
         return this->curRoom;
@@ -651,6 +646,11 @@ namespace SBURB
         this->fadeShape.setSize(sf::Vector2f(this->viewSize.x, this->viewSize.y));
     }
 
+    void Sburb::SetName(std::string name) {
+        this->name = name;
+        this->window->setTitle(name);
+    };
+    
     std::shared_ptr<ActionQueue> Sburb::GetActionQueueById(std::string id)
     {
         for (int i = 0; i < this->actionQueues.size(); i++)

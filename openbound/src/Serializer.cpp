@@ -316,8 +316,9 @@ namespace SBURB
             fontVerdanaPath = "C:/Windows/Fonts/Verdana.ttf";
 #endif
 
-            if (fontVerdanaPath != "") {
-                auto fontVerdana = std::make_shared<AssetFont>("Verdana", std::vector({ "url:" + fontVerdanaPath }));
+            if (fontVerdanaPath != "")
+            {
+                auto fontVerdana = std::make_shared<AssetFont>("Verdana", std::vector({"url:" + fontVerdanaPath}));
                 AssetManager::LoadAsset(fontVerdana);
             }
         }
@@ -343,7 +344,7 @@ namespace SBURB
 
         std::string name = rootNode.attribute("name").value();
         if (name != "")
-            Sburb::GetInstance()->name = name;
+            Sburb::GetInstance()->SetName(name);
 
         std::string version = rootNode.attribute("version").value();
         if (version != "")
@@ -413,8 +414,8 @@ namespace SBURB
             {
                 /*if (!AssetManager::CheckIsLoaded(assetNode.attribute("name").value()))
                 {*/
-                    LoadSerialAsset(assetNode);
-               // }
+                LoadSerialAsset(assetNode);
+                // }
             }
         }
 
