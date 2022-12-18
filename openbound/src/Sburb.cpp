@@ -15,7 +15,10 @@
 #include <thread>
 
 #if defined(_WIN32) || defined(WIN32)
+#include <atlstr.h>
 #include <dwrite.h>
+#include <shobjidl.h> 
+
 #undef PlaySound
 #endif
 
@@ -543,6 +546,83 @@ namespace SBURB
         }
     }
 
+#if defined(_WIN32) || defined(WIN32)
+    // This is the worst function I have ever seen and it comes directly from the official documentation.
+    // This is how Microsoft wants us to open dialogs.
+    // *throws up*
+    std::string OpenDialog(HWND hwnd) {
+        const COMDLG_FILTERSPEC c_rgSaveTypes[] =
+        {
+            {L"SburbML File (*.xml)",        L"*.xml"},
+            {L"All Documents (*.*)",         L"*.*"}
+        };
+
+        #define INDEX_SBURBML 1
+
+        std::string filePath = "";
+
+        HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+        if (SUCCEEDED(hr))
+        {
+            IFileOpenDialog* pFileOpen;
+
+            // Create the FileOpenDialog object.
+            hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
+                IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+
+            if (SUCCEEDED(hr))
+            {
+                hr = pFileOpen->SetTitle(L"Select initialization file");
+                if (SUCCEEDED(hr))
+                {
+                    // Set the file types to display only. 
+                    // Notice that this is a 1-based array.
+                    hr = pFileOpen->SetFileTypes(ARRAYSIZE(c_rgSaveTypes), c_rgSaveTypes);
+                    if (SUCCEEDED(hr))
+                    {
+                        // Set the selected file type index
+                        hr = pFileOpen->SetFileTypeIndex(INDEX_SBURBML);
+                        if (SUCCEEDED(hr))
+                        {
+                            // Set the default extension
+                            hr = pFileOpen->SetDefaultExtension(L"xml");
+                            if (SUCCEEDED(hr))
+                            {
+                                // Show the Open dialog box.
+                                hr = pFileOpen->Show(NULL);
+
+                                // Get the file name from the dialog box.
+                                if (SUCCEEDED(hr))
+                                {
+                                    IShellItem* pItem;
+                                    hr = pFileOpen->GetResult(&pItem);
+                                    if (SUCCEEDED(hr))
+                                    {
+                                        PWSTR pszFilePath;
+                                        hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+                                        // Display the file name to the user.
+                                        if (SUCCEEDED(hr))
+                                        {
+                                            filePath = CW2A(pszFilePath);
+                                            CoTaskMemFree(pszFilePath);
+                                        }
+                                        pItem->Release();
+                                    }
+                                }
+                                pFileOpen->Release();
+                            }
+                        }
+                    }
+                }
+            }
+            CoUninitialize();
+        }
+
+        return filePath;
+    }
+#endif
+
     bool Sburb::Start()
     {
         // Create & initialize main window
@@ -557,8 +637,17 @@ namespace SBURB
         // Center window
         window.CenterWindow();
 
+        std::string initFilePath = "";
+
+#if defined(_WIN32) || defined(WIN32)
+        initFilePath = OpenDialog(window->getSystemHandle());
+#endif
+
+        // Fallback path
+        if (initFilePath == "") initFilePath = "levels/openbound/openbound.xml";
+
         // Initialize room
-        std::thread t1(Serializer::LoadSerialFromXML, "./levels/openbound/openbound.xml", false);
+        std::thread t1(Serializer::LoadSerialFromXML, initFilePath, false);
 
         // Start update loop
         while (window->isOpen())

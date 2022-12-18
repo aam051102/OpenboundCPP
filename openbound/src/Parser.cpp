@@ -498,6 +498,7 @@ namespace SBURB
 	std::shared_ptr<SpriteButton> Parser::ParseSpriteButton(pugi::xml_node node)
 	{
 		std::shared_ptr<AssetGraphic> sheet = AssetManager::GetGraphicByName(node.attribute("sheet").as_string());
+
 		auto newButton = std::make_shared<SpriteButton>(node.attribute("name").as_string(),
 											  node.attribute("x").as_int(),
 											  node.attribute("y").as_int(),
