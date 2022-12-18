@@ -33,7 +33,7 @@ namespace SBURB
         
         bool Collides(std::shared_ptr<Sprite> sprite, int dx = 0, int dy = 0);
         
-        std::map<std::string, Vector2> GetBoundaryQueries(int dx = 0, int dy = 0);
+        std::map<std::string, sf::Vector2f> GetBoundaryQueries(int dx = 0, int dy = 0);
         
         bool TryToMove();
 

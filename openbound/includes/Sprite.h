@@ -37,7 +37,7 @@ namespace SBURB
         void RemoveAction(std::string name);
         std::vector<std::shared_ptr<Action>> GetActions(std::shared_ptr<Sprite> sprite);
 
-        std::map<std::string, Vector2> GetBoundaryQueries(int dx, int dy);
+        std::map<std::string, sf::Vector2f> GetBoundaryQueries(int dx, int dy);
 
         std::shared_ptr<Sprite> Clone(std::string name);
         std::string Serialize(std::string output);
@@ -72,7 +72,7 @@ namespace SBURB
         std::string state;
         int lastTime;
         std::vector<std::shared_ptr<Action>> actions;
-        std::map<std::string, Vector2> queries;
+        std::map<std::string, sf::Vector2f> queries;
 
     private:
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;

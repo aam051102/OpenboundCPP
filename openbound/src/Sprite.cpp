@@ -111,18 +111,18 @@ namespace SBURB
         return validActions;
     }
 
-    std::map<std::string, Vector2> Sprite::GetBoundaryQueries(int dx = 0, int dy = 0) {
+    std::map<std::string, sf::Vector2f> Sprite::GetBoundaryQueries(int dx = 0, int dy = 0) {
         int spriteX = this->x + dx;
         int spriteY = this->y + dy;
-        int w = this->width / 2;
-        int h = this->height / 2;
+        float w = this->width / 2.f;
+        float h = this->height / 2.f;
 
-        this->queries["upRight"] = Vector2(spriteX + w, spriteY - h);
-        this->queries["upLeft"] = Vector2(spriteX - w, spriteY - h);
-        this->queries["downLeft"] = Vector2(spriteX - w, spriteY + h);
-        this->queries["downRight"] = Vector2(spriteX + w, spriteY + h);
-        this->queries["downMid"] = Vector2(spriteX, spriteY + h);
-        this->queries["upMid"] = Vector2(spriteX, spriteY - h);
+        this->queries["upRight"] = sf::Vector2f(spriteX + w, spriteY - h);
+        this->queries["upLeft"] = sf::Vector2f(spriteX - w, spriteY - h);
+        this->queries["downLeft"] = sf::Vector2f(spriteX - w, spriteY + h);
+        this->queries["downRight"] = sf::Vector2f(spriteX + w, spriteY + h);
+        this->queries["downMid"] = sf::Vector2f(spriteX, spriteY + h);
+        this->queries["upMid"] = sf::Vector2f(spriteX, spriteY - h);
 
         return this->queries;
     }

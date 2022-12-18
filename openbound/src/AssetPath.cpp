@@ -11,19 +11,19 @@ namespace SBURB {
 		this->points.push_back(point);
 	}
 
-	void AssetPath::QueryBatchPos(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results) {
+	void AssetPath::QueryBatchPos(std::map<std::string, sf::Vector2f> queries, std::map<std::string, bool>* results) {
 		for (auto query : queries) {
 			(*results)[query.first] = (*results)[query.first] || this->Query(query.second);
 		}
 	}
 
-	void AssetPath::QueryBatchNeg(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results) {
+	void AssetPath::QueryBatchNeg(std::map<std::string, sf::Vector2f> queries, std::map<std::string, bool>* results) {
 		for (auto query : queries) {
 			(*results)[query.first] = (*results)[query.first] && !this->Query(query.second);
 		}
 	}
 
-    bool AssetPath::Query(Vector2 point) {
+    bool AssetPath::Query(sf::Vector2f point) {
 		bool isOnPath = false;
 		
 		for (int i = -1, l = this->points.size(), j = l - 1; ++i < l; j = i) {

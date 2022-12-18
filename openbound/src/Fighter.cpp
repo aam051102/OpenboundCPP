@@ -125,16 +125,16 @@ namespace SBURB {
 		return sqrt(xDiff * xDiff / w2 / w1 + yDiff * yDiff / h2 / h1) < 2;
 	}
 
-	std::map<std::string, Vector2> Fighter::GetBoundaryQueries(int dx, int dy) {
+	std::map<std::string, sf::Vector2f> Fighter::GetBoundaryQueries(int dx, int dy) {
 		int x = this->x + dx;
 		int y = this->y + dy;
 		int queryCount = 8;
 		int angleDiff = 2 * PI / queryCount;
 
-		std::map<std::string, Vector2> queries = {};
+		std::map<std::string, sf::Vector2f> queries = {};
 		
 		for (int i = 0, theta = 0; i < queryCount; i++, theta += angleDiff) {
-			queries[std::to_string(i)] = Vector2(x + cos(theta) * this->width / 2, y + sin(theta) * this->height / 2);
+			queries[std::to_string(i)] = sf::Vector2f(x + cos(theta) * this->width / 2, y + sin(theta) * this->height / 2);
 		}
 
 		return queries;

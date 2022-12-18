@@ -26,7 +26,7 @@ namespace SBURB
 	sf::Vector2f Room::GetAdjustedMovement(Sprite* sprite, float ax, float ay) {
 		for (int i = 0; i < this->motionPaths.size(); i++) {
 			std::shared_ptr<MotionPath> motionPath = this->motionPaths[i];
-			bool shouldMove = motionPath->path->Query(Vector2(sprite->GetX(), sprite->GetY()));
+			bool shouldMove = motionPath->path->Query(sf::Vector2f(sprite->GetX(), sprite->GetY()));
 
 			if (shouldMove) {
 				float fx = (ax * motionPath->xtox + ay * motionPath->ytox + motionPath->dx);
@@ -41,7 +41,7 @@ namespace SBURB
 	sf::Vector2f Room::GetInverseAdjustedMovement(Sprite* sprite, float ax, float ay) {
 		for (int i = 0; i < this->motionPaths.size(); i++) {
 			std::shared_ptr<MotionPath> motionPath = this->motionPaths[i];
-			bool shouldMove = motionPath->path->Query(Vector2(sprite->GetX(), sprite->GetY()));
+			bool shouldMove = motionPath->path->Query(sf::Vector2f(sprite->GetX(), sprite->GetY()));
 
 			if (shouldMove) {
 				ax -= motionPath->dx;
@@ -209,7 +209,7 @@ namespace SBURB
 	}
 
 	bool Room::IsInBounds(Sprite* sprite, int dx, int dy) {
-		std::map<std::string, Vector2> queries = sprite->GetBoundaryQueries(dx, dy);
+		std::map<std::string, sf::Vector2f> queries = sprite->GetBoundaryQueries(dx, dy);
 		std::map<std::string, bool> results;
 		this->IsInBoundsBatch(queries, &results);
 
@@ -222,19 +222,19 @@ namespace SBURB
 		return true;
 	}
 
-	std::map<std::string, bool> Room::IsInBoundsBatch(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results) {
+	std::map<std::string, bool> Room::IsInBoundsBatch(std::map<std::string, sf::Vector2f> queries, std::map<std::string, bool>* results) {
 		if (this->walkableMap) {
 			for (auto query : queries) {
-				Vector2 pt = query.second;
+				sf::Vector2f pt = query.second;
 				int width = this->walkableMap->GetAsset()->getSize().x;
 				int height = this->walkableMap->GetAsset()->getSize().y;
 				
-				if (pt.x<0 || pt.x>width * this->mapScale || pt.y<0 || pt.y>height * this->mapScale) {
+				if (pt.x < 0 || pt.x > width * this->mapScale || pt.y < 0 || pt.y > height * this->mapScale) {
 					(*results)[query.first] = false;
 				}
 				else {
-					int mapX = round(pt.x / this->mapScale);
-					int mapY = round(pt.y / this->mapScale);
+					int mapX = round(pt.x / (float)this->mapScale);
+					int mapY = round(pt.y / (float)this->mapScale);
 
 					(*results)[query.first] = this->mapData->getPixel(mapX, mapY) == sf::Color::White;
 				}

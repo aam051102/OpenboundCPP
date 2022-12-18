@@ -10,9 +10,9 @@ namespace SBURB {
         AssetPath(std::string name, std::vector<Vector2> points);
 
         void Push(Vector2 point);
-        void QueryBatchPos(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results);
-        void QueryBatchNeg(std::map<std::string, Vector2> queries, std::map<std::string, bool>* results);
-        bool Query(Vector2 point);
+        void QueryBatchPos(std::map<std::string, sf::Vector2f> queries, std::map<std::string, bool>* results);
+        void QueryBatchNeg(std::map<std::string, sf::Vector2f> queries, std::map<std::string, bool>* results);
+        bool Query(sf::Vector2f point);
 
         std::vector<Vector2> GetPoints() { return this->points; };
 

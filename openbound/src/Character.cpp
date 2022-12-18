@@ -269,8 +269,8 @@ namespace SBURB {
 
 		std::shared_ptr<Room> room = Sburb::GetInstance()->GetCurrentRoom();
 		
-		int minX = 1; // NOTE: originally Sburb.Stage.scaleX;
-		int minY = 1; // NOTE: originally Sburb.Stage.scaleY;
+		int minX = 3; // NOTE: originally Sburb.Stage.scaleX;
+		int minY = 3; // NOTE: originally Sburb.Stage.scaleY;
 
 		while (abs(vx) >= minX || abs(vy) >= minY) {
 			int dx = 0;
@@ -326,6 +326,7 @@ namespace SBURB {
 
 				if (!room->IsInBounds(this)) {
 					bool fixed = false;
+
 					if (dx != 0) {
 						if (room->IsInBounds(this, 0, minY)) {
 							dy += minY;
@@ -338,6 +339,7 @@ namespace SBURB {
 							fixed = true;
 						}
 					}
+
 					if (!fixed && dy != 0) {
 						if (room->IsInBounds(this, minX, 0)) {
 							dx += minX;
@@ -350,6 +352,7 @@ namespace SBURB {
 							fixed = true;
 						}
 					}
+
 					if (!fixed || room->Collides(this)) {
 						this->SetX(this->x - dx);
 						this->SetY(this->y - dy);
