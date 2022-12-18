@@ -652,7 +652,6 @@ namespace SBURB
                         sf::Image icon;
                         if (icon.loadFromMemory(cBuffer, hMemorySize))
                         {
-                            std::cout << icon.getSize().x << " by " << icon.getSize().y << std::endl;
                             window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
                         }
                         else {
