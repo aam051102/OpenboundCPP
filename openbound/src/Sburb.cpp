@@ -17,7 +17,7 @@
 #if defined(_WIN32) || defined(WIN32)
 #include <atlstr.h>
 #include <dwrite.h>
-#include <shobjidl.h> 
+#include <shobjidl.h>
 
 #undef PlaySound
 #endif
@@ -126,7 +126,8 @@ namespace SBURB
         this->levelPath = "";
         this->nextQueueId = 0;
 
-        for (auto cursor : this->cursors) {
+        for (auto cursor : this->cursors)
+        {
             cursor.second.reset();
         }
 
@@ -445,8 +446,9 @@ namespace SBURB
         {
             sf::Sprite preloaderBGSprite;
             preloaderBGSprite.setPosition(0, 0);
-            preloaderBGSprite.setTexture(*preloaderBG->GetAsset());
+            preloaderBGSprite.setTexture(*preloaderBG->Load());
             window->draw(preloaderBGSprite);
+            preloaderBG->Unload();
         }
 
         // Check if Verdana is defined - use SburbFont otherwise
@@ -549,32 +551,32 @@ namespace SBURB
     // This is the worst function I have ever seen and it comes directly from the official documentation.
     // This is how Microsoft wants us to open dialogs.
     // *throws up*
-    std::string OpenDialog(HWND hwnd) {
+    std::string OpenDialog(HWND hwnd)
+    {
         const COMDLG_FILTERSPEC c_rgSaveTypes[] =
-        {
-            {L"SburbML File (*.xml)",        L"*.xml"},
-            {L"All Documents (*.*)",         L"*.*"}
-        };
+            {
+                {L"SburbML File (*.xml)", L"*.xml"},
+                {L"All Documents (*.*)", L"*.*"}};
 
-        #define INDEX_SBURBML 1
+#define INDEX_SBURBML 1
 
         std::string filePath = "";
 
         HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
         if (SUCCEEDED(hr))
         {
-            IFileOpenDialog* pFileOpen;
+            IFileOpenDialog *pFileOpen;
 
             // Create the FileOpenDialog object.
             hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
-                IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+                                  IID_IFileOpenDialog, reinterpret_cast<void **>(&pFileOpen));
 
             if (SUCCEEDED(hr))
             {
                 hr = pFileOpen->SetTitle(L"Select initialization file");
                 if (SUCCEEDED(hr))
                 {
-                    // Set the file types to display only. 
+                    // Set the file types to display only.
                     // Notice that this is a 1-based array.
                     hr = pFileOpen->SetFileTypes(ARRAYSIZE(c_rgSaveTypes), c_rgSaveTypes);
                     if (SUCCEEDED(hr))
@@ -593,7 +595,7 @@ namespace SBURB
                                 // Get the file name from the dialog box.
                                 if (SUCCEEDED(hr))
                                 {
-                                    IShellItem* pItem;
+                                    IShellItem *pItem;
                                     hr = pFileOpen->GetResult(&pItem);
                                     if (SUCCEEDED(hr))
                                     {
@@ -626,7 +628,7 @@ namespace SBURB
     {
         // Create & initialize main window
         window.Init(name, {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar); // Standard
-        
+
         if (!window.GetWin())
         {
             GlobalLogger->Log(Logger::Error, "Failed to create main game window.");
@@ -637,23 +639,28 @@ namespace SBURB
 #if defined(_WIN32) || defined(WIN32)
         HRSRC hIconInfo = FindResourceEx(nullptr, RT_ICON, MAKEINTRESOURCE(1), MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL));
 
-        if (hIconInfo != NULL) {
+        if (hIconInfo != NULL)
+        {
             HGLOBAL hMemory = LoadResource(nullptr, hIconInfo);
 
-            if (hMemory != NULL) {
+            if (hMemory != NULL)
+            {
                 DWORD hMemorySize = SizeofResource(nullptr, hIconInfo);
 
-                if (hMemorySize != NULL) {
-                    char* cBuffer = new char[hMemorySize];
-                    cBuffer = (char*)LockResource(hMemory);
+                if (hMemorySize != NULL)
+                {
+                    char *cBuffer = new char[hMemorySize];
+                    cBuffer = (char *)LockResource(hMemory);
 
-                    if (cBuffer != NULL) {
+                    if (cBuffer != NULL)
+                    {
                         sf::Image icon;
                         if (icon.loadFromMemory(cBuffer, hMemorySize))
                         {
                             window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
                         }
-                        else {
+                        else
+                        {
                             GlobalLogger->Log(Logger::Error, "Failed to load icon.");
                         }
                     }
@@ -672,7 +679,8 @@ namespace SBURB
 #endif
 
         // Fallback path
-        if (initFilePath == "") initFilePath = "levels/init.xml";
+        if (initFilePath == "")
+            initFilePath = "levels/init.xml";
 
         // Initialize room
         std::thread t1(Serializer::LoadSerialFromXML, initFilePath, false);
@@ -764,11 +772,12 @@ namespace SBURB
         this->fadeShape.setSize(sf::Vector2f(this->viewSize.x, this->viewSize.y));
     }
 
-    void Sburb::SetName(std::string name) {
+    void Sburb::SetName(std::string name)
+    {
         this->name = name;
         this->window->setTitle(name);
     };
-    
+
     std::shared_ptr<ActionQueue> Sburb::GetActionQueueById(std::string id)
     {
         for (int i = 0; i < this->actionQueues.size(); i++)
@@ -924,11 +933,14 @@ namespace SBURB
         this->LoadMouseCursor(newCursor);
     }
 
-    void Sburb::LoadMouseCursor(sf::Cursor::Type newCursor) {
-        if (cursors.find(newCursor) == cursors.end()) {
+    void Sburb::LoadMouseCursor(sf::Cursor::Type newCursor)
+    {
+        if (cursors.find(newCursor) == cursors.end())
+        {
             std::shared_ptr<sf::Cursor> cursor = std::make_shared<sf::Cursor>();
 
-            if (cursor->loadFromSystem(newCursor)) {
+            if (cursor->loadFromSystem(newCursor))
+            {
                 this->cursors.insert(std::pair(newCursor, cursor));
             }
         }

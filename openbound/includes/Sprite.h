@@ -10,7 +10,8 @@
 
 namespace SBURB
 {
-    enum class Depth : int {
+    enum class Depth : int
+    {
         BG_DEPTHING = 0,
         MG_DEPTHING = 1,
         FG_DEPTHING = 2
@@ -27,12 +28,12 @@ namespace SBURB
         std::shared_ptr<Animation> GetAnimation() { return this->animation; };
         std::shared_ptr<Animation> GetAnimation(std::string name) { return this->animations[name]; };
         virtual void Update();
-        
+
         bool IsBehind(std::shared_ptr<Sprite> other);
         bool Collides(std::shared_ptr<Sprite> other, int dx, int dy);
         bool HitsPoint(int x, int y);
         bool IsVisuallyUnder(int x, int y);
-        
+
         void AddAction(std::shared_ptr<Action> action);
         void RemoveAction(std::string name);
         std::vector<std::shared_ptr<Action>> GetActions(std::shared_ptr<Sprite> sprite);
@@ -42,6 +43,9 @@ namespace SBURB
         std::shared_ptr<Sprite> Clone(std::string name);
         std::string Serialize(std::string output);
 
+        virtual void Load();
+        virtual void Unload();
+
         std::string GetName() { return this->name; };
         bool GetCollidable() { return this->collidable; };
         int GetWidth() { return this->width; };
@@ -49,10 +53,18 @@ namespace SBURB
 
         void SetDepthing(int depthing) { this->depthing = depthing; };
 
-        void SetX(int x) { this->x = x; this->setPosition(this->x, this->y); };
+        void SetX(int x)
+        {
+            this->x = x;
+            this->setPosition(this->x, this->y);
+        };
         int GetX() { return this->x; };
 
-        void SetY(int y) { this->y = y; this->setPosition(this->x, this->y); };
+        void SetY(int y)
+        {
+            this->y = y;
+            this->setPosition(this->x, this->y);
+        };
         int GetY() { return this->y; };
 
         std::string GetProp(std::string prop);

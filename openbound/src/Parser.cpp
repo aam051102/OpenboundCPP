@@ -247,6 +247,8 @@ namespace SBURB
 			sheet = AssetManager::GetGraphicByName(tmpSheet);
 		}
 
+		if(sheet) sheet->Load();
+
 		int x = node.attribute("x").as_int();
 		int y = node.attribute("y").as_int();
 		int length = node.attribute("length").as_int(1);
@@ -265,6 +267,8 @@ namespace SBURB
 			rowSize = tmpRowSize;
 		else if (sheet)
 			rowSize = sheet->GetAsset()->getSize().y;
+
+		if(sheet) sheet->Unload();
 
 		int startPos = node.attribute("startPos").as_int();
 
@@ -498,6 +502,7 @@ namespace SBURB
 	std::shared_ptr<SpriteButton> Parser::ParseSpriteButton(pugi::xml_node node)
 	{
 		std::shared_ptr<AssetGraphic> sheet = AssetManager::GetGraphicByName(node.attribute("sheet").as_string());
+		sheet->Load();
 
 		auto newButton = std::make_shared<SpriteButton>(node.attribute("name").as_string(),
 											  node.attribute("x").as_int(),
@@ -506,6 +511,7 @@ namespace SBURB
 											  node.attribute("height").as_int(sheet->GetAsset()->getSize().y),
 											  node.attribute("sheet").as_string(),
 											  nullptr);
+		sheet->Unload();
 
 		auto action = node.child("action");
 		if (action)

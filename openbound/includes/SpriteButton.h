@@ -17,6 +17,9 @@ namespace SBURB
         void Update() override;
         void UpdateMouse();
 
+        void Load() override;
+        void Unload() override;
+
         void SetState(std::string state);
 
         void SetAction(std::shared_ptr<Action> action) { this->action = action; };

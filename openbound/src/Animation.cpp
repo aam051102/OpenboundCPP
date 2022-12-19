@@ -18,6 +18,7 @@ namespace SBURB
 		this->loopNum = loopNum;
 		this->curLoop = 0;
 		this->followUp = followUp;
+		this->count = 0;
 
 		if (sliced)
 		{
@@ -48,10 +49,12 @@ namespace SBURB
 		else
 		{
 			this->sheet = AssetManager::GetGraphicByName(sheetName);
+			this->sheet->Load();
 			this->rowSize = rowSize ? rowSize : this->sheet->GetAsset()->getSize().y;
 			this->colSize = colSize ? colSize : this->sheet->GetAsset()->getSize().x;
 			this->numRows = this->sheet->GetAsset()->getSize().y / this->rowSize;
 			this->numCols = this->sheet->GetAsset()->getSize().x / this->colSize;
+			this->sheet->Unload();
 		}
 
 		if (frameInterval == "")
@@ -91,6 +94,7 @@ namespace SBURB
 
 	Animation::~Animation()
 	{
+		this->Reset();
 	}
 
 	void Animation::NextFrame()
@@ -188,14 +192,15 @@ namespace SBURB
 			sf::FloatRect transformRect(0, 0, drawWidth, drawHeight);
 			transformRect = states.transform.transformRect(transformRect);
 
-			if (this->flipX) {
+			if (this->flipX)
+			{
 				transformRect.left += -this->x;
 				transformRect.left += -this->x;
 				transformRect.left -= transformRect.width;
 			}
 
 			sf::VertexArray arr(sf::Quads, 4);
-			
+
 			arr[0].position = sf::Vector2f(transformRect.left, transformRect.top);
 			arr[1].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top);
 			arr[2].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top + transformRect.height);
@@ -215,11 +220,56 @@ namespace SBURB
 		}
 	}
 
+	void Animation::Load()
+	{
+		this->count++;
+
+		if (this->count == 1)
+		{
+			if (this->sheet)
+			{
+				this->sheet->Load();
+			}
+
+			for (auto row : this->sheets)
+			{
+				for (auto col : row.second)
+				{
+					col.second->Load();
+				}
+			}
+		}
+	}
+
+	void Animation::Unload()
+	{
+		this->count--;
+
+		if (this->count == 0)
+		{
+			if (this->sheet)
+			{
+				this->sheet->Unload();
+			}
+
+			for (auto row : this->sheets)
+			{
+				for (auto col : row.second)
+				{
+					col.second->Unload();
+					col.second.reset();
+				}
+			}
+		}
+	}
+
 	void Animation::Reset()
 	{
 		this->curFrame = 0;
 		this->curInterval = 0;
 		this->curLoop = 0;
+
+		this->Unload();
 	}
 
 	bool Animation::HasPlayed()

@@ -7,19 +7,21 @@
 
 namespace SBURB
 {
-    class AssetGraphic: public Asset
+    class AssetGraphic : public Asset
     {
     public:
         AssetGraphic(std::string name, std::string path);
 
         std::shared_ptr<sf::Texture> GetAsset() { return this->asset; };
+        std::shared_ptr<sf::Texture> Load();
+        void Unload();
 
         std::string GetPath() { return this->path; };
 
     private:
         std::string path;
         std::shared_ptr<sf::Texture> asset;
-
+        uint8_t count = 0;
     };
 }
 

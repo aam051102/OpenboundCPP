@@ -583,10 +583,13 @@ namespace SBURB
 		if (!dialogBox)
 		{
 			std::shared_ptr<AssetGraphic> boxAsset = AssetManager::GetGraphicByName(box);
+			boxAsset->Load();
 
 			dialogBox = std::make_shared<Sprite>(std::string("dialogBox"), Sburb::GetInstance()->GetViewSize().x + 1, 1000, boxAsset->GetAsset()->getSize().x, boxAsset->GetAsset()->getSize().y, 0, 0, 0);
 			dialogBox->AddAnimation(std::make_shared<Animation>(std::string("image"), boxAsset->GetName(), 0, 0, boxAsset->GetAsset()->getSize().x, boxAsset->GetAsset()->getSize().y, 0, 1, "1"));
 			dialogBox->StartAnimation("image");
+
+			boxAsset->Unload();
 		}
 
 		if (!this->box)

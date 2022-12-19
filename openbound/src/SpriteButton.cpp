@@ -17,11 +17,14 @@ namespace SBURB
 		this->sheetName = sheetName;
 
 		this->sheet = AssetManager::GetGraphicByName(sheetName);
+		this->sheet->Load();
 
-		for (int i = 0; i < (sheet->GetAsset()->getSize().x / this->width) * (sheet->GetAsset()->getSize().y / this->height); i++)
+		for (int i = 0; i < (this->sheet->GetAsset()->getSize().x / this->width) * (this->sheet->GetAsset()->getSize().y / this->height); i++)
 		{
 			this->AddAnimation(std::make_shared<Animation>("state" + std::to_string(i), sheetName, 0, 0, width, height, i, 1, "1000"));
 		}
+
+		this->sheet->Unload();
 
 		this->StartAnimation("state0");
 		this->setPosition(x, y);
@@ -35,6 +38,30 @@ namespace SBURB
 	{
 		this->Sprite::Update();
 		this->UpdateMouse();
+	}
+
+	void SpriteButton::Load()
+	{
+		if (this->animation)
+		{
+			this->animation->Load();
+		}
+
+		if (this->sheet) {
+			this->sheet->Load();
+		}
+	}
+
+	void SpriteButton::Unload()
+	{
+		if (this->animation)
+		{
+			this->animation->Unload();
+		}
+
+		if (this->sheet) {
+			this->sheet->Unload();
+		}
 	}
 
 	void SpriteButton::UpdateMouse()

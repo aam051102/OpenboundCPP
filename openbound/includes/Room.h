@@ -69,7 +69,7 @@ namespace SBURB
 		void SetMapScale(int mapScale) { this->mapScale = mapScale; };
 		int GetMapScale() { return this->mapScale; };
 
-		void SetWalkableMap(std::shared_ptr<AssetGraphic> walkableMap) { this->walkableMap = walkableMap; };
+		void SetWalkableMap(std::shared_ptr<AssetGraphic> walkableMap);
 		std::shared_ptr<AssetGraphic> GetWalkableMap() { return this->walkableMap; };
 
 		void SetWidth(int width) { this->width = width; };
