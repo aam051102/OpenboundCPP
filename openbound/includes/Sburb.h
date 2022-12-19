@@ -51,7 +51,10 @@ namespace SBURB
         void SetCurrentRoom(std::shared_ptr<Room> curRoom) { this->curRoom = curRoom; };
         std::shared_ptr<Room> GetCurrentRoom();
 
-        void SetSprite(std::string name, std::shared_ptr<Sprite> sprite) { this->sprites[name] = sprite; };
+        void SetSprite(std::string name, std::shared_ptr<Sprite> sprite) {
+            sprite->Load();
+            this->sprites[name] = sprite;
+        };
         std::shared_ptr<Sprite> GetSprite(std::string name) { return this->sprites[name]; };
 
         std::map<std::string, std::shared_ptr<Room>> GetRooms() { return this->rooms; };
@@ -136,7 +139,10 @@ namespace SBURB
         void SetNextQueueId(int nextQueueId) { this->nextQueueId = nextQueueId; };
         int GetNextQueueId() { return this->nextQueueId;};
 
-        void SetHud(std::string name, std::shared_ptr<Sprite> sprite) { this->hud[name] = sprite; };
+        void SetHud(std::string name, std::shared_ptr<Sprite> sprite) {
+            sprite->Load();
+            this->hud[name] = sprite;
+        };
 
         void HaltUpdateProcess();
         void StartUpdateProcess();

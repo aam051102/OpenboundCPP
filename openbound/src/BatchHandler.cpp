@@ -83,10 +83,17 @@ namespace SBURB
     void BatchHandler::DrawBatch()
     {
         sf::RenderStates states = sf::RenderStates();
-        if (currentTexName != "")
-            states.texture = AssetManager::GetGraphicByName(currentTexName)->GetAsset().get();
-        if (offset != verticesSize)
+        
+        if (currentTexName != "") {
+            auto texAsset = AssetManager::GetGraphicByName(currentTexName)->Load();
+            states.texture = texAsset.get();
+            AssetManager::GetGraphicByName(currentTexName)->Unload();
+        }
+
+        if (offset != verticesSize) {
             vertices.resize(offset);
+        }
+
         target->draw(vertices, states);
         verticesInitialized = false;
         offset = 0;

@@ -111,9 +111,21 @@ namespace SBURB
         this->rooms.clear();
         this->gameState.clear();
         this->globalVolume = 100;
+
+        for(auto sprite : this->hud) {
+            sprite.second->Unload();
+        }
+        
         this->hud.clear();
+
         this->sounds.clear();
+
+        for (auto sprite : this->sprites) {
+            sprite.second->Unload();
+        }
+
         this->sprites.clear();
+
         this->buttons.clear();
         this->effects.clear();
         this->queue->SetCurrentAction(nullptr);

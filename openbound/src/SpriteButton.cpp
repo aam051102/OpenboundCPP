@@ -17,9 +17,9 @@ namespace SBURB
 		this->sheetName = sheetName;
 
 		this->sheet = AssetManager::GetGraphicByName(sheetName);
-		this->sheet->Load();
+		auto sheetAsset = this->sheet->Load();
 
-		for (int i = 0; i < (this->sheet->GetAsset()->getSize().x / this->width) * (this->sheet->GetAsset()->getSize().y / this->height); i++)
+		for (int i = 0, l = (sheetAsset->getSize().x / this->width) * (sheetAsset->getSize().y / this->height); i < l; i++)
 		{
 			this->AddAnimation(std::make_shared<Animation>("state" + std::to_string(i), sheetName, 0, 0, width, height, i, 1, "1000"));
 		}

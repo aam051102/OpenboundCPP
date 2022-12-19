@@ -49,11 +49,11 @@ namespace SBURB
 		else
 		{
 			this->sheet = AssetManager::GetGraphicByName(sheetName);
-			this->sheet->Load();
-			this->rowSize = rowSize ? rowSize : this->sheet->GetAsset()->getSize().y;
-			this->colSize = colSize ? colSize : this->sheet->GetAsset()->getSize().x;
-			this->numRows = this->sheet->GetAsset()->getSize().y / this->rowSize;
-			this->numCols = this->sheet->GetAsset()->getSize().x / this->colSize;
+			auto sheetAsset = this->sheet->Load();
+			this->rowSize = rowSize ? rowSize : sheetAsset->getSize().y;
+			this->colSize = colSize ? colSize : sheetAsset->getSize().x;
+			this->numRows = sheetAsset->getSize().y / this->rowSize;
+			this->numCols = sheetAsset->getSize().x / this->colSize;
 			this->sheet->Unload();
 		}
 
@@ -150,10 +150,12 @@ namespace SBURB
 					if (this->sheets.find(colNum) != this->sheets.end() && this->sheets.at(colNum).find(rowNum) != this->sheets.at(colNum).end())
 					{
 						std::shared_ptr<AssetGraphic> sheet = this->sheets.at(colNum).at(rowNum);
+						auto sheetAsset = sheet->Load();
 						int frameX = 0;
 						int frameY = 0;
-						int drawWidth = sheet->GetAsset()->getSize().x;
-						int drawHeight = sheet->GetAsset()->getSize().y;
+						int drawWidth = sheetAsset->getSize().x;
+						int drawHeight = sheetAsset->getSize().y;
+						sheet->Unload();
 						int offsetX = colNum * this->colSize;
 						int offsetY = rowNum * this->rowSize;
 
@@ -293,14 +295,18 @@ namespace SBURB
 	void Animation::SetColSize(int newSize)
 	{
 		this->colSize = newSize;
-		this->numCols = this->sheet->GetAsset()->getSize().x / this->colSize;
+		auto sheetAsset = this->sheet->Load();
+		this->numCols = sheetAsset->getSize().x / this->colSize;
+		this->sheet->Unload();
 		Reset();
 	}
 
 	void Animation::SetRowSize(int newSize)
 	{
 		this->rowSize = newSize;
-		this->numRows = this->sheet->GetAsset()->getSize().y / this->rowSize;
+		auto sheetAsset = this->sheet->Load();
+		this->numRows = sheetAsset->getSize().y / this->rowSize;
+		this->sheet->Unload();
 		Reset();
 	}
 
@@ -349,13 +355,15 @@ namespace SBURB
 			frameInterval = this->frameInterval;
 		}
 
+		auto sheetAsset = this->sheet->Load();
+
 		output = output + "\n<animation " +
 				 ("sheet='" + this->sheetName + "' ") +
 				 ((this->name != "image") ? "name='" + this->name + "' " : "") +
 				 Serializer::SerializeAttribute("x", this->x) +
 				 Serializer::SerializeAttribute("y", this->y) +
-				 ((this->rowSize != this->sheet->GetAsset()->getSize().y) ? "rowSize='" + std::to_string(this->rowSize) + "' " : "") +
-				 ((this->colSize != this->sheet->GetAsset()->getSize().x) ? "colSize='" + std::to_string(this->colSize) + "' " : "") +
+				 ((this->rowSize != sheetAsset->getSize().y) ? "rowSize='" + std::to_string(this->rowSize) + "' " : "") +
+				 ((this->colSize != sheetAsset->getSize().x) ? "colSize='" + std::to_string(this->colSize) + "' " : "") +
 				 Serializer::SerializeAttribute("startPos", this->startPos) +
 				 ((this->length != 1) ? "length='" + std::to_string(this->length) + "' " : "") +
 				 ((frameInterval != "") ? "frameInterval='" + frameInterval + "' " : "") +
@@ -365,6 +373,8 @@ namespace SBURB
 				 Serializer::SerializeAttribute("flipY", this->flipY) +
 				 (this->sliced ? ("sliced='true' numCols='" + std::to_string(this->numCols) + "' numRows='" + std::to_string(this->numRows) + "' ") : ("")) +
 				 " />";
+
+		this->sheet->Unload();
 
 		return output;
 	}

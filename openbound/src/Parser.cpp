@@ -247,7 +247,10 @@ namespace SBURB
 			sheet = AssetManager::GetGraphicByName(tmpSheet);
 		}
 
-		if(sheet) sheet->Load();
+		std::shared_ptr<sf::Texture> sheetAsset = nullptr;
+		if (sheet) {
+			sheetAsset = sheet->Load();
+		}
 
 		int x = node.attribute("x").as_int();
 		int y = node.attribute("y").as_int();
@@ -260,13 +263,13 @@ namespace SBURB
 		if (tmpColSize)
 			colSize = tmpColSize;
 		else if (sheet)
-			colSize = round(sheet->GetAsset()->getSize().x / length);
+			colSize = round(sheetAsset->getSize().x / length);
 
 		int tmpRowSize = node.attribute("rowSize").as_int();
 		if (tmpRowSize)
 			rowSize = tmpRowSize;
 		else if (sheet)
-			rowSize = sheet->GetAsset()->getSize().y;
+			rowSize = sheetAsset->getSize().y;
 
 		if(sheet) sheet->Unload();
 
@@ -425,15 +428,17 @@ namespace SBURB
 		if (walkableMap != "")
 		{
 			newRoom->SetWalkableMap(AssetManager::GetGraphicByName(walkableMap));
+			auto walkableMapAsset = newRoom->GetWalkableMap()->Load();
 			if (!newRoom->GetWidth())
 			{
-				newRoom->SetWidth(newRoom->GetWalkableMap()->GetAsset()->getSize().x * newRoom->GetMapScale());
+				newRoom->SetWidth(walkableMapAsset->getSize().x * newRoom->GetMapScale());
 			}
 
 			if (!newRoom->GetHeight())
 			{
-				newRoom->SetHeight(newRoom->GetWalkableMap()->GetAsset()->getSize().y * newRoom->GetMapScale());
+				newRoom->SetHeight(walkableMapAsset->getSize().y * newRoom->GetMapScale());
 			}
+			newRoom->GetWalkableMap()->Unload();
 		}
 
 		Serializer::SerialLoadRoomSprites(newRoom, GetNestedChildren(&node, "sprite"));
@@ -502,13 +507,13 @@ namespace SBURB
 	std::shared_ptr<SpriteButton> Parser::ParseSpriteButton(pugi::xml_node node)
 	{
 		std::shared_ptr<AssetGraphic> sheet = AssetManager::GetGraphicByName(node.attribute("sheet").as_string());
-		sheet->Load();
+		auto sheetAsset = sheet->Load();
 
 		auto newButton = std::make_shared<SpriteButton>(node.attribute("name").as_string(),
 											  node.attribute("x").as_int(),
 											  node.attribute("y").as_int(),
-											  node.attribute("width").as_int(sheet->GetAsset()->getSize().x),
-											  node.attribute("height").as_int(sheet->GetAsset()->getSize().y),
+											  node.attribute("width").as_int(sheetAsset->getSize().x),
+											  node.attribute("height").as_int(sheetAsset->getSize().y),
 											  node.attribute("sheet").as_string(),
 											  nullptr);
 		sheet->Unload();

@@ -134,8 +134,10 @@ namespace SBURB
 	{
 		if (this->walkableMap)
 		{
-			sf::Image img = this->walkableMap->GetAsset()->copyToImage();
+			auto walkableMapAsset = this->walkableMap->Load();
+			sf::Image img = walkableMapAsset->copyToImage();
 			this->mapData = std::make_shared<sf::Image>(img);
+			this->walkableMap->Unload();
 		}
 	}
 
@@ -293,11 +295,13 @@ namespace SBURB
 	{
 		if (this->walkableMap)
 		{
+			auto walkableMapAsset = this->walkableMap->Load();
+
 			for (auto query : queries)
 			{
 				sf::Vector2f pt = query.second;
-				int width = this->walkableMap->GetAsset()->getSize().x;
-				int height = this->walkableMap->GetAsset()->getSize().y;
+				int width = walkableMapAsset->getSize().x;
+				int height = walkableMapAsset->getSize().y;
 
 				if (pt.x < 0 || pt.x > width * this->mapScale || pt.y < 0 || pt.y > height * this->mapScale)
 				{
@@ -311,6 +315,8 @@ namespace SBURB
 					(*results)[query.first] = this->mapData->getPixel(mapX, mapY) == sf::Color::White;
 				}
 			}
+
+			this->walkableMap->Unload();
 		}
 
 		for (int i = 0; i < this->walkables.size(); i++)

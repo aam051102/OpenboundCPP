@@ -190,8 +190,10 @@ namespace SBURB
 			if (!this->graphic)
 			{
 				std::shared_ptr<AssetGraphic> img = AssetManager::GetGraphicByName(resource);
+				auto imgAsset = img->Load();
 				this->graphic = std::make_shared<Sprite>();
-				this->graphic->AddAnimation(std::make_shared<Animation>("image", img->GetName(), 0, 0, (int)img->GetAsset()->getSize().x, (int)img->GetAsset()->getSize().y, 0, 1, "1"));
+				this->graphic->AddAnimation(std::make_shared<Animation>("image", img->GetName(), 0, 0, (int)imgAsset->getSize().x, (int)imgAsset->getSize().y, 0, 1, "1"));
+				img->Unload();
 				this->graphic->StartAnimation("image");
 			}
 		}
@@ -582,14 +584,14 @@ namespace SBURB
 		std::shared_ptr<Sprite> dialogBox = Sburb::GetInstance()->GetSprite(box);
 		if (!dialogBox)
 		{
-			std::shared_ptr<AssetGraphic> boxAsset = AssetManager::GetGraphicByName(box);
-			boxAsset->Load();
+			std::shared_ptr<AssetGraphic> boxGraphic = AssetManager::GetGraphicByName(box);
+			auto boxAsset = boxGraphic->Load();
 
-			dialogBox = std::make_shared<Sprite>(std::string("dialogBox"), Sburb::GetInstance()->GetViewSize().x + 1, 1000, boxAsset->GetAsset()->getSize().x, boxAsset->GetAsset()->getSize().y, 0, 0, 0);
-			dialogBox->AddAnimation(std::make_shared<Animation>(std::string("image"), boxAsset->GetName(), 0, 0, boxAsset->GetAsset()->getSize().x, boxAsset->GetAsset()->getSize().y, 0, 1, "1"));
+			dialogBox = std::make_shared<Sprite>(std::string("dialogBox"), Sburb::GetInstance()->GetViewSize().x + 1, 1000, boxAsset->getSize().x, boxAsset->getSize().y, 0, 0, 0);
+			dialogBox->AddAnimation(std::make_shared<Animation>(std::string("image"), boxGraphic->GetName(), 0, 0, boxAsset->getSize().x, boxAsset->getSize().y, 0, 1, "1"));
 			dialogBox->StartAnimation("image");
 
-			boxAsset->Unload();
+			boxGraphic->Unload();
 		}
 
 		if (!this->box)

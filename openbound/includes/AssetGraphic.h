@@ -12,7 +12,6 @@ namespace SBURB
     public:
         AssetGraphic(std::string name, std::string path);
 
-        std::shared_ptr<sf::Texture> GetAsset() { return this->asset; };
         std::shared_ptr<sf::Texture> Load();
         void Unload();
 
