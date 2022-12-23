@@ -36,21 +36,7 @@ namespace SBURB
 
     void Logger::OpenLogFile() {
         if (!logFile.is_open()) {
-            std::string appdataDir = std::getenv("APPDATA");
-            std::string baseDir = appdataDir;
-
-            if (appdataDir == "")
-                baseDir = GetExecutableDirectory();
-
-            // Define path
-            std::filesystem::path filePath(baseDir);
-            if (appdataDir != "")
-                filePath /= "OpenboundCPP";
-
-            filePath /= "logs";
-
-            // Create directories
-            std::filesystem::create_directories(filePath);
+            auto filePath = GetAppDataDirectory("logs");
 
             // Append filename
             auto duration = std::chrono::system_clock::now().time_since_epoch();

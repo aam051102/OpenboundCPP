@@ -30,7 +30,8 @@ workspace "OpenboundCPP"
         includedirs
         {
             "%{prj.name}/includes",
-            "includes/"
+            "includes/",
+            "lib/"
         }
 
 		filter "system:windows"

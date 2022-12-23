@@ -10,6 +10,7 @@
 #include <SFML/Graphics.hpp>
 #include <pugixml.hpp>
 #include <iostream>
+#include <filesystem>
 
 const std::map<char, bool> specialCharsIgnore = {
     {'a', true}
@@ -244,6 +245,7 @@ uint16_t swapbits(uint16_t src);
 uint32_t swapbits(uint32_t src);
 uint64_t swapbits(uint64_t src);
 
+std::filesystem::path GetAppDataDirectory(std::string appendedPath = "");
 std::string GetExecutableDirectory();
 
 #endif

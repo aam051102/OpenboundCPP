@@ -128,10 +128,11 @@ namespace SBURB
 
         void SetFading(bool fading) { this->fading = fading; };
 
-        void SaveStateToStorage(std::string state, bool automatic, bool local);
+        void SaveStateToStorage(std::string state = "SaveFile", bool automatic = false, bool local = false);
         void LoadStateFromStorage(bool automatic, bool local);
         bool IsStateInStorage(bool automatic, bool local);
         std::string GetStateDescription(bool automatic);
+        void DeleteStateFromStorage(bool automatic);
 
         void SetNextQueueId(int nextQueueId) { this->nextQueueId = nextQueueId; };
         int GetNextQueueId() { return this->nextQueueId;};

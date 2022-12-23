@@ -12,6 +12,8 @@
 #include "Parser.h"
 #include "CommandHandler.h"
 
+#include "iuppiter/iuppiter.h"
+
 #include <thread>
 
 #if defined(_WIN32) || defined(WIN32)
@@ -707,7 +709,18 @@ namespace SBURB
 
     void Sburb::SaveStateToStorage(std::string state, bool automatic, bool local)
     {
-        // TODO: NOT SUPPORTED YET
+        std::string serialized = Serializer::Serialize();
+        std::string compressed = Iuppiter::Base64::Encode(Iuppiter::Compress(Iuppiter::StringToByteArray(serialized)), true);
+
+        std::string saveStateName = description + (automatic ? " (auto)" : "") + "_savedState_" + this->name + ":" + this->version;
+
+        this->DeleteStateFromStorage(automatic);
+
+        auto savePath = GetAppDataDirectory("saves");
+        savePath /= saveStateName;
+        std::ofstream os(savePath.string(), std::ios::trunc);
+        os << compressed;
+        os.close();
     }
 
     void Sburb::LoadStateFromStorage(bool automatic, bool local)
@@ -725,6 +738,10 @@ namespace SBURB
     {
         // TODO: NOT SUPPORTED YET
         return "";
+    }
+
+    void Sburb::DeleteStateFromStorage(bool automatic) {
+
     }
 
     void Sburb::HaltUpdateProcess()

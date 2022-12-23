@@ -1,5 +1,6 @@
 #include "Common.h"
 
+#include <filesystem>
 #include <limits.h>
 
 #if defined(_WIN32) || defined(WIN32)
@@ -7,6 +8,26 @@
 #elif defined(__linux__)
 #include <unistd.h>
 #endif
+
+std::filesystem::path GetAppDataDirectory(std::string appendedPath) {
+    std::string appdataDir = std::getenv("APPDATA");
+    std::string baseDir = appdataDir;
+
+    if (appdataDir == "")
+        baseDir = GetExecutableDirectory();
+
+    // Define path
+    std::filesystem::path filePath(baseDir);
+    if (appdataDir != "")
+        filePath /= "OpenboundCPP";
+
+    if (appendedPath != "") filePath /= appendedPath;
+
+    // Create directories
+    std::filesystem::create_directories(filePath);
+
+    return filePath;
+}
 
 std::string GetExecutableDirectory()
 {
