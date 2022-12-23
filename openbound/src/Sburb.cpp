@@ -710,16 +710,18 @@ namespace SBURB
     void Sburb::SaveStateToStorage(std::string state, bool automatic, bool local)
     {
         std::string serialized = Serializer::Serialize();
-        std::string compressed = Iuppiter::Base64::Encode(Iuppiter::Compress(Iuppiter::StringToByteArray(serialized)), true);
+        auto byteArray = Iuppiter::StringToByteArray(serialized);
+        auto compressed = Iuppiter::Compress(byteArray);
+        std::string encoded = Iuppiter::Base64::Encode(compressed, true);
 
-        std::string saveStateName = description + (automatic ? " (auto)" : "") + "_savedState_" + this->name + ":" + this->version;
+        std::string saveStateName = description + (automatic ? " (auto)" : "") + "_savedState_" + this->name + "_" + this->version;
 
         this->DeleteStateFromStorage(automatic);
 
         auto savePath = GetAppDataDirectory("saves");
         savePath /= saveStateName;
-        std::ofstream os(savePath.string(), std::ios::trunc);
-        os << compressed;
+        std::ofstream os(savePath.string());
+        os << encoded;
         os.close();
     }
 

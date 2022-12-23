@@ -182,10 +182,11 @@ namespace SBURB
     {
         output = output + "\n<hud>";
 
-        for (auto content : Sburb::GetInstance()->GetHud())
+        // TODO: STOP DOING THIS! IT REGISTERS AS A REMOVAL OF SHARED_PTR COUNT, BUT NOT AN ADDITION, SO THEY GET REMOVED EARLY. FIX EVERYWHERE
+        /*for (auto content : Sburb::GetInstance()->GetHud())
         {
             output = content.second->Serialize(output);
-        }
+        }*/
 
         output = Sburb::GetInstance()->GetDialoger()->Serialize(output);
 
@@ -220,11 +221,16 @@ namespace SBURB
 
             if (!contained)
             {
+                // TODO: Figure out why dialogBox isn't defined. Why is a definition attempt even made?
+                if (!theSprite) {
+                    std::cout << sprite.first << std::endl;
+                    continue;
+                }
                 output = theSprite->Serialize(output);
             }
         }
 
-        for (auto button : Sburb::GetInstance()->GetButtons())
+        /*for (auto button : Sburb::GetInstance()->GetButtons())
         {
             auto theButton = button.second;
 
@@ -232,7 +238,7 @@ namespace SBURB
             {
                 output = theButton->Serialize(output);
             }
-        }
+        }*/
 
         return output;
     }

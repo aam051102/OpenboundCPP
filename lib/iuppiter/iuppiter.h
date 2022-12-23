@@ -288,9 +288,9 @@ namespace Iuppiter
 
         // Using byte array or not.
         std::vector<uint32_t> sstart = input;
-        std::vector<uint32_t> dstart = {};
-
         slen = sstart.size();
+
+        std::vector<uint32_t> dstart = {};
 
         while (src < slen)
         {
@@ -302,16 +302,8 @@ namespace Iuppiter
 
                     for (src = 0, dst = 0; mlen; mlen--)
                     {
-                        if (dstart.size() <= dst)
-                        {
-                            dstart.push_back(sstart[src]);
-                        }
-                        else
-                        {
-                            dstart[dst] = sstart[src];
-                        }
-                        src++;
-                        dst++;
+                        if (dstart.size() <= dst) dstart.resize(dst + 1);
+                        dstart[dst++] = sstart[src++];
                     }
 
                     return dstart;
@@ -320,16 +312,8 @@ namespace Iuppiter
                 copymask = 1;
                 copymap = dst;
 
-                if (dstart.size() <= dst)
-                {
-                    dstart.push_back(0);
-                }
-                else
-                {
-                    dstart[dst] = 0;
-                }
-
-                dst++;
+                if (dstart.size() <= dst) dstart.resize(dst + 1);
+                dstart[dst++] = 0;
             }
 
             if (src > slen - MATCH_MAX)
@@ -364,16 +348,9 @@ namespace Iuppiter
             }
             else
             {
-                if (dstart.size() <= dst)
-                {
-                    dstart.push_back(sstart[src]);
-                }
-                else
-                {
-                    dstart[dst] = sstart[src];
-                }
-                src++;
-                dst++;
+                if (dstart.size() <= dst) dstart.resize(dst + 1);
+
+                dstart[dst++] = sstart[src++];
             }
         }
 

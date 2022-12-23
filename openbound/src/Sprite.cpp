@@ -17,6 +17,9 @@ namespace SBURB
         this->depthing = depthing;
         this->collidable = collidable;
         this->queries = {};
+        this->animations = {};
+        this->animation = nullptr;
+        this->actions = {};
 
         this->setPosition(this->x, this->y);
     }
@@ -27,7 +30,7 @@ namespace SBURB
     }
 
     void Sprite::StartAnimation(std::string name) {
-        if (this->state != name && this->animations[name]) {
+        if (this->state != name && this->animations.find(name) != this->animations.end()) {
             this->animation = this->animations[name];
             this->animation->Reset();
             this->state = name;

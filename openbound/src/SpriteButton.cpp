@@ -68,7 +68,7 @@ namespace SBURB
 					this->clicked = true;
 					std::string nextState = "state" + std::to_string(stoi(this->animation->GetName().substr(5)) + 1);
 
-					if (this->animations[nextState])
+					if (this->animations.find(nextState) != this->animations.end())
 					{
 						this->StartAnimation(nextState);
 					}
