@@ -286,6 +286,34 @@ namespace SBURB
         Serializer::LoadSerial(&doc, keepOld);
     }
 
+    bool Serializer::LoadSerialFromXMLMemory(std::string memory, bool keepOld)
+    {
+        Sburb::GetInstance()->HaltUpdateProcess();
+
+        // TODO: Add loadedFiles back in - it'll DEFINITELY break without.
+        /*if (keepOld && Sburb::GetInstance()->loadedFiles[path])
+        {
+            Sburb::GetInstance()->StartUpdateProcess();
+            return true;
+        }
+        else
+        {
+            //Sburb::GetInstance()->loadedFiles[path] = true;
+        }*/
+
+        pugi::xml_document doc;
+        pugi::xml_parse_result initDocRes = doc.load_string(memory.c_str());
+
+        if (initDocRes.status != pugi::status_ok)
+        {
+            std::string errMsg = initDocRes.description();
+            GlobalLogger->Log(Logger::Error, errMsg);
+            return false;
+        }
+
+        Serializer::LoadSerial(&doc, keepOld);
+    }
+
     // IS THIS DOC KEPT ALIVE? PROBABLY NOT!
     pugi::xml_document Serializer::ParseXML(std::string inText)
     {

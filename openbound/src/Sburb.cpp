@@ -728,6 +728,44 @@ namespace SBURB
     void Sburb::LoadStateFromStorage(bool automatic, bool local)
     {
         // TODO: NOT SUPPORTED YET
+        std::string saveStateName = "";
+
+        auto savePath = GetAppDataDirectory("saves");
+
+        auto files = std::filesystem::directory_iterator(savePath);
+
+        for (std::filesystem::directory_entry file : files)
+        {
+            auto key = file.path().filename().string();
+            auto savedIndex = key.find("_savedState_");
+            if (savedIndex != std::string::npos) // this key is a saved state
+            {
+                if (automatic && key.find("(auto)") != std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex)
+                {
+                    saveStateName = file.path().string();
+                    break;
+                }
+                else if (!automatic && key.find("(auto)") == std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex)
+                {
+                    saveStateName = file.path().string();
+                    break;
+                }
+            }
+
+        }
+
+        std::ifstream fs(saveStateName);
+        std::string compressed;
+        fs >> compressed;
+        fs.close();
+
+        if (compressed == "") return;
+        
+        auto decompressed = replace(Iuppiter::ByteArrayToString(Iuppiter::Decompress(Iuppiter::Base64::Decode(Iuppiter::StringToByteArray(compressed), true))), "\0", "");
+        
+        if (!Serializer::LoadSerialFromXMLMemory(decompressed)) {
+            GlobalLogger->Log(Logger::Error, "Failed to load serialized XML " + saveStateName);
+        }
     }
 
     bool Sburb::IsStateInStorage(bool automatic, bool local)

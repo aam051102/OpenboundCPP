@@ -54,6 +54,7 @@ namespace SBURB {
         static pugi::xml_document ParseXML(std::string inText);
 
         static bool LoadSerialFromXML(std::string path, bool keepOld = false);
+        static bool LoadSerialFromXMLMemory(std::string memory, bool keepOld = false);
         static bool LoadSerial(pugi::xml_document* doc, bool keepOld = false);
         static bool LoadDependencies(pugi::xml_node node);
         static bool LoadSerialAssets(pugi::xml_node node);
