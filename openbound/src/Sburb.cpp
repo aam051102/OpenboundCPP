@@ -15,6 +15,7 @@
 #include "iuppiter/iuppiter.h"
 
 #include <thread>
+#include <stdio.h>
 
 #if defined(_WIN32) || defined(WIN32)
 #include <atlstr.h>
@@ -727,7 +728,6 @@ namespace SBURB
 
     void Sburb::LoadStateFromStorage(bool automatic, bool local)
     {
-        // TODO: NOT SUPPORTED YET
         std::string saveStateName = "";
 
         auto savePath = GetAppDataDirectory("saves");
@@ -770,18 +770,96 @@ namespace SBURB
 
     bool Sburb::IsStateInStorage(bool automatic, bool local)
     {
-        // TODO: NOT SUPPORTED YET
+        auto savePath = GetAppDataDirectory("saves");
+
+        auto files = std::filesystem::directory_iterator(savePath);
+
+        for (auto file : files)
+        {
+            auto key = file.path().filename().string();
+           
+            auto savedIndex = key.find("_savedState_");
+            if (savedIndex >= 0) // this key is a saved state
+            {
+                if (automatic && key.find("(auto)") != std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex) {
+                    return true;
+                }
+                else if (!automatic && key.find("(auto)") == std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
-    std::string Sburb::GetStateDescription(bool automatic)
+    std::string Sburb::GetStateDescription(bool automatic, bool local)
     {
-        // TODO: NOT SUPPORTED YET
+        auto savePath = GetAppDataDirectory("saves");
+
+        auto files = std::filesystem::directory_iterator(savePath);
+        for (auto file : files)
+        {
+            auto key = file.path().filename().string();
+
+            auto savedIndex = key.find("_savedState_");
+            if (savedIndex != std::string::npos) // this key is a saved state
+            {
+                if (automatic && key.find("(auto)") != std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex) {
+                    return key.substr(0, savedIndex);
+                } 
+                else if (!automatic && key.find("(auto)") == std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex) {
+                    return key.substr(0, savedIndex);
+                }
+            }
+
+        }
+
         return "";
     }
 
-    void Sburb::DeleteStateFromStorage(bool automatic) {
+    void Sburb::DeleteStateFromStorage(bool automatic, bool local) {
+        this->DeleteOldVersionStates(local);
 
+        auto savePath = GetAppDataDirectory("saves");
+
+        auto files = std::filesystem::directory_iterator(savePath);
+
+        for (auto file : files)
+        {
+            auto key = file.path().filename().string();
+
+            auto savedIndex = key.find("_savedState_");
+            if (savedIndex != std::string::npos) // this key is a saved state
+            {
+                if (automatic && key.find("(auto)") != std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex) {
+                    std::remove(file.path().string().c_str());
+                }
+                else if (!automatic && key.find("(auto)") == std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex) {
+                    std::remove(file.path().string().c_str());
+                }
+            }
+        }
+    }
+
+    void Sburb::DeleteOldVersionStates(bool local) {
+        auto savePath = GetAppDataDirectory("saves");
+
+        auto files = std::filesystem::directory_iterator(savePath);
+
+        for (auto file : files)
+        {
+            auto key = file.path().filename().string();
+           
+            auto savedIndex = key.find("_savedState_");
+            if (savedIndex != std::string::npos) // this key is a saved state
+            {
+                // This is a key for our game, but not of the right version
+                if (key.find(this->name + "_") >= savedIndex && key.find("_" + this->version) == std::string::npos) {
+                    std::remove(file.path().string().c_str());
+                }
+            }
+        }
     }
 
     void Sburb::HaltUpdateProcess()

@@ -131,8 +131,9 @@ namespace SBURB
         void SaveStateToStorage(std::string state = "SaveFile", bool automatic = false, bool local = false);
         void LoadStateFromStorage(bool automatic = false, bool local = false);
         bool IsStateInStorage(bool automatic, bool local);
-        std::string GetStateDescription(bool automatic);
-        void DeleteStateFromStorage(bool automatic);
+        std::string GetStateDescription(bool automatic = false, bool local = false);
+        void DeleteStateFromStorage(bool automatic = false, bool local = false);
+        void DeleteOldVersionStates(bool local = false);
 
         void SetNextQueueId(int nextQueueId) { this->nextQueueId = nextQueueId; };
         int GetNextQueueId() { return this->nextQueueId;};
