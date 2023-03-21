@@ -59,5 +59,7 @@ namespace SBURB {
         if (token == "=") {
             return entity->GetProp(this->prop) == target;
         }
+
+        return false;
     }
 }

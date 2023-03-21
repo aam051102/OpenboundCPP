@@ -38,6 +38,7 @@ namespace SBURB
         this->description = "";
         this->engineMode = "wander";
 
+        this->isFullscreen = false;
         this->FPS = 30;
         this->FPStimeObj = sf::Clock();
 
@@ -157,8 +158,18 @@ namespace SBURB
 
             if (event.type == sf::Event::KeyPressed)
             {
-                if (event.key.code == sf::Keyboard::Escape)
+                if (event.key.code == sf::Keyboard::Escape) {
                     window->close();
+                }
+                else if (event.key.code == sf::Keyboard::F) {
+                    /*if (this->isFullscreen) {
+                        window->create(sf::VideoMode(this->viewSize.x, this->viewSize.y), this->name, sf::Style::Close | sf::Style::Titlebar);
+                    } else {
+                        window->create(sf::VideoMode(sf::VideoMode::getFullscreenModes()[0].width, sf::VideoMode::getFullscreenModes()[0].height), this->name, sf::Style::Fullscreen);
+                    }*/
+
+                    this->isFullscreen = !this->isFullscreen;
+                }
             }
             else if (event.type == sf::Event::Closed)
             {
@@ -629,7 +640,7 @@ namespace SBURB
     {
         // Create & initialize main window
         window.Init(name, {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar); // Standard
-        
+
         if (!window.GetWin())
         {
             GlobalLogger->Log(Logger::Error, "Failed to create main game window.");
@@ -751,7 +762,6 @@ namespace SBURB
                     break;
                 }
             }
-
         }
 
         std::ifstream fs(saveStateName);
@@ -812,7 +822,6 @@ namespace SBURB
                     return key.substr(0, savedIndex);
                 }
             }
-
         }
 
         return "";

@@ -283,7 +283,7 @@ namespace SBURB
             return false;
         }
 
-        Serializer::LoadSerial(&doc, keepOld);
+        return Serializer::LoadSerial(&doc, keepOld);
     }
 
     bool Serializer::LoadSerialFromXMLMemory(std::string memory, bool keepOld)
@@ -311,7 +311,7 @@ namespace SBURB
             return false;
         }
 
-        Serializer::LoadSerial(&doc, keepOld);
+        return Serializer::LoadSerial(&doc, keepOld);
     }
 
     // IS THIS DOC KEPT ALIVE? PROBABLY NOT!

@@ -97,6 +97,8 @@ namespace SBURB {
 
             return result;
         }
+
+        return false;
     }
 
     bool Trigger::TryToTrigger() {
@@ -133,6 +135,8 @@ namespace SBURB {
 
             return this->shouldDetonate;
         }
+
+        return false;
     }
 
     std::string Trigger::Serialize(std::string output) {

@@ -60,6 +60,8 @@ namespace SBURB
 				}
 			}
 		}
+
+		return sf::Vector2f(ax, ay);
 	}
 
 	void Room::AddEffect(std::shared_ptr<Animation> effect) {

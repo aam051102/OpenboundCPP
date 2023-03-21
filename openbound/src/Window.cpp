@@ -13,13 +13,11 @@ namespace SBURB
     {
         this->title = title;
         this->size = size;
-
         
         this->win = new sf::RenderWindow(sf::VideoMode(size.x, size.y), title, flags);
         if (flags == sf::Style::Fullscreen)
         {
             win->setSize({sf::VideoMode::getFullscreenModes()[0].width, sf::VideoMode::getFullscreenModes()[0].height});
-            win->setMouseCursorVisible(false);
         }
 
         if (const auto &size = icon.getSize(); size.x != 0)

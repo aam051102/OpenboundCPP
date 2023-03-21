@@ -203,5 +203,7 @@ namespace SBURB
         else if (prop == "state") {
             return this->state;
         }
+
+        return "";
     }
 }
