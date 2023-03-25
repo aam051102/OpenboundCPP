@@ -83,7 +83,8 @@ namespace SBURB {
 
     void FontEngine::ParseText() {
 		this->lines = {};
-		int i = 0;
+		size_t i = 0;
+		size_t l = this->text.size();
 		int lastSpace = 0;
 		int lineStart = 0;
 
@@ -93,13 +94,19 @@ namespace SBURB {
 		textMeasurer.setCharacterSize(this->fontSize);
 		textMeasurer.setStyle(font->GetStyle());
 
-		for (i = 0; i < this->text.size(); i++) {
+		for (i = 0; i < l; i++) {
 			if (this->text[i] == ' ') {
 				lastSpace = i;
 			}
 			else if (this->text[i] == '\n') {
 				this->lines.push_back(this->text.substr(lineStart, i - lineStart));
 				lineStart = i + 1;
+				lastSpace = lineStart;
+				continue;
+			}
+			else if (i < l - 1; this->text[i] == '\\' && this->text[i + 1] == 'n') {
+				this->lines.push_back(this->text.substr(lineStart, i - lineStart));
+				lineStart = i + 2;
 				lastSpace = lineStart;
 				continue;
 			}
