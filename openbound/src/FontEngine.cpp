@@ -24,26 +24,33 @@ namespace SBURB {
 
 		this->formatQueue = {};
 
-        this->prefixColours = {
-            { "aa", 0xa10000ff }, { "aradia", 0xa10000ff },
-            { "ac", 0x416600ff }, { "nepeta", 0x416600ff },
-            { "ag", 0x005682ff }, { "vriska", 0x005682ff },
-            { "at", 0xa15000ff }, { "tavros", 0xa15000ff },
-            { "ca", 0x6a006aff }, { "eridan", 0x6a006aff },
-            { "cc", 0x77003cff }, { "feferi", 0x77003cff },
-            { "cg", 0x626262ff }, { "karkat", 0x626262ff },
-            { "ct", 0x000056ff }, { "equius", 0x000056ff },
-            { "ga", 0x008141ff }, { "kanaya", 0x008141ff },
-            { "gc", 0x008282ff }, { "terezi", 0x008282ff },
-            { "ta", 0xa1a100ff }, { "sollux", 0xa1a100ff },
-            { "tc", 0x2b0057ff }, { "gamzee", 0x2b0057ff },
-            { "dave", 0xe00707ff },
-            { "meenah", 0x77003cff },
-            { "rose", 0xb536daff },
-            { "aranea", 0x005682ff },
-            { "kankri", 0xff0000ff },
-            { "porrum", 0x008141ff },
-            { "latula", 0x008282ff },
+		this->prefixColours = {
+			{ "aa", 0xa10000ff }, { "aradia", 0xa10000ff },
+			{ "ac", 0x416600ff }, { "nepeta", 0x416600ff },
+			{ "ag", 0x005682ff }, { "vriska", 0x005682ff },
+			{ "at", 0xa15000ff }, { "tavros", 0xa15000ff },
+			{ "ca", 0x6a006aff }, { "eridan", 0x6a006aff },
+			{ "cc", 0x77003cff }, { "feferi", 0x77003cff },
+			{ "cg", 0x626262ff }, { "karkat", 0x626262ff },
+			{ "ct", 0x000056ff }, { "equius", 0x000056ff },
+			{ "ga", 0x008141ff }, { "kanaya", 0x008141ff },
+			{ "gc", 0x008282ff }, { "terezi", 0x008282ff },
+			{ "ta", 0xa1a100ff }, { "sollux", 0xa1a100ff },
+			{ "tc", 0x2b0057ff }, { "gamzee", 0x2b0057ff },
+			{ "dave", 0xe00707ff },
+			{ "meenah", 0x77003cff },
+			{ "rose", 0xb536daff },
+			{ "aranea", 0x005682ff },
+			{ "kankri", 0xff0000ff },
+			{ "porrim", 0x008141ff },
+			{ "latula", 0x008282ff },
+			{ "cronus", 0x6a006aff },
+			{ "mituna", 0xa1a100ff },
+			{ "kurloz", 0x6c00daff },
+			{ "meulin", 0x416600ff },
+			{ "rufioh", 0xa15000ff },
+			{ "horuss", 0x000056ff },
+			{ "damara", 0xa10000ff }
         };
     }
 
