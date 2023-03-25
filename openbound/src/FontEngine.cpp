@@ -99,6 +99,7 @@ namespace SBURB {
 				lastSpace = i;
 			}
 			else if (this->text[i] == '\n') {
+				// NOTE: This might not actually be necessary, but I'm not certain enough to remove it.
 				this->lines.push_back(this->text.substr(lineStart, i - lineStart));
 				lineStart = i + 1;
 				lastSpace = lineStart;
