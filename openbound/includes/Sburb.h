@@ -51,36 +51,36 @@ namespace SBURB
         void SetCurrentRoom(std::shared_ptr<Room> curRoom) { this->curRoom = curRoom; };
         std::shared_ptr<Room> GetCurrentRoom();
 
-        void SetSprite(std::string name, std::shared_ptr<Sprite> sprite) { this->sprites[name] = sprite; };
-        std::shared_ptr<Sprite> GetSprite(std::string name) { return this->sprites[name]; };
+        void SetSprite(std::wstring name, std::shared_ptr<Sprite> sprite) { this->sprites[name] = sprite; };
+        std::shared_ptr<Sprite> GetSprite(std::wstring name) { return this->sprites[name]; };
 
-        std::map<std::string, std::shared_ptr<Room>> GetRooms() { return this->rooms; };
+        std::map<std::wstring, std::shared_ptr<Room>> GetRooms() { return this->rooms; };
 
-        void SetRoom(std::string name, std::shared_ptr<Room> room) { this->rooms[name] = room; };
-        std::shared_ptr<Room> GetRoom(std::string name) { return this->rooms[name]; };
+        void SetRoom(std::wstring name, std::shared_ptr<Room> room) { this->rooms[name] = room; };
+        std::shared_ptr<Room> GetRoom(std::wstring name) { return this->rooms[name]; };
 
-        void SetButton(std::string name, std::shared_ptr<SpriteButton> button) { this->buttons[name] = button; }
-        std::shared_ptr<SpriteButton> GetButton(std::string name) { return this->buttons[name]; };
+        void SetButton(std::wstring name, std::shared_ptr<SpriteButton> button) { this->buttons[name] = button; }
+        std::shared_ptr<SpriteButton> GetButton(std::wstring name) { return this->buttons[name]; };
 
-        void SetEffect(std::string, std::shared_ptr<Animation> anim) { this->effects[name] = anim; };
-        std::shared_ptr<Animation> GetEffect(std::string name) { return this->effects[name]; };
+        void SetEffect(std::wstring, std::shared_ptr<Animation> anim) { this->effects[name] = anim; };
+        std::shared_ptr<Animation> GetEffect(std::wstring name) { return this->effects[name]; };
 
-        void SetGameState(std::string prop, std::string value) { this->gameState[prop] = value; };
-        std::map<std::string, std::string> GetGameState() { return this->gameState; };
-        std::string GetGameState(std::string prop) { return this->gameState[prop]; };
+        void SetGameState(std::wstring prop, std::wstring value) { this->gameState[prop] = value; };
+        std::map<std::wstring, std::wstring> GetGameState() { return this->gameState; };
+        std::wstring GetGameState(std::wstring prop) { return this->gameState[prop]; };
 
-        std::map<std::string, std::shared_ptr<Sprite>> GetHud() { return this->hud; };
-        std::shared_ptr<Sprite> GetHud(std::string name) { return this->hud[name]; };
+        std::map<std::wstring, std::shared_ptr<Sprite>> GetHud() { return this->hud; };
+        std::shared_ptr<Sprite> GetHud(std::wstring name) { return this->hud[name]; };
 
-        std::map<std::string, std::shared_ptr<Sprite>> GetSprites() { return this->sprites; };
-        std::map<std::string, std::shared_ptr<Animation>> GetEffects() { return this->effects; };
-        std::map<std::string, std::shared_ptr<SpriteButton>> GetButtons() { return this->buttons; };
+        std::map<std::wstring, std::shared_ptr<Sprite>> GetSprites() { return this->sprites; };
+        std::map<std::wstring, std::shared_ptr<Animation>> GetEffects() { return this->effects; };
+        std::map<std::wstring, std::shared_ptr<SpriteButton>> GetButtons() { return this->buttons; };
 
         std::vector<std::shared_ptr<ActionQueue>> GetActionQueues() { return this->actionQueues; };
-        std::shared_ptr<ActionQueue> GetActionQueueById(std::string id);
-        void RemoveActionQueueById(std::string id);
-        void RemoveActionQueuesByGroup(std::string group);
-        void ForEachActionQueueInGroup(std::string group, void(*func)(std::shared_ptr<ActionQueue>));
+        std::shared_ptr<ActionQueue> GetActionQueueById(std::wstring id);
+        void RemoveActionQueueById(std::wstring id);
+        void RemoveActionQueuesByGroup(std::wstring group);
+        void ForEachActionQueueInGroup(std::wstring group, void(*func)(std::shared_ptr<ActionQueue>));
         void AddActionQueue(std::shared_ptr<ActionQueue> queue) { this->actionQueues.push_back(queue); };
 
         std::shared_ptr<ActionQueue> PerformAction(std::shared_ptr<Action> action, std::shared_ptr<ActionQueue> queue = nullptr);
@@ -94,7 +94,7 @@ namespace SBURB
 
         void ChangeRoom(std::shared_ptr<Room> room, int newX, int newY);
         void PlayEffect(std::shared_ptr<Animation> effect, int x, int y);
-        void PlaySound(std::string name);
+        void PlaySound(std::wstring name);
         void PlayMovie();
         void SetCurRoomOf(std::shared_ptr<Character> sprite);
         void MoveSprite(std::shared_ptr<Character> sprite, std::shared_ptr<Room> oldRoom, std::shared_ptr<Room> newRoom);
@@ -123,22 +123,22 @@ namespace SBURB
         int GetGlobalVolume() { return this->globalVolume; };
         void SetGlobalVolume(int globalVolume) { this->globalVolume = globalVolume; };
 
-        void SetEngineMode(std::string engineMode) { this->engineMode = engineMode; };
-        std::string GetEngineMode() { return this->engineMode; };
+        void SetEngineMode(std::wstring engineMode) { this->engineMode = engineMode; };
+        std::wstring GetEngineMode() { return this->engineMode; };
 
         void SetFading(bool fading) { this->fading = fading; };
 
         void SaveStateToStorage(std::string state = "SaveFile", bool automatic = false, bool local = false);
         void LoadStateFromStorage(bool automatic = false, bool local = false);
         bool IsStateInStorage(bool automatic, bool local);
-        std::string GetStateDescription(bool automatic = false, bool local = false);
+        std::wstring GetStateDescription(bool automatic = false, bool local = false);
         void DeleteStateFromStorage(bool automatic = false, bool local = false);
         void DeleteOldVersionStates(bool local = false);
 
         void SetNextQueueId(int nextQueueId) { this->nextQueueId = nextQueueId; };
         int GetNextQueueId() { return this->nextQueueId;};
 
-        void SetHud(std::string name, std::shared_ptr<Sprite> sprite) { this->hud[name] = sprite; };
+        void SetHud(std::wstring name, std::shared_ptr<Sprite> sprite) { this->hud[name] = sprite; };
 
         void HaltUpdateProcess();
         void StartUpdateProcess();
@@ -160,27 +160,27 @@ namespace SBURB
 
         bool GetInputDisabled() { return this->inputDisabled; };
 
-        void SetDescription(std::string description) { this->description = description; };
-        std::string GetDescription() { return this->description; };
+        void SetDescription(std::wstring description) { this->description = description; };
+        std::wstring GetDescription() { return this->description; };
 
-        static std::string ResolvePath(std::string path);
+        static std::wstring ResolvePath(std::wstring path);
 
         void SetDimensions(float width, float height);
 
-        std::string GetName() { return this->name; };
-        void SetName(std::string name);
+        std::wstring GetName() { return this->name; };
+        void SetName(std::wstring name);
 
         Window window;
 
-        std::string levelPath;
-        std::string version;
-        std::string resourcePath;
+        std::wstring levelPath;
+        std::wstring version;
+        std::wstring resourcePath;
 
     private:
-        std::string name;
+        std::wstring name;
 
         sf::Cursor::Type mouseCursor;
-        std::string description;
+        std::wstring description;
 
         bool shouldUpdate;
         bool shouldDraw;
@@ -203,7 +203,7 @@ namespace SBURB
         sf::View view;
 
         int globalVolume;
-        std::string engineMode;
+        std::wstring engineMode;
 
         sf::RectangleShape fadeShape;
         float fade;
@@ -218,14 +218,14 @@ namespace SBURB
 
         std::shared_ptr<Trigger> inputDisabledTrigger;
 
-        std::map<std::string, std::string> gameState;
-        std::map<std::string, std::shared_ptr<Room>> rooms;
-        std::map<std::string, std::shared_ptr<Sprite>> sprites;
-        std::map<std::string, std::shared_ptr<Sound>> sounds;
-        std::map<std::string, std::shared_ptr<SpriteButton>> buttons;
-        std::map<std::string, std::shared_ptr<sf::Font>> fonts;
-        std::map<std::string, std::shared_ptr<Animation>> effects;
-        std::map<std::string, std::shared_ptr<Sprite>> hud;
+        std::map<std::wstring, std::wstring> gameState;
+        std::map<std::wstring, std::shared_ptr<Room>> rooms;
+        std::map<std::wstring, std::shared_ptr<Sprite>> sprites;
+        std::map<std::wstring, std::shared_ptr<Sound>> sounds;
+        std::map<std::wstring, std::shared_ptr<SpriteButton>> buttons;
+        std::map<std::wstring, std::shared_ptr<sf::Font>> fonts;
+        std::map<std::wstring, std::shared_ptr<Animation>> effects;
+        std::map<std::wstring, std::shared_ptr<Sprite>> hud;
         std::vector<std::shared_ptr<ActionQueue>> actionQueues;
 
         InputHandler inputHandler;

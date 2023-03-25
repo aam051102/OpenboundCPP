@@ -19,13 +19,13 @@ namespace SBURB
     class Sprite : public sf::Drawable, public sf::Transformable
     {
     public:
-        Sprite(std::string name = "", int x = 0, int y = 0, int width = 0, int height = 0, int dx = 0, int dy = 0, int depthing = static_cast<int>(Depth::BG_DEPTHING), bool collidable = false);
+        Sprite(std::wstring name = L"", int x = 0, int y = 0, int width = 0, int height = 0, int dx = 0, int dy = 0, int depthing = static_cast<int>(Depth::BG_DEPTHING), bool collidable = false);
 
         void AddAnimation(std::shared_ptr<Animation> anim);
-        void StartAnimation(std::string name);
-        std::map<std::string, std::shared_ptr<Animation>> GetAnimations() { return this->animations; };
+        void StartAnimation(std::wstring name);
+        std::map<std::wstring, std::shared_ptr<Animation>> GetAnimations() { return this->animations; };
         std::shared_ptr<Animation> GetAnimation() { return this->animation; };
-        std::shared_ptr<Animation> GetAnimation(std::string name) { return this->animations[name]; };
+        std::shared_ptr<Animation> GetAnimation(std::wstring name) { return this->animations[name]; };
         virtual void Update();
         
         bool IsBehind(std::shared_ptr<Sprite> other);
@@ -34,15 +34,15 @@ namespace SBURB
         bool IsVisuallyUnder(int x, int y);
         
         void AddAction(std::shared_ptr<Action> action);
-        void RemoveAction(std::string name);
+        void RemoveAction(std::wstring name);
         std::vector<std::shared_ptr<Action>> GetActions(std::shared_ptr<Sprite> sprite);
 
-        std::map<std::string, sf::Vector2f> GetBoundaryQueries(int dx, int dy);
+        std::map<std::wstring, sf::Vector2f> GetBoundaryQueries(int dx, int dy);
 
-        std::shared_ptr<Sprite> Clone(std::string name);
-        std::string Serialize(std::string output);
+        std::shared_ptr<Sprite> Clone(std::wstring name);
+        std::wstring Serialize(std::wstring output);
 
-        std::string GetName() { return this->name; };
+        std::wstring GetName() { return this->name; };
         bool GetCollidable() { return this->collidable; };
         int GetWidth() { return this->width; };
         int GetHeight() { return this->height; };
@@ -55,10 +55,10 @@ namespace SBURB
         void SetY(int y) { this->y = y; this->setPosition(this->x, this->y); };
         int GetY() { return this->y; };
 
-        std::string GetProp(std::string prop);
+        std::wstring GetProp(std::wstring prop);
 
     protected:
-        std::string name;
+        std::wstring name;
         float x;
         float y;
         int width;
@@ -67,12 +67,12 @@ namespace SBURB
         float dy;
         int depthing;
         bool collidable;
-        std::map<std::string, std::shared_ptr<Animation>> animations;
+        std::map<std::wstring, std::shared_ptr<Animation>> animations;
         std::shared_ptr<Animation> animation;
-        std::string state;
+        std::wstring state;
         int lastTime;
         std::vector<std::shared_ptr<Action>> actions;
-        std::map<std::string, sf::Vector2f> queries;
+        std::map<std::wstring, sf::Vector2f> queries;
 
     private:
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;

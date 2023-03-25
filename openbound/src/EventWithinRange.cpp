@@ -4,7 +4,7 @@
 #include "Parser.h"
 
 namespace SBURB {
-    EventWithinRange::EventWithinRange(std::string spriteName1, std::string spriteName2, float distance) {
+    EventWithinRange::EventWithinRange(std::wstring spriteName1, std::wstring spriteName2, float distance) {
         this->canSerialize = false;
         this->spriteName1 = spriteName1;
         this->spriteName2 = spriteName2;

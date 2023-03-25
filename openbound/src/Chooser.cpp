@@ -62,7 +62,7 @@ namespace SBURB {
 		this->choice = 0;
 		this->dialogs = {};
 		for (int i = 0; i < this->choices.size(); i++) {
-			FontEngine curEngine = FontEngine(" > " + this->choices[i]->GetName());
+			FontEngine curEngine = FontEngine(L" > " + this->choices[i]->GetName());
 			curEngine.ShowSubText(0, 1);
 			curEngine.SetDimensions(x, y + i * curEngine.GetLineHeight(), curEngine.GetWidth(), curEngine.GetHeight());
 			this->dialogs.push_back(curEngine);

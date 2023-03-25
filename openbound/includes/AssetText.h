@@ -9,16 +9,16 @@ namespace SBURB
     class AssetText : public Asset
     {
     public:
-        AssetText(std::string name, std::string text) {
-            this->type = "text";
+        AssetText(std::wstring name, std::wstring text) {
+            this->type = L"text";
             this->name = name;
             this->text = unescape(trim(text));
         };
 
-        const char* GetText() { return this->text; };
+        const wchar_t* GetText() { return this->text; };
 
     private:
-        const char* text;
+        const wchar_t* text;
 
     };
 }

@@ -1,7 +1,7 @@
 #include "EventMovie.h"
 
 namespace SBURB {
-    EventMovie::EventMovie(std::string movieName, int threshold) {
+    EventMovie::EventMovie(std::wstring movieName, int threshold) {
         this->movieName = movieName;
         this->threshold = threshold;
     }

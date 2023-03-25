@@ -10,7 +10,7 @@ namespace SBURB
     class EventWithinRange : public Event
     {
     public:
-        EventWithinRange(std::string spriteName1, std::string spriteName2, float distance);
+        EventWithinRange(std::wstring spriteName1, std::wstring spriteName2, float distance);
         ~EventWithinRange();
 
         virtual void Reset() override;
@@ -19,8 +19,8 @@ namespace SBURB
         bool canSerialize;
 
     protected:
-        std::string spriteName1;
-        std::string spriteName2;
+        std::wstring spriteName1;
+        std::wstring spriteName2;
         float distance;
 
     };

@@ -4,7 +4,7 @@ constexpr int BLOCK_SIZE = 500;
 
 namespace SBURB
 {
-    Room::Room(std::string name, int width, int height) {
+    Room::Room(std::wstring name, int width, int height) {
 		this->name = name;
 		this->width = width;
 		this->height = height;
@@ -211,8 +211,8 @@ namespace SBURB
 	}
 
 	bool Room::IsInBounds(Sprite* sprite, int dx, int dy) {
-		std::map<std::string, sf::Vector2f> queries = sprite->GetBoundaryQueries(dx, dy);
-		std::map<std::string, bool> results;
+		std::map<std::wstring, sf::Vector2f> queries = sprite->GetBoundaryQueries(dx, dy);
+		std::map<std::wstring, bool> results;
 		this->IsInBoundsBatch(queries, &results);
 
 		for (auto point : results) {
@@ -224,7 +224,7 @@ namespace SBURB
 		return true;
 	}
 
-	std::map<std::string, bool> Room::IsInBoundsBatch(std::map<std::string, sf::Vector2f> queries, std::map<std::string, bool>* results) {
+	std::map<std::wstring, bool> Room::IsInBoundsBatch(std::map<std::wstring, sf::Vector2f> queries, std::map<std::wstring, bool>* results) {
 		if (this->walkableMap) {
 			for (auto query : queries) {
 				sf::Vector2f pt = query.second;
@@ -268,46 +268,46 @@ namespace SBURB
 		return nullptr;
 	}
 	
-	std::string Room::Serialize(std::string output) {
-		output = output + "\n<room name='" + this->name +
-			"' width='" + std::to_string(this->width) +
-			"' height='" + std::to_string(this->height) +
-			(this->walkableMap ? ("' walkableMap='" + this->walkableMap->GetName()) : "") +
-			(this->mapScale != 4 ? ("' mapScale='" + std::to_string(this->mapScale)) : "") +
-			"' >";
+	std::wstring Room::Serialize(std::wstring output) {
+		output = output + L"\n<room name='" + this->name +
+			L"' width='" + std::to_wstring(this->width) +
+			L"' height='" + std::to_wstring(this->height) +
+			(this->walkableMap ? (L"' walkableMap='" + this->walkableMap->GetName()) : L"") +
+			(this->mapScale != 4 ? (L"' mapScale='" + std::to_wstring(this->mapScale)) : L"") +
+			L"' >";
 
-		output = output + "\n<paths>";
+		output = output + L"\n<paths>";
 
 		for (int i = 0; i < this->walkables.size(); i++) {
 			std::shared_ptr<AssetPath> walkable = this->walkables[i];
-			output = output + "\n<walkable path='" + walkable->GetName() + "'/>";
+			output = output + L"\n<walkable path='" + walkable->GetName() + L"'/>";
 		}
 
 		for (int i = 0; i < this->unwalkables.size(); i++) {
 			std::shared_ptr<AssetPath> unwalkable = this->unwalkables[i];
-			output = output + "\n<unwalkable path='" + unwalkable->GetName() + "'/>";
+			output = output + L"\n<unwalkable path='" + unwalkable->GetName() + L"'/>";
 		}
 
 		for (int i = 0; i < this->motionPaths.size(); i++) {
 			std::shared_ptr<MotionPath> motionPath = this->motionPaths[i];
-			output = output + "\n<motionpath path='" + motionPath->path->GetName()  + "' xtox='" + std::to_string(motionPath->xtox) + "' xtoy='" + std::to_string(motionPath->xtoy) +
-				"' ytox='" + std::to_string(motionPath->ytox) + "' ytoy='" + std::to_string(motionPath->ytoy) + "' dx='" + std::to_string(motionPath->dx) + "' dy='" + std::to_string(motionPath->dy) + "'/>";
+			output = output + L"\n<motionpath path='" + motionPath->path->GetName()  + L"' xtox='" + std::to_wstring(motionPath->xtox) + L"' xtoy='" + std::to_wstring(motionPath->xtoy) +
+				L"' ytox='" + std::to_wstring(motionPath->ytox) + L"' ytoy='" + std::to_wstring(motionPath->ytoy) + L"' dx='" + std::to_wstring(motionPath->dx) + L"' dy='" + std::to_wstring(motionPath->dy) + L"'/>";
 		}
 
-		output = output + "\n</paths>";
-		output = output + "\n<triggers>";
+		output = output + L"\n</paths>";
+		output = output + L"\n<triggers>";
 
 		for (int i = 0; i < this->triggers.size(); i++) {
 			output = this->triggers[i]->Serialize(output);
 		}
 
-		output = output + "\n</triggers>";
+		output = output + L"\n</triggers>";
 
 		for (int i = 0; i < this->sprites.size(); i++) {
 			output = this->sprites[i]->Serialize(output);
 		}
 
-		output = output + "\n</room>";
+		output = output + L"\n</room>";
 
 		return output;
 	}

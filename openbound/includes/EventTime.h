@@ -14,7 +14,7 @@ namespace SBURB
         ~EventTime();
 
         virtual void Reset() override;
-        virtual std::string Serialize() override;
+        virtual std::wstring Serialize() override;
         virtual bool CheckCompletion() override;
 
         bool canSerialize;

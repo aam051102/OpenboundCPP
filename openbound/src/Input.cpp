@@ -96,7 +96,7 @@ namespace SBURB
                 }
             }
             else if (sburbInst->HasControl()) {
-                if (key == sf::Keyboard::Space && !inputHandlerInst->pressed[sf::Keyboard::Space] && sburbInst->GetEngineMode() == "wander") {
+                if (key == sf::Keyboard::Space && !inputHandlerInst->pressed[sf::Keyboard::Space] && sburbInst->GetEngineMode() == L"wander") {
                     sburbInst->GetChooser()->SetChoices({});
                     auto queries = sburbInst->GetCharacter()->GetActionQueries();
                   
@@ -109,7 +109,7 @@ namespace SBURB
                     }
 
                     if (sburbInst->GetChooser()->GetChoices().size() > 0) {
-                        sburbInst->GetChooser()->AddChoice(std::make_shared<Action>("cancel", "cancel", "Cancel."));
+                        sburbInst->GetChooser()->AddChoice(std::make_shared<Action>(L"cancel", L"cancel", L"Cancel."));
                         sburbInst->BeginChoosing();
                     }
                 }
@@ -129,11 +129,11 @@ namespace SBURB
         auto sburbInst = Sburb::GetInstance();
 
         if (!sburbInst->GetShouldUpdate()) return;
-        if (sburbInst->GetEngineMode() == "strife" && sburbInst->HasControl()) {
+        if (sburbInst->GetEngineMode() == L"strife" && sburbInst->HasControl()) {
             sburbInst->GetChooser()->SetChoices(sburbInst->GetCurrentRoom()->QueryActionsVisual(sburbInst->GetCharacter(), sburbInst->GetViewPos().x + inputHandlerInst->GetMousePosition().x, sburbInst->GetViewPos().y + inputHandlerInst->GetMousePosition().y));
 
             if (sburbInst->GetChooser()->GetChoices().size() > 0) {
-                sburbInst->GetChooser()->AddChoice(std::make_shared<Action>("cancel", "cancel", "cancel"));
+                sburbInst->GetChooser()->AddChoice(std::make_shared<Action>(L"cancel", L"cancel", L"cancel"));
                 sburbInst->BeginChoosing();
             }
         }

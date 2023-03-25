@@ -23,32 +23,32 @@ namespace SBURB
         static void LoadAsset(std::shared_ptr<Asset> asset);
         
         // File paths
-        static std::string GetFilePathByName(const std::string& name);
-        static void AddFilePath(const std::string& name, const std::string path);
+        static std::wstring GetFilePathByName(const std::wstring& name);
+        static void AddFilePath(const std::wstring& name, const std::wstring path);
         static void ClearFilePaths();
 
         // Path
-        static std::shared_ptr<AssetPath> GetPathByName(const std::string &name);
+        static std::shared_ptr<AssetPath> GetPathByName(const std::wstring &name);
         static void ClearPaths();
 
         // Graphic
-        static std::shared_ptr<AssetGraphic> GetGraphicByName(const std::string &name);
+        static std::shared_ptr<AssetGraphic> GetGraphicByName(const std::wstring &name);
         static void ClearGraphics();
 
         // Audio
-        static std::shared_ptr<AssetAudio> GetAudioByName(const std::string &name);
+        static std::shared_ptr<AssetAudio> GetAudioByName(const std::wstring &name);
         static void ClearAudio();
 
         // Font
-        static std::shared_ptr<AssetFont> GetFontByName(const std::string &name);
+        static std::shared_ptr<AssetFont> GetFontByName(const std::wstring &name);
         static void ClearFonts();
 
         // Movie
-        static std::shared_ptr<AssetMovie> GetMovieByName(const std::string &name);
+        static std::shared_ptr<AssetMovie> GetMovieByName(const std::wstring &name);
         static void ClearMovies();
 
         // Text
-        static std::shared_ptr<AssetText> GetTextByName(const std::string &name);
+        static std::shared_ptr<AssetText> GetTextByName(const std::wstring &name);
         static void ClearText();
     };
 }

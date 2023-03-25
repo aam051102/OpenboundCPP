@@ -3,10 +3,10 @@
 
 namespace SBURB
 {
-    Sound::Sound(std::string name, std::shared_ptr<AssetAudio> audio)
+    Sound::Sound(std::wstring name, std::shared_ptr<AssetAudio> audio)
     {
         this->name = name;
-        this->type = "sound";
+        this->type = L"sound";
         this->audio = audio;
         this->asset = sf::Sound();
         this->asset.setBuffer(*this->audio->GetAsset());

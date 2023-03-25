@@ -2,7 +2,7 @@
 #include "Sburb.h"
 
 namespace SBURB {
-    EventInBox::EventInBox(std::string spriteName, int x, int y, int width, int height) {
+    EventInBox::EventInBox(std::wstring spriteName, int x, int y, int width, int height) {
         this->spriteName = spriteName;
         this->x = x;
         this->y = y;
@@ -16,7 +16,7 @@ namespace SBURB {
     }
 
     void EventInBox::Reset() {
-        if (this->spriteName == "char") {
+        if (this->spriteName == L"char") {
             this->entity = nullptr;
         }
         else {
@@ -27,7 +27,7 @@ namespace SBURB {
     bool EventInBox::CheckCompletion() {
         auto entity = this->entity;
 
-        if (this->spriteName == "char") {
+        if (this->spriteName == L"char") {
             entity = Sburb::GetInstance()->GetCharacter();
         }
 

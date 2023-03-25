@@ -5,7 +5,7 @@
 
 namespace SBURB
 {
-    Sprite::Sprite(std::string name, int x, int y, int width, int height, int dx, int dy, int depthing, bool collidable)
+    Sprite::Sprite(std::wstring name, int x, int y, int width, int height, int dx, int dy, int depthing, bool collidable)
     {
         this->name = name;
         this->x = x;
@@ -29,7 +29,7 @@ namespace SBURB
         this->animations.insert(std::pair(anim->GetName(), anim));
     }
 
-    void Sprite::StartAnimation(std::string name) {
+    void Sprite::StartAnimation(std::wstring name) {
         if (this->state != name && this->animations.find(name) != this->animations.end()) {
             this->animation = this->animations[name];
             this->animation->Reset();
@@ -39,7 +39,7 @@ namespace SBURB
 
     void Sprite::Update() {
         if (this->animation) {
-            if (this->animation->HasPlayed() && this->animation->GetFollowUp() != "") {
+            if (this->animation->HasPlayed() && this->animation->GetFollowUp() != L"") {
                 StartAnimation(this->animation->GetFollowUp());
             }
             else {
@@ -92,7 +92,7 @@ namespace SBURB
         this->actions.push_back(action);
     }
 
-    void Sprite::RemoveAction(std::string name) {
+    void Sprite::RemoveAction(std::wstring name) {
         for (int i = 0; i < this->actions.size(); i++) {
             if (this->actions[i]->GetName() == name) {
                 this->actions.erase(this->actions.begin() + i);
@@ -105,8 +105,8 @@ namespace SBURB
         std::vector<std::shared_ptr<Action>> validActions = {};
 
         for (auto action : this->actions) {
-            std::string desired = action->GetSprite();
-            if (desired == "" || desired == sprite->GetName() || (desired[0] == '!' && desired.substr(1) != sprite->GetName())) {
+            std::wstring desired = action->GetSprite();
+            if (desired == L"" || desired == sprite->GetName() || (desired[0] == L'!' && desired.substr(1) != sprite->GetName())) {
                 validActions.push_back(action);
             }
         }
@@ -114,40 +114,40 @@ namespace SBURB
         return validActions;
     }
 
-    std::map<std::string, sf::Vector2f> Sprite::GetBoundaryQueries(int dx = 0, int dy = 0) {
+    std::map<std::wstring, sf::Vector2f> Sprite::GetBoundaryQueries(int dx = 0, int dy = 0) {
         int spriteX = this->x + dx;
         int spriteY = this->y + dy;
         float w = this->width / 2.f;
         float h = this->height / 2.f;
 
-        this->queries["upRight"] = sf::Vector2f(spriteX + w, spriteY - h);
-        this->queries["upLeft"] = sf::Vector2f(spriteX - w, spriteY - h);
-        this->queries["downLeft"] = sf::Vector2f(spriteX - w, spriteY + h);
-        this->queries["downRight"] = sf::Vector2f(spriteX + w, spriteY + h);
-        this->queries["downMid"] = sf::Vector2f(spriteX, spriteY + h);
-        this->queries["upMid"] = sf::Vector2f(spriteX, spriteY - h);
+        this->queries[L"upRight"] = sf::Vector2f(spriteX + w, spriteY - h);
+        this->queries[L"upLeft"] = sf::Vector2f(spriteX - w, spriteY - h);
+        this->queries[L"downLeft"] = sf::Vector2f(spriteX - w, spriteY + h);
+        this->queries[L"downRight"] = sf::Vector2f(spriteX + w, spriteY + h);
+        this->queries[L"downMid"] = sf::Vector2f(spriteX, spriteY + h);
+        this->queries[L"upMid"] = sf::Vector2f(spriteX, spriteY - h);
 
         return this->queries;
     }
 
-    std::string Sprite::Serialize(std::string output) {
+    std::wstring Sprite::Serialize(std::wstring output) {
         int animationCount = 0;
         for (auto anim : this->animations) {
             animationCount++;
         }
 
-        output = output + "\n<sprite " +
-            Serializer::SerializeAttribute("name", this->name) +
-            Serializer::SerializeAttribute("x", (int)this->x) +
-            Serializer::SerializeAttribute("y", (int)this->y) +
-            Serializer::SerializeAttribute("dx", (int)this->dx) +
-            Serializer::SerializeAttribute("dy", (int)this->dy) +
-            Serializer::SerializeAttribute("width", this->width) +
-            Serializer::SerializeAttribute("height", this->height) +
-            Serializer::SerializeAttribute("depthing", this->depthing) +
-            Serializer::SerializeAttribute("collidable", this->collidable) +
-            (animationCount > 1 ? "state='" + this->state + "' " : "") +
-            ">";
+        output = output + L"\n<sprite " +
+            Serializer::SerializeAttribute(L"name", this->name) +
+            Serializer::SerializeAttribute(L"x", (int)this->x) +
+            Serializer::SerializeAttribute(L"y", (int)this->y) +
+            Serializer::SerializeAttribute(L"dx", (int)this->dx) +
+            Serializer::SerializeAttribute(L"dy", (int)this->dy) +
+            Serializer::SerializeAttribute(L"width", this->width) +
+            Serializer::SerializeAttribute(L"height", this->height) +
+            Serializer::SerializeAttribute(L"depthing", this->depthing) +
+            Serializer::SerializeAttribute(L"collidable", this->collidable) +
+            (animationCount > 1 ? L"state='" + this->state + L"' " : L"") +
+            L">";
 
         for (auto anim : this->animations) {
             output = anim.second->Serialize(output);
@@ -157,12 +157,12 @@ namespace SBURB
             output = action->Serialize(output);
         }
 
-        output = output + "\n</sprite>";
+        output = output + L"\n</sprite>";
 
         return output;
     }
 
-    std::shared_ptr<Sprite> Sprite::Clone(std::string newName) {
+    std::shared_ptr<Sprite> Sprite::Clone(std::wstring newName) {
         auto newSprite = std::make_shared<Sprite>(newName, this->x, this->y, this->width, this->height, this->dx, this->dy, this->depthing, this->collidable);
 
         for (auto anim : this->animations) {
@@ -190,20 +190,20 @@ namespace SBURB
         }
     }
 
-    std::string Sprite::GetProp(std::string prop) {
-        if (prop == "name") {
+    std::wstring Sprite::GetProp(std::wstring prop) {
+        if (prop == L"name") {
             return this->name;
         }
-        else if (prop == "x") {
-            return std::to_string((int)this->x);
+        else if (prop == L"x") {
+            return std::to_wstring((int)this->x);
         }
-        else if (prop == "y") {
-            return std::to_string((int)this->y);
+        else if (prop == L"y") {
+            return std::to_wstring((int)this->y);
         }
-        else if (prop == "state") {
+        else if (prop == L"state") {
             return this->state;
         }
 
-        return "";
+        return L"";
     }
 }

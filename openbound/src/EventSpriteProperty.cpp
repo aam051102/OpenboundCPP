@@ -2,17 +2,17 @@
 #include "Sburb.h"
 
 namespace SBURB {
-    EventSpriteProperty::EventSpriteProperty(std::string spriteName, std::string query) {
+    EventSpriteProperty::EventSpriteProperty(std::wstring spriteName, std::wstring query) {
         this->canSerialize = false;
         this->spriteName = spriteName;
 
-        this->token = "";
-        if (query.find(">") != std::string::npos) this->token = ">";
-        else if (query.find("GREATER") != std::string::npos) this->token = "GREATER";
-        else if (query.find("<") != std::string::npos) this->token = "<";
-        else if (query.find("LESS") != std::string::npos) this->token = "LESS";
-        else if (query.find("!=") != std::string::npos) this->token = "!=";
-        else if (query.find("=") != std::string::npos) this->token = "=";
+        this->token = L"";
+        if (query.find(L">") != std::wstring::npos) this->token = L">";
+        else if (query.find(L"GREATER") != std::wstring::npos) this->token = L"GREATER";
+        else if (query.find(L"<") != std::wstring::npos) this->token = L"<";
+        else if (query.find(L"LESS") != std::wstring::npos) this->token = L"LESS";
+        else if (query.find(L"!=") != std::wstring::npos) this->token = L"!=";
+        else if (query.find(L"=") != std::wstring::npos) this->token = L"=";
 
         auto queryParts = split(query, this->token);
 
@@ -25,7 +25,7 @@ namespace SBURB {
     }
 
     void EventSpriteProperty::Reset() {
-        if (this->spriteName == "char") {
+        if (this->spriteName == L"char") {
             this->entity = nullptr;
         }
         else {
@@ -36,7 +36,7 @@ namespace SBURB {
     bool EventSpriteProperty::CheckCompletion() {
         auto entity = this->entity;
 
-        if (this->spriteName == "char") {
+        if (this->spriteName == L"char") {
             entity = Sburb::GetInstance()->GetCharacter();
         }
 
@@ -44,19 +44,19 @@ namespace SBURB {
             std::cout << this->spriteName << ", " << token << ", " << this->prop << ": " << entity->GetProp(this->prop) << ", " << target;
         }*/
 
-        if (token == ">" || token == "GREATER") {
+        if (token == L">" || token == L"GREATER") {
             return std::stoi(entity->GetProp(this->prop)) > std::stoi(target);
         }
 
-        if (token == "<" || token == "LESS") {
+        if (token == L"<" || token == L"LESS") {
             return std::stoi(entity->GetProp(this->prop)) < std::stoi(target);
         }
 
-        if (token == "!=") {
+        if (token == L"!=") {
             return entity->GetProp(this->prop) != target;
         }
 
-        if (token == "=") {
+        if (token == L"=") {
             return entity->GetProp(this->prop) == target;
         }
 

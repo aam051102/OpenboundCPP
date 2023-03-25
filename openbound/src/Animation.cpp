@@ -6,7 +6,7 @@
 
 namespace SBURB
 {
-	Animation::Animation(std::string name, std::string sheetName, int x, int y, int colSize, int rowSize, int startPos, int length, std::string frameInterval, int loopNum, std::string followUp, bool flipX, bool flipY, bool sliced, int numCols, int numRows)
+	Animation::Animation(std::wstring name, std::wstring sheetName, int x, int y, int colSize, int rowSize, int startPos, int length, std::wstring frameInterval, int loopNum, std::wstring followUp, bool flipX, bool flipY, bool sliced, int numCols, int numRows)
 	{
 		this->sheetName = sheetName;
 		this->sliced = sliced;
@@ -31,7 +31,7 @@ namespace SBURB
 			{
 				for (int rowNum = 0; rowNum < this->numRows; rowNum++)
 				{
-					std::shared_ptr<AssetGraphic> texture = AssetManager::GetGraphicByName(sheetName + "_" + std::to_string(colNum) + "_" + std::to_string(rowNum));
+					std::shared_ptr<AssetGraphic> texture = AssetManager::GetGraphicByName(sheetName + L"_" + std::to_wstring(colNum) + L"_" + std::to_wstring(rowNum));
 
 					if (texture)
 					{
@@ -54,24 +54,24 @@ namespace SBURB
 			this->numCols = this->sheet->GetAsset()->getSize().x / this->colSize;
 		}
 
-		if (frameInterval == "")
+		if (frameInterval == L"")
 		{
 			this->frameInterval = 1;
 		}
 		else
 		{
-			if (frameInterval.find(":") == -1)
+			if (frameInterval.find(L":") == -1)
 			{
 				this->frameInterval = stoi(frameInterval);
 			}
 			else
 			{
-				std::vector<std::string> intervals = split(frameInterval, ",");
+				std::vector<std::wstring> intervals = split(frameInterval, L",");
 				this->frameIntervals = {};
 
 				for (int i = 0; i < intervals.size(); i++)
 				{
-					std::vector<std::string> pair = split(intervals[i], ":");
+					std::vector<std::wstring> pair = split(intervals[i], L":");
 					this->frameIntervals[stoi(pair[0])] = stoi(pair[1]);
 				}
 				if (!this->frameIntervals[0])
@@ -171,7 +171,7 @@ namespace SBURB
 						arr[2].color = sf::Color::White;
 						arr[3].color = sf::Color::White;
 
-						BatchHandler::getInstance().DrawSpriteRect(this->sheetName + "_" + std::to_string(colNum) + "_" + std::to_string(rowNum), arr, target);
+						BatchHandler::getInstance().DrawSpriteRect(this->sheetName + L"_" + std::to_wstring(colNum) + L"_" + std::to_wstring(rowNum), arr, target);
 					}
 				}
 			}
@@ -278,19 +278,19 @@ namespace SBURB
 
 	std::shared_ptr<Animation> Animation::Clone(int x, int y)
 	{
-		return std::make_shared<Animation>(this->name, this->sheetName, x + this->x, y + this->y, this->colSize, this->rowSize, this->startPos, this->length, std::to_string(this->frameInterval), this->loopNum, this->followUp, this->flipX, this->flipY, this->sliced, this->numCols, this->numRows);
+		return std::make_shared<Animation>(this->name, this->sheetName, x + this->x, y + this->y, this->colSize, this->rowSize, this->startPos, this->length, std::to_wstring(this->frameInterval), this->loopNum, this->followUp, this->flipX, this->flipY, this->sliced, this->numCols, this->numRows);
 	}
 
-	std::string Animation::Serialize(std::string output)
+	std::wstring Animation::Serialize(std::wstring output)
 	{
-		std::string frameInterval = "";
+		std::wstring frameInterval = L"";
 		bool firstInterval = true;
 
 		if (!this->frameIntervals.empty())
 		{
 			for (std::pair<int, int> interval : this->frameIntervals)
 			{
-				frameInterval = frameInterval + (firstInterval ? "" : ",") + std::to_string(interval.first) + ":" + std::to_string(interval.second);
+				frameInterval = frameInterval + (firstInterval ? L"" : L",") + std::to_wstring(interval.first) + L":" + std::to_wstring(interval.second);
 				firstInterval = false;
 			}
 		}
@@ -299,22 +299,22 @@ namespace SBURB
 			frameInterval = this->frameInterval;
 		}
 
-		output = output + "\n<animation " +
-				 ("sheet='" + this->sheetName + "' ") +
-				 ((this->name != "image") ? "name='" + this->name + "' " : "") +
-				 Serializer::SerializeAttribute("x", this->x) +
-				 Serializer::SerializeAttribute("y", this->y) +
-				 ((this->rowSize != this->sheet->GetAsset()->getSize().y) ? "rowSize='" + std::to_string(this->rowSize) + "' " : "") +
-				 ((this->colSize != this->sheet->GetAsset()->getSize().x) ? "colSize='" + std::to_string(this->colSize) + "' " : "") +
-				 Serializer::SerializeAttribute("startPos", this->startPos) +
-				 ((this->length != 1) ? "length='" + std::to_string(this->length) + "' " : "") +
-				 ((frameInterval != "") ? "frameInterval='" + frameInterval + "' " : "") +
-				 ((this->loopNum != -1) ? "loopNum='" + std::to_string(this->loopNum) + "' " : "") +
-				 Serializer::SerializeAttribute("followUp", this->followUp) +
-				 Serializer::SerializeAttribute("flipX", this->flipX) +
-				 Serializer::SerializeAttribute("flipY", this->flipY) +
-				 (this->sliced ? ("sliced='true' numCols='" + std::to_string(this->numCols) + "' numRows='" + std::to_string(this->numRows) + "' ") : ("")) +
-				 " />";
+		output = output + L"\n<animation " +
+				 (L"sheet='" + this->sheetName + L"' ") +
+				 ((this->name != L"image") ? L"name='" + this->name + L"' " : L"") +
+				 Serializer::SerializeAttribute(L"x", this->x) +
+				 Serializer::SerializeAttribute(L"y", this->y) +
+				 ((this->rowSize != this->sheet->GetAsset()->getSize().y) ? L"rowSize='" + std::to_wstring(this->rowSize) + L"' " : L"") +
+				 ((this->colSize != this->sheet->GetAsset()->getSize().x) ? L"colSize='" + std::to_wstring(this->colSize) + L"' " : L"") +
+				 Serializer::SerializeAttribute(L"startPos", this->startPos) +
+				 ((this->length != 1) ? L"length='" + std::to_wstring(this->length) + L"' " : L"") +
+				 ((frameInterval != L"") ? L"frameInterval='" + frameInterval + L"' " : L"") +
+				 ((this->loopNum != -1) ? L"loopNum='" + std::to_wstring(this->loopNum) + L"' " : L"") +
+				 Serializer::SerializeAttribute(L"followUp", this->followUp) +
+				 Serializer::SerializeAttribute(L"flipX", this->flipX) +
+				 Serializer::SerializeAttribute(L"flipY", this->flipY) +
+				 (this->sliced ? (L"sliced='true' numCols='" + std::to_wstring(this->numCols) + L"' numRows='" + std::to_wstring(this->numRows) + L"' ") : (L"")) +
+				 L" />";
 
 		return output;
 	}

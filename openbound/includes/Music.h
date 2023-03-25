@@ -9,7 +9,7 @@ namespace SBURB
     class Music
     {
     public:
-        Music(std::string name, double startLoop = 0);
+        Music(std::wstring name, double startLoop = 0);
 
         void SetLoopPoints(double start);
         void Loop();
@@ -19,10 +19,10 @@ namespace SBURB
         bool Ended();
         void FixVolume();
 
-        void SetName(std::string name) { this->name = name; };
-        std::string GetName() { return this->name; };
+        void SetName(std::wstring name) { this->name = name; };
+        std::wstring GetName() { return this->name; };
 
-        std::string GetType() { return this->type; };
+        std::wstring GetType() { return this->type; };
 
         std::shared_ptr<sf::Music> GetAsset() { return this->asset; };
 
@@ -31,9 +31,9 @@ namespace SBURB
     private:
         double startLoop;
         
-        std::string path;
-        std::string name;
-        std::string type;
+        std::wstring path;
+        std::wstring name;
+        std::wstring type;
 
         std::shared_ptr<sf::Music> asset;
 

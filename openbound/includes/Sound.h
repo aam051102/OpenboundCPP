@@ -11,7 +11,7 @@ namespace SBURB
     class Sound
     {
     public:
-        Sound(std::string name, std::shared_ptr<AssetAudio> audio);
+        Sound(std::wstring name, std::shared_ptr<AssetAudio> audio);
 
         void Play(float pos = 0);
         void Pause();
@@ -19,14 +19,14 @@ namespace SBURB
         bool Ended();
         void FixVolume();
 
-        void SetName(std::string name) { this->name = name; };
-        std::string GetName() { return this->name; };
+        void SetName(std::wstring name) { this->name = name; };
+        std::wstring GetName() { return this->name; };
 
-        std::string GetType() { return this->type; };
+        std::wstring GetType() { return this->type; };
 
     private:
-        std::string name;
-        std::string type;
+        std::wstring name;
+        std::wstring type;
 
         sf::Sound asset;
         std::shared_ptr<AssetAudio> audio;

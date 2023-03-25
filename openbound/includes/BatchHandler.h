@@ -21,11 +21,11 @@ namespace SBURB
         void operator=(BatchHandler const &) = delete;
 
         // Actual public method
-        void DrawSpriteRect(std::string textureName, const sf::VertexArray &coords, sf::RenderTarget &target);
+        void DrawSpriteRect(std::wstring textureName, const sf::VertexArray &coords, sf::RenderTarget &target);
         void DrawPrimitive(const sf::VertexArray &coords, sf::RenderTarget &target);
         void DrawBatch();
         inline bool BatchExists() const { return this->verticesSize != 0; }
-        inline void Reset() { this->currentTexName = ""; }
+        inline void Reset() { this->currentTexName = L""; }
 
     private:
         BatchHandler();
@@ -36,7 +36,7 @@ namespace SBURB
 
         // Members
         bool verticesInitialized;
-        std::string currentTexName;
+        std::wstring currentTexName;
         int offset;
         int verticesSize;
         sf::VertexArray vertices;

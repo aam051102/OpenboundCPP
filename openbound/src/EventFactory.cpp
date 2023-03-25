@@ -11,25 +11,25 @@
 #include <vector>
 
 namespace SBURB {
-	std::shared_ptr<Event> EventFactory::CreateEvent(std::string info) {
+	std::shared_ptr<Event> EventFactory::CreateEvent(std::wstring info) {
 		// Parse params
-		std::vector<std::string> params = split(info, ",");
+		std::vector<std::wstring> params = split(info, L",");
 		for (int i = 0; i < params.size(); i++) {
 			params[i] = trim(params[i]);
 		}
 
-		std::string type = params[0];
+		std::wstring type = params[0];
 
 		/// Create event
-		if (type == "gameState") {
+		if (type == L"gameState") {
 			return std::make_shared<EventGameState>(params[1]);
 		}
 		
-		if (type == "inBox") {
+		if (type == L"inBox") {
 			return std::make_shared<EventInBox>(params[1], stoi(params[2]), stoi(params[3]), stoi(params[4]), stoi(params[5]));
 		}
 
-		if (type == "inBox2") {
+		if (type == L"inBox2") {
 			// Alternate method of creating inBox event
 			return std::make_shared<EventInBox>(
 				params[1],
@@ -40,31 +40,31 @@ namespace SBURB {
 				);
 		}
 
-		if (type == "movie") {
+		if (type == L"movie") {
 			return std::make_shared<EventMovie>(params[1]);
 		}
 
-		if (type == "noActions") {
+		if (type == L"noActions") {
 			return std::make_shared<EventNoActions>();
 		}
 		
-		if (type == "nudge") {
+		if (type == L"nudge") {
 			return std::make_shared<EventNudge>();
 		}
 
-		if (type == "played") {
+		if (type == L"played") {
 			return std::make_shared<EventPlayed>(params[1]);
 		}
 
-		if (type == "spriteProperty") {
+		if (type == L"spriteProperty") {
 			return std::make_shared<EventSpriteProperty>(params[1], params[2]);
 		}
 
-		if (type == "time") {
+		if (type == L"time") {
 			return std::make_shared<EventTime>();
 		}
 
-		if (type == "withinRange") {
+		if (type == L"withinRange") {
 			return std::make_shared<EventWithinRange>(params[1], params[2], stoi(params[3]));
 		}
 

@@ -2,7 +2,7 @@
 #include "Sburb.h"
 
 namespace SBURB {
-    EventPlayed::EventPlayed(std::string spriteName) {
+    EventPlayed::EventPlayed(std::wstring spriteName) {
         this->canSerialize = false;
         this->spriteName = spriteName;
         this->entity = nullptr;
@@ -13,7 +13,7 @@ namespace SBURB {
     }
 
     void EventPlayed::Reset() {
-        if (this->spriteName == "char") {
+        if (this->spriteName == L"char") {
             this->entity = nullptr;
         }
         else {
@@ -24,7 +24,7 @@ namespace SBURB {
     bool EventPlayed::CheckCompletion() {
         auto entity = this->entity;
 
-        if (this->spriteName == "char") {
+        if (this->spriteName == L"char") {
             entity = Sburb::GetInstance()->GetCharacter();
         }
 

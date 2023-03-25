@@ -11,7 +11,7 @@ namespace SBURB
     class Character : public Sprite
     {
     public:
-        Character(std::string name, int x, int y, int width, int height, int sx, int sy, int sWidth, int sHeight, std::string sheetName, bool bootstrap = false);
+        Character(std::wstring name, int x, int y, int width, int height, int sx, int sy, int sWidth, int sHeight, std::wstring sheetName, bool bootstrap = false);
 
         void Update() override;
         void HandleFollowing();
@@ -37,12 +37,12 @@ namespace SBURB
 
         bool IsNPC();
 
-        std::string Serialize(std::string output);
+        std::wstring Serialize(std::wstring output);
 
         int GetOldX() { return this->oldX; };
         int GetOldY() { return this->oldY; };
 
-        void SetFacing(std::string facing) { this->facing = facing; };
+        void SetFacing(std::wstring facing) { this->facing = facing; };
 
         void SetFollowBuffer(std::vector<Vector2> followBuffer) { this->followBuffer = followBuffer; };
 
@@ -52,9 +52,9 @@ namespace SBURB
         int speed;
         float vx;
         float vy;
-        std::string facing;
+        std::wstring facing;
         bool npc;
-        std::string spriteType;
+        std::wstring spriteType;
         int handledInput;
         int oldX;
         int oldY;

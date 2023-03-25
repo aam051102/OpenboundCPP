@@ -10,7 +10,7 @@ namespace SBURB
     class Fighter : public Sprite
     {
     public:
-        Fighter(std::string name, int x, int y, int width, int height);
+        Fighter(std::wstring name, int x, int y, int width, int height);
         ~Fighter();
         
         void Update();
@@ -33,13 +33,13 @@ namespace SBURB
         
         bool Collides(std::shared_ptr<Sprite> sprite, int dx = 0, int dy = 0);
         
-        std::map<std::string, sf::Vector2f> GetBoundaryQueries(int dx = 0, int dy = 0);
+        std::map<std::wstring, sf::Vector2f> GetBoundaryQueries(int dx = 0, int dy = 0);
         
         bool TryToMove();
 
-        std::string Serialize(std::string output);
+        std::wstring Serialize(std::wstring output);
 
-        void SetFacing(std::string facing) { this->facing = facing; };
+        void SetFacing(std::wstring facing) { this->facing = facing; };
 
     protected:
         float accel;
@@ -47,7 +47,7 @@ namespace SBURB
         float friction;
         float vx;
         float vy;
-        std::string facing;
+        std::wstring facing;
 
     };
 }

@@ -9,7 +9,7 @@ namespace SBURB
     class Animation : public sf::Drawable, public sf::Transformable
     {
     public:
-		Animation(std::string name, std::string sheetName, int x = 0, int y = 0, int colSize = 0, int rowSize = 0, int startPos = 0, int length = 1, std::string frameInterval = "", int loopNum = -1, std::string followUp = "", bool flipX = false, bool flipY = false, bool sliced = false, int numCols = 1, int numRows = 1);
+		Animation(std::wstring name, std::wstring sheetName, int x = 0, int y = 0, int colSize = 0, int rowSize = 0, int startPos = 0, int length = 1, std::wstring frameInterval = L"", int loopNum = -1, std::wstring followUp = L"", bool flipX = false, bool flipY = false, bool sliced = false, int numCols = 1, int numRows = 1);
         ~Animation();
 
         void NextFrame();
@@ -39,16 +39,16 @@ namespace SBURB
 
 		std::shared_ptr<AssetGraphic> GetSheet() { return this->sheet; };
 
-		std::string GetFollowUp() { return this->followUp; };
+		std::wstring GetFollowUp() { return this->followUp; };
 
         std::shared_ptr<Animation> Clone(int x = 0, int y = 0);
 
-        std::string Serialize(std::string output);
+        std::wstring Serialize(std::wstring output);
 
-		std::string GetName() { return this->name; };
+		std::wstring GetName() { return this->name; };
 
     protected:
-		std::string sheetName;
+		std::wstring sheetName;
 		std::shared_ptr<AssetGraphic> sheet;
 		bool sliced;
 		int x;
@@ -60,9 +60,9 @@ namespace SBURB
 		int curInterval;
 		int curFrame;
 		int curLoop;
-		std::string name;
+		std::wstring name;
 		int loopNum;
-		std::string followUp;
+		std::wstring followUp;
 		bool flipX;
 		bool flipY;
 		int numRows;

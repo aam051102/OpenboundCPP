@@ -3,46 +3,47 @@
 #include "Logger.h"
 
 namespace SBURB {
-    AssetFont::AssetFont(std::string name, std::vector<std::string> sources) {
-        this->type = "font";
+    AssetFont::AssetFont(std::wstring name, std::vector<std::wstring> sources) {
+        this->type = L"font";
         this->name = name;
         this->sources = sources;
         this->asset = std::make_shared<sf::Font>();
         this->style = sf::Text::Style::Regular;
 
         for (int i = 0; i < sources.size(); i++) {
-            auto values = split(sources[i], ":", 1);
+            auto values = split(sources[i], L":", 1);
             auto type = trim(values[0]);
             auto path = trim(values[1]);
 
-            if (type == "url") {
-                auto extension = path.substr(path.find_last_of(".") + 1, path.size() - (path.find_last_of(".") + 1));
+            if (type == L"url") {
+                auto extension = path.substr(path.find_last_of(L".") + 1, path.size() - (path.find_last_of(L".") + 1));
                 auto format = "";
 
-                if (extension == "ttf") {
+                if (extension == L"ttf") {
                     format = "truetype";
                 }
-                else if (extension == "woff") {
+                else if (extension == L"woff") {
                     format = "woff";
                 }
-                else if (extension == "svg") {
+                else if (extension == L"svg") {
                     format = "svg";
                 }
 
                 if (format == "truetype" || format == "woff") {
                     // NOTE: UNSURE IF WOFF IS SUPPORTED?????
-                    if (!this->asset->loadFromFile(Sburb::ResolvePath(path))) {
+                    const auto resolvedPath = Sburb::ResolvePath(path);
+                    if (!this->asset->loadFromFile(std::string(resolvedPath.begin(), resolvedPath.end()))) {
                         GlobalLogger->Log(Logger::Error, "Font does not exist.");
                         return;
                     }
                 }
             }
-            else if (type == "local") {
+            else if (type == L"local") {
                 // NOTE: Probably not possible anymore. Unknown.
-                //ret.sources.push("local('" + path + "')");
+                //ret.sources.push(L"local('" + path + "')");
             }
-            else if (type == "weight") {
-                if (path == "bold") {
+            else if (type == L"weight") {
+                if (path == L"bold") {
                     this->style = sf::Text::Style::Bold;
                 }
             }

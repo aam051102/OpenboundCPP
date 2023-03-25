@@ -39,11 +39,11 @@ std::string GetExecutableDirectory()
     std::string path(temp.begin(), temp.end());
     return path.substr(0, path.find_last_of("/\\"));
     #elif defined(__linux__)
-    char buff[PATH_MAX];
-    ssize_t len = readlink("/proc/self/exe", buff, sizeof(buff)-1);
+    wchar_t buff[PATH_MAX];
+    ssize_t len = readlink(L"/proc/self/exe", buff, sizeof(buff)-1);
     buff[len] = '\0';
-    std::string path(buff);
-    return path.substr(0, path.find_last_of("/\\"));
+    std::wstring path(buff);
+    return path.substr(0, path.find_last_of(L"/\\"));
     #else
     return "./";
     #endif

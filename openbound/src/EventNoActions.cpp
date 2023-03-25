@@ -3,7 +3,7 @@
 #include "ActionQueue.h"
 
 namespace SBURB {
-    EventNoActions::EventNoActions(std::string queue) {
+    EventNoActions::EventNoActions(std::wstring queue) {
         this->canSerialize = false;
         this->queue = queue;
     }
@@ -17,7 +17,7 @@ namespace SBURB {
     }
 
     bool EventNoActions::CheckCompletion() {
-        if (this->queue == "") {
+        if (this->queue == L"") {
             return Sburb::GetInstance()->GetQueue()->GetCurrentAction() == nullptr;
         }
 

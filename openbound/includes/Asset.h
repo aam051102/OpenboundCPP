@@ -6,12 +6,12 @@
 namespace SBURB {
     class Asset {
     public:
-        std::string GetType() { return this->type; };
-        std::string GetName() { return this->name; };
+        std::wstring GetType() { return this->type; };
+        std::wstring GetName() { return this->name; };
 
     protected:
-        std::string type;
-        std::string name;
+        std::wstring type;
+        std::wstring name;
     };
 }
 #endif

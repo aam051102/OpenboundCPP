@@ -67,7 +67,7 @@ namespace SBURB
     /*
     TODO
     */
-    static inline const char* unescape(const std::string& in) {
+    static inline const wchar_t* unescape(const std::wstring& in) {
         return in.c_str();
         /*std::basic_ostringstream<unsigned char, std::char_traits<unsigned char>, std::allocator<unsigned char>> unescaped;
         unescaped.fill('0');
@@ -80,7 +80,7 @@ namespace SBURB
     Source 1: https://stackoverflow.com/questions/154536/encode-decode-urls-in-c
     Source 2: https://stackoverflow.com/questions/23689733/convert-string-from-utf-8-to-iso-8859-1
     */
-    static inline std::string escape(const char* in) {
+    static inline std::wstring escape(const wchar_t* in) {
         // NOTE: function is complete, but incompatible with unescape, which is incomplete, and therefore commented out until unescape is complete.
         return in;
 
@@ -94,7 +94,7 @@ namespace SBURB
         unsigned int codepoint = 0;
         while (*in != 0)
         {
-            unsigned char ch = static_cast<unsigned char>(*in);
+            unsigned wchar_t ch = static_cast<unsigned char>(*in);
             if (ch <= 0x7f) {
                 codepoint = ch;
             }
@@ -117,7 +117,7 @@ namespace SBURB
             {
                 if (codepoint <= 255)
                 {
-                    const char c = static_cast<char>(codepoint);
+                    const wchar_t c = static_cast<char>(codepoint);
 
                     // Keep alphanumeric and other accepted characters intact
                     if (isalnum(c) || c == '_' || c == '@' || c == '*' || c == '+' || c == '-' || c == '.' || c == '/') {
@@ -150,12 +150,12 @@ namespace SBURB
     /*
     Source: https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
     */
-    static inline std::vector<std::string> split(std::string s, std::string delimiter, int max = -1) {
+    static inline std::vector<std::wstring> split(const std::wstring& s, const std::wstring& delimiter, int max = -1) {
         size_t pos_start = 0, pos_end, delim_len = delimiter.length();
-        std::string token;
-        std::vector<std::string> res;
+        std::wstring token;
+        std::vector<std::wstring> res;
 
-        while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
+        while ((pos_end = s.find(delimiter, pos_start)) != std::wstring::npos) {
             token = s.substr(pos_start, pos_end - pos_start);
             pos_start = pos_end + delim_len;
             res.push_back(token);
@@ -169,7 +169,7 @@ namespace SBURB
         return res;
     }
 
-    static inline std::string trim(std::string s) {
+    static inline std::wstring trim(const std::wstring& s) {
         const int len = s.length();
 
         int start = 0;
@@ -189,7 +189,7 @@ namespace SBURB
             }
         }
 
-        std::string newStr = "";
+        std::wstring newStr = L"";
 
         for (int i = start; i <= end; i++) {
             newStr += s[i];
@@ -198,10 +198,10 @@ namespace SBURB
         return newStr;
     }
 
-    static inline std::string replace(std::string s, std::string oldSubstr, std::string newSubstr) {
+    static inline std::wstring replace(std::wstring s, const std::wstring& oldSubstr, const std::wstring& newSubstr) {
         size_t pos = 0;
         
-        while ((pos = s.find(oldSubstr, pos)) != std::string::npos) {
+        while ((pos = s.find(oldSubstr, pos)) != std::wstring::npos) {
             s.replace(s.begin() + pos, s.begin() + pos + oldSubstr.size(), newSubstr.c_str());
             pos += newSubstr.size();
         }
@@ -209,12 +209,12 @@ namespace SBURB
         return s;
     }
 
-    static inline std::vector<pugi::xml_node> GetNestedChildren(pugi::xml_node* node, std::string tagName)
+    static inline std::vector<pugi::xml_node> GetNestedChildren(pugi::xml_node* node, const std::wstring& tagName)
     {
         std::vector<pugi::xml_node> nodes = {};
 
         for (auto child : node->children()) {            
-            if (std::string(child.name()) == tagName) {
+            if (std::wstring(child.name()) == tagName) {
                 nodes.push_back(child);
             }
 
@@ -225,10 +225,10 @@ namespace SBURB
         return nodes;
     }
 
-    static inline pugi::xml_node GetNestedChild(pugi::xml_node* node, std::string tagName)
+    static inline pugi::xml_node GetNestedChild(pugi::xml_node* node, const std::wstring& tagName)
     {
         for (auto child : node->children()) {
-            if (std::string(child.name()) == tagName) {
+            if (std::wstring(child.name()) == tagName) {
                 return child;
             }
             else {

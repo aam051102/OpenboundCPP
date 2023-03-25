@@ -1,13 +1,13 @@
 #include "Action.h"
 
 namespace SBURB {
-    Action::Action(std::string command, std::string info, std::string name, std::string sprite, std::shared_ptr<Action> followUp, bool noWait, bool noDelay, uint16_t times, bool soft, std::string silent) {
+    Action::Action(std::wstring command, std::wstring info, std::wstring name, std::wstring sprite, std::shared_ptr<Action> followUp, bool noWait, bool noDelay, uint16_t times, bool soft, std::wstring silent) {
         this->command = command;
         this->info = info;
 
         this->silentCause = silent;
         
-        if (silent == "" || silent == "false") {
+        if (silent == L"" || silent == L"false") {
             this->silent = false;
         }
         else {
@@ -31,19 +31,19 @@ namespace SBURB {
         return std::make_shared<Action>(this->command, this->info, this->name, this->sprite, this->followUp, this->noWait, this->noDelay, this->times, this->soft, this->silentCause);
     }
 
-    std::string Action::Serialize(std::string output) {
-        std::string newOutput = output + "\n<action " +
-            "command='" + this->command +
-            (this->sprite != "" ? "' sprite='" + this->sprite : "") +
-            (this->name != "" ? "' name='" + this->name : "") +
-            (this->noWait ? "' noWait='" + this->noWait : "") +
-            (this->noDelay ? "' noDelay='" + this->noDelay : "") +
-            (this->soft ? "' soft='" + this->soft : "") +
-            (this->silentCause != "" ? "' silent='" + this->silentCause : "") +
-            (this->times != 1 ? "' times='" + this->times : "") +
-            "'>";
+    std::wstring Action::Serialize(std::wstring output) {
+        std::wstring newOutput = output + L"\n<action " +
+            L"command='" + this->command +
+            (this->sprite != L"" ? L"' sprite='" + this->sprite : L"") +
+            (this->name != L"" ? L"' name='" + this->name : L"") +
+            (this->noWait ? L"' noWait='" + this->noWait : L"") +
+            (this->noDelay ? L"' noDelay='" + this->noDelay : L"") +
+            (this->soft ? L"' soft='" + this->soft : L"") +
+            (this->silentCause != L"" ? L"' silent='" + this->silentCause : L"") +
+            (this->times != 1 ? L"' times='" + this->times : L"") +
+            L"'>";
 
-        newOutput += (this->info != "" ? "<args>" + this->info + "</args>" : "");
+        newOutput += (this->info != L"" ? L"<args>" + this->info + L"</args>" : L"");
 
         if (this->followUp.get() != NULL) {
             newOutput = this->followUp.get()->Serialize(newOutput);

@@ -10,7 +10,7 @@ namespace SBURB
     class EventInBox : public Event
     {
     public:
-        EventInBox(std::string spriteName, int x, int y, int width, int height);
+        EventInBox(std::wstring spriteName, int x, int y, int width, int height);
         ~EventInBox();
 
         virtual void Reset() override;
@@ -20,7 +20,7 @@ namespace SBURB
 
     protected:
         std::shared_ptr<Sprite> entity;
-        std::string spriteName;
+        std::wstring spriteName;
         int x;
         int y;
         int width;

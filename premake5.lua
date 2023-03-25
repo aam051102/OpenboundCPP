@@ -38,11 +38,11 @@ workspace "OpenboundCPP"
 			postbuildcommands { "{COPY} %{conan_rootpath_openal}/bin/OpenAL32.dll %{cfg.targetdir}" }
 
         filter "configurations:Debug"
-            defines "SBURB_DEBUG"
+            defines { "SBURB_DEBUG", "PUGIXML_WCHAR_MODE" }
             runtime "Debug"
             symbols "on"
         
         filter "configurations:Release"
-            defines "SBURB_RELEASE"
+            defines { "SBURB_RELEASE", "PUGIXML_WCHAR_MODE" }
             runtime "Release"
             optimize "on"

@@ -1,8 +1,8 @@
 #include "AssetPath.h"
 
 namespace SBURB {
-	AssetPath::AssetPath(std::string name, std::vector<Vector2> points) {
-		this->type = "path";
+	AssetPath::AssetPath(std::wstring name, std::vector<Vector2> points) {
+		this->type = L"path";
 		this->name = name;
 		this->points = points;
 	}
@@ -11,13 +11,13 @@ namespace SBURB {
 		this->points.push_back(point);
 	}
 
-	void AssetPath::QueryBatchPos(std::map<std::string, sf::Vector2f> queries, std::map<std::string, bool>* results) {
+	void AssetPath::QueryBatchPos(std::map<std::wstring, sf::Vector2f> queries, std::map<std::wstring, bool>* results) {
 		for (auto query : queries) {
 			(*results)[query.first] = (*results)[query.first] || this->Query(query.second);
 		}
 	}
 
-	void AssetPath::QueryBatchNeg(std::map<std::string, sf::Vector2f> queries, std::map<std::string, bool>* results) {
+	void AssetPath::QueryBatchNeg(std::map<std::wstring, sf::Vector2f> queries, std::map<std::wstring, bool>* results) {
 		for (auto query : queries) {
 			(*results)[query.first] = (*results)[query.first] && !this->Query(query.second);
 		}

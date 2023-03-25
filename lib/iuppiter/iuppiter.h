@@ -47,16 +47,23 @@ namespace Iuppiter
     constexpr short LEMPEL_SIZE = 256;
 
     /// Encoding characters table.
-    constexpr const char *CA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    constexpr const wchar_t *CA = L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     /// Encoding characters table for url safe encoding.
-    constexpr const char *CAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+    constexpr const wchar_t *CAS = L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
     /// Decoding reference table.
     std::vector<int32_t> IA(256);
 
     /// Decoding reference table for url safe encoded string.
     std::vector<int32_t> IAS(256);
+
+    int wstrlen(const wchar_t* str)
+    {
+        size_t size = 0;
+        while (str[size] != '\0') size++;
+        return size;
+    }
 
     static void Init()
     {
@@ -69,7 +76,7 @@ namespace Iuppiter
             IAS[i] = -1;
         }
 
-        for (i = 0, iS = strlen(CA); i < iS; i++)
+        for (i = 0, iS = wstrlen(CA); i < iS; i++)
         {
             IA[CA[i]] = i;
             IAS[CAS[i]] = i;
@@ -87,13 +94,13 @@ namespace Iuppiter
          * @param urlsafe True if you want to make encoded string is url safe.
          * @return Encoded base64 string.
          */
-        static std::string Encode(std::vector<uint32_t> input, bool urlSafe = false)
+        static std::wstring Encode(std::vector<uint32_t> input, bool urlSafe = false)
         {
             // size_t eLen;
             size_t dLen;
             size_t sLen;
             size_t i;
-            std::string ca;
+            std::wstring ca;
 
             if (urlSafe)
                 ca = CAS;
@@ -106,7 +113,7 @@ namespace Iuppiter
             // eLen = sLen - (sLen % 3);       // Length of even 24-bits.
             dLen = ((sLen - 1) / 3 + 1) << 2; // Length of returned array
 
-            std::string dArr;
+            std::wstring dArr;
             dArr.resize(dLen);
 
             // Encode even 24-bits
@@ -435,7 +442,7 @@ namespace Iuppiter
      * @param input The input string value.
      * @return A byte array from string value.
      */
-    static std::vector<uint32_t> StringToByteArray(const std::string &input)
+    static std::vector<uint32_t> StringToByteArray(const std::wstring &input)
     {
         std::vector<uint32_t> b = {};
         uint32_t unicode;
@@ -480,9 +487,9 @@ namespace Iuppiter
      * @param input The input byte array.
      * @return A string value from byte array.
      */
-    static std::string ByteArrayToString(std::vector<uint32_t> input)
+    static std::wstring ByteArrayToString(std::vector<uint32_t> input)
     {
-        std::string s;
+        std::wstring s;
 
         for (auto b : input)
         {

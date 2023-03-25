@@ -4,7 +4,7 @@
 
 namespace SBURB
 {
-	SpriteButton::SpriteButton(std::string name, int x, int y, int width, int height, std::string sheetName, std::shared_ptr<Action> action) : Sprite(name, x, y, width, height)
+	SpriteButton::SpriteButton(std::wstring name, int x, int y, int width, int height, std::wstring sheetName, std::shared_ptr<Action> action) : Sprite(name, x, y, width, height)
 	{
 		this->pressed = false;
 		this->mousePressed = false;
@@ -20,10 +20,10 @@ namespace SBURB
 
 		for (int i = 0; i < (sheet->GetAsset()->getSize().x / this->width) * (sheet->GetAsset()->getSize().y / this->height); i++)
 		{
-			this->AddAnimation(std::make_shared<Animation>("state" + std::to_string(i), sheetName, 0, 0, width, height, i, 1, "1000"));
+			this->AddAnimation(std::make_shared<Animation>(L"state" + std::to_wstring(i), sheetName, 0, 0, width, height, i, 1, L"1000"));
 		}
 
-		this->StartAnimation("state0");
+		this->StartAnimation(L"state0");
 		this->setPosition(x, y);
 	}
 
@@ -66,7 +66,7 @@ namespace SBURB
 				if (this->HitsPoint(x - this->width / 2, y - this->height / 2))
 				{
 					this->clicked = true;
-					std::string nextState = "state" + std::to_string(stoi(this->animation->GetName().substr(5)) + 1);
+					std::wstring nextState = L"state" + std::to_wstring(stoi(this->animation->GetName().substr(5)) + 1);
 
 					if (this->animations.find(nextState) != this->animations.end())
 					{
@@ -74,7 +74,7 @@ namespace SBURB
 					}
 					else
 					{
-						this->StartAnimation("state0");
+						this->StartAnimation(L"state0");
 					}
 				}
 			}
@@ -89,27 +89,27 @@ namespace SBURB
 		}
 	}
 
-	void SpriteButton::SetState(std::string state)
+	void SpriteButton::SetState(std::wstring state)
 	{
-		this->StartAnimation("state" + state);
+		this->StartAnimation(L"state" + state);
 	}
 
-	std::string SpriteButton::Serialize(std::string output)
+	std::wstring SpriteButton::Serialize(std::wstring output)
 	{
-		output = output + "\n<spritebutton name='" + this->name +
-				 (this->x ? "' x='" + std::to_string(this->x) : "") +
-				 (this->y ? "' y='" + std::to_string(this->y) : "") +
-				 "' width='" + std::to_string(this->width) +
-				 "' height='" + std::to_string(this->height) +
-				 "' sheet='" + this->animation->GetSheet()->GetName() +
-				 "' >";
+		output = output + L"\n<spritebutton name='" + this->name +
+				 (this->x ? L"' x='" + std::to_wstring(this->x) : L"") +
+				 (this->y ? L"' y='" + std::to_wstring(this->y) : L"") +
+				 L"' width='" + std::to_wstring(this->width) +
+				 L"' height='" + std::to_wstring(this->height) +
+				 L"' sheet='" + this->animation->GetSheet()->GetName() +
+				 L"' >";
 
 		if (this->action)
 		{
 			output = this->action->Serialize(output);
 		}
 
-		output = output + "</spritebutton>";
+		output = output + L"</spritebutton>";
 		return output;
 	}
 }

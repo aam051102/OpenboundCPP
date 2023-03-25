@@ -9,16 +9,16 @@ namespace SBURB
     class AssetFont : public Asset
     {
     public:
-        AssetFont(std::string name, std::vector<std::string> sources);
+        AssetFont(std::wstring name, std::vector<std::wstring> sources);
 
         std::shared_ptr<sf::Font> GetAsset() { return this->asset; };
 
-        std::vector<std::string> GetSources() { return this->sources; };
+        std::vector<std::wstring> GetSources() { return this->sources; };
 
         sf::Text::Style GetStyle() { return this->style; };
 
     private:
-        std::vector<std::string> sources;
+        std::vector<std::wstring> sources;
         std::shared_ptr<sf::Font> asset;
         sf::Text::Style style;
 

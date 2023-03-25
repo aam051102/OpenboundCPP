@@ -20,7 +20,7 @@ namespace SBURB {
         return this->time <= 0;
     }
 
-    std::string EventTime::Serialize() {
-        return "time," + this->time;
+    std::wstring EventTime::Serialize() {
+        return L"time," + this->time;
     }
 }

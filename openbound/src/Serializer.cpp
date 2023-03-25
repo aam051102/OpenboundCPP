@@ -14,36 +14,36 @@
 
 namespace SBURB
 {
-    static std::map<std::string, pugi::xml_node> templateClasses;
+    static std::map<std::wstring, pugi::xml_node> templateClasses;
     static int loadingDepth = 0;
     static std::vector<pugi::xml_node> loadQueue;
     static pugi::xml_document templateDoc;
 
-    std::string Serializer::Serialize()
+    std::wstring Serializer::Serialize()
     {
         Sburb *sburbInst = Sburb::GetInstance();
 
-        std::string loadedFiles = "";
+        std::wstring loadedFiles = L"";
         bool loadedFilesExist = false;
 
         /*for (auto key : sburbInst->loadedFiles)
         {
-            loadedFiles = loadedFiles + (loadedFilesExist ? "," : "") + key;
+            loadedFiles = loadedFiles + (loadedFilesExist ? L"," : L"") + key;
             loadedFilesExist = true;
         }*/
 
         auto character = sburbInst->GetCharacter();
         auto bgm = sburbInst->GetBGM();
 
-        std::string output = "<sburb" +
-                             std::string(" char='") + character->GetName() +
-                             (bgm ? "' bgm='" + bgm->GetName() + (bgm->GetStartLoop() ? "," + std::to_string(bgm->GetStartLoop()) : "") : "") +
-                             (sburbInst->GetScale().x != 1 ? "' scale='" + sburbInst->GetScale().x : "") +
-                             (sburbInst->GetNextQueueId() > 0 ? "' nextQueueId='" + sburbInst->GetNextQueueId() : "") +
-                             (sburbInst->resourcePath != "" ? ("' resourcePath='" + sburbInst->resourcePath) : "") +
-                             (sburbInst->levelPath != "" ? ("' levelPath='" + sburbInst->levelPath) : "") +
-                             (loadedFilesExist ? ("' loadedFiles='" + loadedFiles) : "") +
-                             "'>\n";
+        std::wstring output = L"<sburb" +
+                              std::wstring(L" char='") + character->GetName() +
+                              (bgm ? L"' bgm='" + bgm->GetName() + (bgm->GetStartLoop() ? L"," + std::to_wstring(bgm->GetStartLoop()) : L"") : L"") +
+                              (sburbInst->GetScale().x != 1 ? L"' scale='" + sburbInst->GetScale().x : L"") +
+                              (sburbInst->GetNextQueueId() > 0 ? L"' nextQueueId='" + sburbInst->GetNextQueueId() : L"") +
+                              (sburbInst->resourcePath != L"" ? (L"' resourcePath='" + sburbInst->resourcePath) : L"") +
+                              (sburbInst->levelPath != L"" ? (L"' levelPath='" + sburbInst->levelPath) : L"") +
+                              (loadedFilesExist ? (L"' loadedFiles='" + loadedFiles) : L"") +
+                              L"'>\n";
         output = Serializer::SerializeAssets(output);
         output = Serializer::SerializeTemplates(output);
         output = Serializer::SerializeHud(output);
@@ -52,33 +52,33 @@ namespace SBURB
         output = Serializer::SerializeGameState(output);
         output = Serializer::SerializeActionQueues(output);
 
-        output = output + "\n</sburb>";
+        output = output + L"\n</sburb>";
 
         return output;
     }
 
-    std::string EncodeXML(std::string str)
+    std::wstring EncodeXML(std::wstring str)
     {
-        return replace(replace(replace(replace(str, "&", "&amp;"), "<", "&lt;"), ">", "&gt;"), "\"", "&quot;");
+        return replace(replace(replace(replace(str, L"&", L"&amp;"), L"<", L"&lt;"), L">", L"&gt;"), L"\"", L"&quot;");
     };
 
-    std::string Serializer::SerializeGameState(std::string output)
+    std::wstring Serializer::SerializeGameState(std::wstring output)
     {
-        output = output + "\n<gameState>\n";
+        output = output + L"\n<gameState>\n";
 
         for (auto state : Sburb::GetInstance()->GetGameState())
         {
-            output = output + "  <" + state.first + ">" + EncodeXML(state.second) + "</" + state.first + ">";
+            output = output + L"  <" + state.first + L">" + EncodeXML(state.second) + L"</" + state.first + L">";
         }
 
-        output = output + "\n</gameState>\n";
+        output = output + L"\n</gameState>\n";
 
         return output;
     }
 
-    std::string Serializer::SerializeActionQueues(std::string output)
+    std::wstring Serializer::SerializeActionQueues(std::wstring output)
     {
-        output = output + "<actionQueues>";
+        output = output + L"<actionQueues>";
 
         for (auto actionQueue : Sburb::GetInstance()->GetActionQueues())
         {
@@ -87,100 +87,100 @@ namespace SBURB
                 output = actionQueue->Serialize(output);
             }
         }
-        output = output + "\n</actionQueues>\n";
+        output = output + L"\n</actionQueues>\n";
 
         return output;
     }
 
-    std::string Serializer::SerializeAssets(std::string output)
+    std::wstring Serializer::SerializeAssets(std::wstring output)
     {
-        output = output + "\n<assets>";
+        output = output + L"\n<assets>";
         /*
         for (auto asset : assets)
         {
             std::shared_ptr<Asset> curAsset = assets[asset];
-            std::string innerHTML = "";
+            std::wstring innerHTML = L"";
 
-            if (curAsset->GetType() == "graphic")
+            if (curAsset->GetType() == L"graphic")
             {
 
                 innerHTML += std::static_pointer_cast<AssetGraphic>(curAsset)->GetPath();
             }
-            else if (curAsset->GetType() == "audio")
+            else if (curAsset->GetType() == L"audio")
             {
                 bool firstSrc = false;
                 for (auto srcVal : std::static_pointer_cast<AssetAudio>(curAsset)->GetSources())
                 {
-                    innerHTML += (firstSrc ? ";" : "") + srcVal;
+                    innerHTML += (firstSrc ? L";" : L"") + srcVal;
 
                     firstSrc = true;
                 }
             }
-            else if (curAsset->GetType() == "path")
+            else if (curAsset->GetType() == L"path")
             {
                 auto pathAsset = std::static_pointer_cast<AssetPath>(curAsset);
                 for (int i = 0; i < pathAsset->GetPoints().size(); i++)
                 {
-                    innerHTML = innerHTML + std::to_string(pathAsset->GetPoints()[i].x) + "," + std::to_string(pathAsset->GetPoints()[i].y);
+                    innerHTML = innerHTML + std::to_string(pathAsset->GetPoints()[i].x) + L"," + std::to_string(pathAsset->GetPoints()[i].y);
                     if (i != pathAsset->GetPoints().size() - 1)
                     {
-                        innerHTML = innerHTML + ";";
+                        innerHTML = innerHTML + L";";
                     }
                 }
             }
-            else if (curAsset->GetType() == "movie")
+            else if (curAsset->GetType() == L"movie")
             {
                 innerHTML += std::static_pointer_cast<AssetMovie>(curAsset)->GetPath();
             }
-            else if (curAsset->GetType() == "font")
+            else if (curAsset->GetType() == L"font")
             {
                 // Pretty sure this was broken originally. May need to look more into it.
                 innerHTML += std::static_pointer_cast<AssetFont>(curAsset)->GetSources()[0];
             }
-            else if (curAsset->GetType() == "text")
+            else if (curAsset->GetType() == L"text")
             {
                 innerHTML += escape(trim(std::static_pointer_cast<AssetText>(curAsset)->GetText()).c_str());
             }
 
-            output = output + "\n<asset name='" + curAsset->GetName() + "' type='" + curAsset->GetType() + "' ";
+            output = output + L"\n<asset name='" + curAsset->GetName() + L"' type='" + curAsset->GetType() + L"' L";
 
-            output = output + " >";
+            output = output + L" >";
             output = output + innerHTML;
-            output = output + "</asset>";
+            output = output + L"</asset>";
         }
         */
-        output = output + "\n</assets>\n";
-        output = output + "\n<effects>";
+        output = output + L"\n</assets>\n";
+        output = output + L"\n<effects>";
 
         for (auto effect : Sburb::GetInstance()->GetEffects())
         {
             output = effect.second->Serialize(output);
         }
 
-        output = output + "\n</effects>\n";
+        output = output + L"\n</effects>\n";
         return output;
     }
 
-    std::string Serializer::SerializeTemplates(std::string output)
+    std::wstring Serializer::SerializeTemplates(std::wstring output)
     {
-        output = output + "\n<classes>";
+        output = output + L"\n<classes>";
 
-        std::ostringstream serializeStream;
+        std::wostringstream serializeStream;
 
         for (auto templateNode : templateClasses)
         {
-            serializeStream.str("");
-            templateNode.second.print(serializeStream, "", pugi::format_raw);
+            serializeStream.str(L"");
+            templateNode.second.print(serializeStream, L"", pugi::format_raw);
             output += serializeStream.str();
         }
 
-        output = output + "\n</classes>\n";
+        output = output + L"\n</classes>\n";
         return output;
     }
 
-    std::string Serializer::SerializeHud(std::string output)
+    std::wstring Serializer::SerializeHud(std::wstring output)
     {
-        output = output + "\n<hud>";
+        output = output + L"\n<hud>";
 
         // TODO: STOP DOING THIS! IT REGISTERS AS A REMOVAL OF SHARED_PTR COUNT, BUT NOT AN ADDITION, SO THEY GET REMOVED EARLY. FIX EVERYWHERE
         /*for (auto content : Sburb::GetInstance()->GetHud())
@@ -191,19 +191,19 @@ namespace SBURB
         output = Sburb::GetInstance()->GetDialoger()->Serialize(output);
 
         auto animations = Sburb::GetInstance()->GetDialoger()->GetDialogSpriteLeft()->GetAnimations();
-        output = output + "\n<dialogsprites>";
+        output = output + L"\n<dialogsprites>";
 
         for (auto animation : animations)
         {
             output = animation.second->Serialize(output);
         }
 
-        output = output + "\n</dialogsprites>";
-        output = output + "\n</hud>\n";
+        output = output + L"\n</dialogsprites>";
+        output = output + L"\n</hud>\n";
         return output;
     }
 
-    std::string Serializer::SerializeLooseObjects(std::string output)
+    std::wstring Serializer::SerializeLooseObjects(std::wstring output)
     {
         for (auto sprite : Sburb::GetInstance()->GetSprites())
         {
@@ -222,8 +222,9 @@ namespace SBURB
             if (!contained)
             {
                 // TODO: Figure out why dialogBox isn't defined. Why is a definition attempt even made?
-                if (!theSprite) {
-                    std::cout << sprite.first << std::endl;
+                if (!theSprite)
+                {
+                    std::wcout << sprite.first << std::endl;
                     continue;
                 }
                 output = theSprite->Serialize(output);
@@ -243,21 +244,21 @@ namespace SBURB
         return output;
     }
 
-    std::string Serializer::SerializeRooms(std::string output)
+    std::wstring Serializer::SerializeRooms(std::wstring output)
     {
-        output = output + "\n<rooms>\n";
+        output = output + L"\n<rooms>\n";
 
         for (auto room : Sburb::GetInstance()->GetRooms())
         {
             output = room.second->Serialize(output);
         }
 
-        output = output + "\n</rooms>\n";
+        output = output + L"\n</rooms>\n";
 
         return output;
     }
 
-    bool Serializer::LoadSerialFromXML(std::string path, bool keepOld)
+    bool Serializer::LoadSerialFromXML(std::wstring path, bool keepOld)
     {
         Sburb::GetInstance()->HaltUpdateProcess();
         path = Sburb::GetInstance()->levelPath + path;
@@ -278,7 +279,7 @@ namespace SBURB
 
         if (initDocRes.status != pugi::status_ok)
         {
-            std::string errMsg = "For " + path + ": " + initDocRes.description();
+            std::string errMsg = "For " + std::string(path.begin(), path.end()) + ": " + initDocRes.description();
             GlobalLogger->Log(Logger::Error, errMsg);
             return false;
         }
@@ -286,7 +287,7 @@ namespace SBURB
         return Serializer::LoadSerial(&doc, keepOld);
     }
 
-    bool Serializer::LoadSerialFromXMLMemory(std::string memory, bool keepOld)
+    bool Serializer::LoadSerialFromXMLMemory(std::wstring memory, bool keepOld)
     {
         Sburb::GetInstance()->HaltUpdateProcess();
 
@@ -315,7 +316,7 @@ namespace SBURB
     }
 
     // IS THIS DOC KEPT ALIVE? PROBABLY NOT!
-    pugi::xml_document Serializer::ParseXML(std::string inText)
+    pugi::xml_document Serializer::ParseXML(std::wstring inText)
     {
         pugi::xml_document doc;
         doc.load_string(inText.c_str());
@@ -335,7 +336,7 @@ namespace SBURB
 
     bool Serializer::LoadSerial(pugi::xml_document *doc, bool keepOld)
     {
-        pugi::xml_node rootNode = doc->child("sburb");
+        pugi::xml_node rootNode = doc->child(L"sburb");
 
         if (!keepOld)
         {
@@ -344,21 +345,21 @@ namespace SBURB
             Sburb::GetInstance()->PurgeState();
 
             // Load Verdana, if it exists.
-            std::string fontVerdanaPath = "";
+            std::wstring fontVerdanaPath = L"";
 
 #if defined(_WIN32) || defined(WIN32)
-            fontVerdanaPath = "C:/Windows/Fonts/Verdana.ttf";
+            fontVerdanaPath = L"C:/Windows/Fonts/Verdana.ttf";
 #endif
 
-            if (fontVerdanaPath != "")
+            if (fontVerdanaPath != L"")
             {
-                auto fontVerdana = std::make_shared<AssetFont>("Verdana", std::vector({"url:" + fontVerdanaPath}));
+                auto fontVerdana = std::make_shared<AssetFont>(L"Verdana", std::vector({L"url:" + fontVerdanaPath}));
                 AssetManager::LoadAsset(fontVerdana);
             }
         }
 
-        std::string levelPath = rootNode.attribute("levelPath").as_string();
-        if (levelPath != "")
+        std::wstring levelPath = rootNode.attribute(L"levelPath").as_string();
+        if (levelPath != L"")
         {
             if (levelPath[levelPath.length() - 1] == '/')
             {
@@ -366,32 +367,32 @@ namespace SBURB
             }
             else
             {
-                Sburb::GetInstance()->levelPath = levelPath + "/";
+                Sburb::GetInstance()->levelPath = levelPath + L"/";
             }
         }
 
-        std::string resourcePath = rootNode.attribute("resourcePath").value();
-        if (resourcePath != "")
+        std::wstring resourcePath = rootNode.attribute(L"resourcePath").value();
+        if (resourcePath != L"")
         {
             Sburb::GetInstance()->resourcePath = resourcePath;
         }
 
-        std::string name = rootNode.attribute("name").value();
-        if (name != "")
+        std::wstring name = rootNode.attribute(L"name").value();
+        if (name != L"")
             Sburb::GetInstance()->SetName(name);
 
-        std::string version = rootNode.attribute("version").value();
-        if (version != "")
+        std::wstring version = rootNode.attribute(L"version").value();
+        if (version != L"")
             Sburb::GetInstance()->version = version;
 
-        std::string width = rootNode.attribute("width").value();
-        if (width != "")
+        std::wstring width = rootNode.attribute(L"width").value();
+        if (width != L"")
         {
             Sburb::GetInstance()->SetDimensions(stoi(width), Sburb::GetInstance()->GetViewSize().y);
         }
 
-        std::string height = rootNode.attribute("height").value();
-        if (height != "")
+        std::wstring height = rootNode.attribute(L"height").value();
+        if (height != L"")
         {
             Sburb::GetInstance()->SetDimensions(Sburb::GetInstance()->GetViewSize().y, stoi(height));
         }
@@ -408,11 +409,11 @@ namespace SBURB
 
     bool Serializer::LoadDependencies(pugi::xml_node node)
     {
-        pugi::xml_node dependenciesNode = node.child("dependencies");
+        pugi::xml_node dependenciesNode = node.child(L"dependencies");
 
         if (dependenciesNode)
         {
-            auto dependencyNodes = GetNestedChildren(&dependenciesNode, "dependency");
+            auto dependencyNodes = GetNestedChildren(&dependenciesNode, L"dependency");
 
             for (pugi::xml_node dependencyNode : dependencyNodes)
             {
@@ -427,26 +428,26 @@ namespace SBURB
 
     bool Serializer::LoadSerialAssets(pugi::xml_node node)
     {
-        std::string description = node.attribute("description").value();
-        if (description != "")
+        std::wstring description = node.attribute(L"description").value();
+        if (description != L"")
         {
             Sburb::GetInstance()->SetDescription(description);
         }
         else
         {
-            Sburb::GetInstance()->SetDescription("assets");
+            Sburb::GetInstance()->SetDescription(L"assets");
         }
 
-        pugi::xml_node assetsNode = node.child("assets");
+        pugi::xml_node assetsNode = node.child(L"assets");
 
         if (assetsNode)
         {
-            auto assetNodes = GetNestedChildren(&assetsNode, "asset");
+            auto assetNodes = GetNestedChildren(&assetsNode, L"asset");
             AssetManager::AddToTotalAssets(assetNodes.size());
 
             for (pugi::xml_node assetNode : assetNodes)
             {
-                /*if (!AssetManager::CheckIsLoaded(assetNode.attribute("name").value()))
+                /*if (!AssetManager::CheckIsLoaded(assetNode.attribute(L"name").value()))
                 {*/
                 LoadSerialAsset(assetNode);
                 // }
@@ -465,50 +466,50 @@ namespace SBURB
 
     std::shared_ptr<Asset> Serializer::ParseSerialAsset(pugi::xml_node node)
     {
-        std::string name = node.attribute("name").value();
-        std::string type = node.attribute("type").value();
-        std::string value = trim(node.text().as_string());
+        std::wstring name = node.attribute(L"name").value();
+        std::wstring type = node.attribute(L"type").value();
+        std::wstring value = trim(node.text().as_string());
 
-        std::string blobUrlsAttr = node.attribute("blob-urls").value();
-        std::vector<std::string> blobUrls = {};
+        std::wstring blobUrlsAttr = node.attribute(L"blob-urls").value();
+        std::vector<std::wstring> blobUrls = {};
 
-        if (blobUrlsAttr != "")
+        if (blobUrlsAttr != L"")
         {
-            blobUrls = split(blobUrlsAttr, ";");
+            blobUrls = split(blobUrlsAttr, L";");
         }
 
         std::shared_ptr<Asset> asset;
 
-        if (type == "graphic")
+        if (type == L"graphic")
         {
             asset = std::make_shared<AssetGraphic>(name, value);
         }
-        else if (type == "audio")
+        else if (type == L"audio")
         {
-            asset = std::make_shared<AssetAudio>(name, split(value, ";"));
+            asset = std::make_shared<AssetAudio>(name, split(value, L";"));
         }
-        else if (type == "path")
+        else if (type == L"path")
         {
-            std::vector<std::string> splitPoints = split(value, ";");
+            std::vector<std::wstring> splitPoints = split(value, L";");
 
             std::vector<Vector2> points;
             for (auto point : splitPoints)
             {
-                auto pointCoords = split(point, ",");
+                auto pointCoords = split(point, L",");
                 points.push_back(Vector2(stoi(pointCoords[0]), stoi(pointCoords[1])));
             }
 
             asset = std::make_shared<AssetPath>(name, points);
         }
-        else if (type == "movie")
+        else if (type == L"movie")
         {
             asset = std::make_shared<AssetMovie>(name, value);
         }
-        else if (type == "font")
+        else if (type == L"font")
         {
-            asset = std::make_shared<AssetFont>(name, split(value, ","));
+            asset = std::make_shared<AssetFont>(name, split(value, L","));
         }
-        else if (type == "text")
+        else if (type == L"text")
         {
             asset = std::make_shared<AssetText>(name, value);
         }
@@ -555,7 +556,7 @@ namespace SBURB
 
     void Serializer::ParseTemplateClasses(pugi::xml_node node)
     {
-        auto classes = node.child("classes");
+        auto classes = node.child(L"classes");
 
         if (classes)
         {
@@ -563,12 +564,12 @@ namespace SBURB
 
             for (pugi::xml_node templateNode : templates)
             {
-                if (std::string(templateNode.name()) != "#text" && std::string(templateNode.name()) != "#comment")
+                if (std::wstring(templateNode.name()) != L"#text" && std::wstring(templateNode.name()) != L"#comment")
                 {
                     ApplyTemplateClasses(templateNode);
 
                     pugi::xml_node templateCopyNode = templateDoc.append_copy(templateNode);
-                    templateClasses[templateCopyNode.attribute("class").as_string()] = templateCopyNode;
+                    templateClasses[templateCopyNode.attribute(L"class").as_string()] = templateCopyNode;
                 }
             }
 
@@ -591,10 +592,10 @@ namespace SBURB
 
     void Serializer::TryToApplyTemplate(pugi::xml_node templateNode, pugi::xml_node candidateNode)
     {
-        std::string templateClass = templateNode.attribute("class").as_string();
-        std::string candClass = candidateNode.attribute("class").as_string();
+        std::wstring templateClass = templateNode.attribute(L"class").as_string();
+        std::wstring candClass = candidateNode.attribute(L"class").as_string();
 
-        if (candClass != "" && candClass == templateClass)
+        if (candClass != L"" && candClass == templateClass)
         {
             Serializer::ApplyTemplate(templateNode, candidateNode);
         }
@@ -608,7 +609,7 @@ namespace SBURB
 
         for (auto tempAttribute : templateNode.attributes())
         {
-            if (std::string(candidateNode.attribute(tempAttribute.name()).as_string()) == "")
+            if (std::wstring(candidateNode.attribute(tempAttribute.name()).as_string()) == L"")
             {
                 candidateNode.append_attribute(tempAttribute.name()).set_value(tempAttribute.as_string());
             }
@@ -622,7 +623,7 @@ namespace SBURB
 
     void Serializer::ParseButtons(pugi::xml_node node)
     {
-        auto newButtons = GetNestedChildren(&node, "spritebutton");
+        auto newButtons = GetNestedChildren(&node, L"spritebutton");
 
         for (pugi::xml_node curButton : newButtons)
         {
@@ -633,7 +634,7 @@ namespace SBURB
 
     void Serializer::ParseSprites(pugi::xml_node node)
     {
-        auto newSprites = GetNestedChildren(&node, "sprite");
+        auto newSprites = GetNestedChildren(&node, L"sprite");
 
         for (pugi::xml_node curSprite : newSprites)
         {
@@ -648,12 +649,12 @@ namespace SBURB
         auto newActions = spriteNode.children();
         for (pugi::xml_node curAction : newActions)
         {
-            if (std::string(curAction.name()) == "#text")
+            if (std::wstring(curAction.name()) == L"#text")
             {
                 continue;
             }
 
-            if (std::string(curAction.name()) == "action")
+            if (std::wstring(curAction.name()) == L"action")
             {
                 auto newAction = Parser::ParseAction(curAction);
                 sprite->AddAction(newAction);
@@ -663,7 +664,7 @@ namespace SBURB
 
     void Serializer::ParseCharacters(pugi::xml_node node)
     {
-        auto newChars = GetNestedChildren(&node, "character");
+        auto newChars = GetNestedChildren(&node, L"character");
 
         for (pugi::xml_node curChar : newChars)
         {
@@ -675,7 +676,7 @@ namespace SBURB
 
     void Serializer::ParseFighters(pugi::xml_node node)
     {
-        auto newFighters = GetNestedChildren(&node, "fighter");
+        auto newFighters = GetNestedChildren(&node, L"fighter");
 
         for (pugi::xml_node curFighter : newFighters)
         {
@@ -687,7 +688,7 @@ namespace SBURB
 
     void Serializer::ParseRooms(pugi::xml_node node)
     {
-        auto newRooms = GetNestedChildren(&node, "room");
+        auto newRooms = GetNestedChildren(&node, L"room");
 
         for (pugi::xml_node curRoom : newRooms)
         {
@@ -698,7 +699,7 @@ namespace SBURB
 
     void Serializer::ParseGameState(pugi::xml_node node)
     {
-        auto newGameStates = GetNestedChildren(&node, "gameState");
+        auto newGameStates = GetNestedChildren(&node, L"gameState");
 
         for (pugi::xml_node curGameState : newGameStates)
         {
@@ -709,8 +710,8 @@ namespace SBURB
                 if (child.type() == pugi::xml_node_type::node_pcdata)
                     continue;
 
-                std::string key = node.name();
-                std::string value = node.first_child().value();
+                std::wstring key = node.name();
+                std::wstring value = node.first_child().value();
                 Sburb::GetInstance()->SetGameState(key, value);
             }
         }
@@ -718,7 +719,7 @@ namespace SBURB
 
     void Serializer::ParseHud(pugi::xml_node node)
     {
-        pugi::xml_node hudNode = GetNestedChild(&node, "hud");
+        pugi::xml_node hudNode = GetNestedChild(&node, L"hud");
 
         if (hudNode)
         {
@@ -726,9 +727,9 @@ namespace SBURB
 
             for (pugi::xml_node child : children)
             {
-                if (std::string(child.name()) == "spritebutton")
+                if (std::wstring(child.name()) == L"spritebutton")
                 {
-                    std::string name = child.attribute("name").as_string();
+                    std::wstring name = child.attribute(L"name").as_string();
                     Sburb::GetInstance()->SetHud(name, Sburb::GetInstance()->GetButton(name));
                 }
             }
@@ -740,7 +741,7 @@ namespace SBURB
 
     void Serializer::ParseDialoger(pugi::xml_node node)
     {
-        auto dialogerNode = GetNestedChild(&node, "dialoger");
+        auto dialogerNode = GetNestedChild(&node, L"dialoger");
 
         if (dialogerNode)
         {
@@ -763,11 +764,11 @@ namespace SBURB
 
     void Serializer::ParseDialogSprites(pugi::xml_node node)
     {
-        pugi::xml_node hudNode = node.child("hud");
+        pugi::xml_node hudNode = node.child(L"hud");
 
         if (hudNode)
         {
-            auto dialogSprites = hudNode.child("dialogsprites");
+            auto dialogSprites = hudNode.child(L"dialogsprites");
 
             if (dialogSprites)
             {
@@ -778,7 +779,7 @@ namespace SBURB
 
     void Serializer::ParseEffects(pugi::xml_node node)
     {
-        auto effects = node.child("effects");
+        auto effects = node.child(L"effects");
 
         if (effects)
         {
@@ -788,34 +789,34 @@ namespace SBURB
 
     void Serializer::ParseState(pugi::xml_node node)
     {
-        std::string character = node.attribute("char").as_string();
-        if (character != "")
+        std::wstring character = node.attribute(L"char").as_string();
+        if (character != L"")
         {
             Sburb::GetInstance()->SetCharacter(std::static_pointer_cast<Character>(Sburb::GetInstance()->GetSprite(character)));
             Sburb::GetInstance()->SetFocus(Sburb::GetInstance()->GetCharacter());
             Sburb::GetInstance()->GetCharacter()->BecomePlayer();
         }
 
-        std::string mode = node.attribute("mode").as_string();
-        if (mode != "")
+        std::wstring mode = node.attribute(L"mode").as_string();
+        if (mode != L"")
         {
             Sburb::GetInstance()->SetEngineMode(mode);
         }
 
-        int scale = node.attribute("scale").as_int();
+        int scale = node.attribute(L"scale").as_int();
         if (scale)
         {
             Sburb::GetInstance()->SetScale(Vector2(scale, scale));
         }
 
-        int nextQueueId = node.attribute("nextQueueId").as_int();
+        int nextQueueId = node.attribute(L"nextQueueId").as_int();
         if (nextQueueId)
         {
             Sburb::GetInstance()->SetNextQueueId(nextQueueId);
         }
 
-        std::string curRoom = node.attribute("curRoom").as_string();
-        if (curRoom != "")
+        std::wstring curRoom = node.attribute(L"curRoom").as_string();
+        if (curRoom != L"")
         {
             Sburb::GetInstance()->SetCurrentRoom(Sburb::GetInstance()->GetRoom(curRoom));
             Sburb::GetInstance()->GetCurrentRoom()->Enter();
@@ -833,21 +834,21 @@ namespace SBURB
             }
         }
 
-        std::string bgm = node.attribute("bgm").as_string();
-        if (bgm != "")
+        std::wstring bgm = node.attribute(L"bgm").as_string();
+        if (bgm != L"")
         {
-            std::vector<std::string> params = split(bgm, ",");
-            Sburb::GetInstance()->ChangeBGM(std::make_shared<Music>(params[0], std::stod(params.size() > 1 ? params[1] : "0") * 1000));
+            std::vector<std::wstring> params = split(bgm, L",");
+            Sburb::GetInstance()->ChangeBGM(std::make_shared<Music>(params[0], std::stod(params.size() > 1 ? params[1] : L"0") * 1000));
         }
 
         std::shared_ptr<Action> initAction;
-        std::string initActionName = node.attribute("startAction").as_string();
+        std::wstring initActionName = node.attribute(L"startAction").as_string();
 
-        if (initActionName != "")
+        if (initActionName != L"")
         {
             for (pugi::xml_node tmp : node.children())
             {
-                if (std::string(tmp.name()) == "action" && tmp.attribute("name").as_string() == initActionName)
+                if (std::wstring(tmp.name()) == L"action" && tmp.attribute(L"name").as_string() == initActionName)
                 {
                     initAction = Parser::ParseAction(tmp);
                     continue;
@@ -863,7 +864,7 @@ namespace SBURB
 
     void Serializer::ParseActionQueues(pugi::xml_node node)
     {
-        auto element = node.child("actionQueues");
+        auto element = node.child(L"actionQueues");
         if (!element)
         {
             return;
@@ -872,7 +873,7 @@ namespace SBURB
         auto newActionQueues = element.children();
         for (pugi::xml_node curActionQueues : newActionQueues)
         {
-            if (std::string(curActionQueues.name()) == "#text")
+            if (std::wstring(curActionQueues.name()) == L"#text")
             {
                 continue;
             }
@@ -887,17 +888,17 @@ namespace SBURB
         auto dialoger = Sburb::GetInstance()->GetDialoger();
         if (!dialoger)
         {
-            Sburb::GetInstance()->SetDialoger(std::make_shared<Dialoger>(Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector4(0, 0, 0, 0), Vector4(0, 0, 0, 0), Vector4(0, 0, 0, 0), "standard"));
+            Sburb::GetInstance()->SetDialoger(std::make_shared<Dialoger>(Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector4(0, 0, 0, 0), Vector4(0, 0, 0, 0), Vector4(0, 0, 0, 0), L"standard"));
             dialoger = Sburb::GetInstance()->GetDialoger();
         }
 
         if (!dialoger->GetDialogSpriteLeft())
         {
-            dialoger->SetDialogSpriteLeft(std::make_shared<Sprite>("dialogSprite", -1000, Sburb::GetInstance()->GetViewSize().y, 0, 0));
-            dialoger->SetDialogSpriteRight(std::make_shared<Sprite>("dialogSprite", Sburb::GetInstance()->GetViewSize().x + 1000, Sburb::GetInstance()->GetViewSize().y, 0, 0));
+            dialoger->SetDialogSpriteLeft(std::make_shared<Sprite>(L"dialogSprite", -1000, Sburb::GetInstance()->GetViewSize().y, 0, 0));
+            dialoger->SetDialogSpriteRight(std::make_shared<Sprite>(L"dialogSprite", Sburb::GetInstance()->GetViewSize().x + 1000, Sburb::GetInstance()->GetViewSize().y, 0, 0));
         }
 
-        auto animations = GetNestedChildren(&dialogSprites, "animation");
+        auto animations = GetNestedChildren(&dialogSprites, L"animation");
         for (pugi::xml_node anim : animations)
         {
             dialoger->GetDialogSpriteLeft()->AddAnimation(Parser::ParseAnimation(anim));
@@ -907,7 +908,7 @@ namespace SBURB
 
     void Serializer::SerialLoadEffects(pugi::xml_node effectsNode)
     {
-        auto animations = GetNestedChildren(&effectsNode, "animation");
+        auto animations = GetNestedChildren(&effectsNode, L"animation");
         for (pugi::xml_node anim : animations)
         {
             auto newEffect = Parser::ParseAnimation(anim);
@@ -919,36 +920,36 @@ namespace SBURB
     {
         for (pugi::xml_node curSprite : roomSprites)
         {
-            std::shared_ptr<Sprite> actualSprite = Sburb::GetInstance()->GetSprite(curSprite.attribute("name").as_string());
+            std::shared_ptr<Sprite> actualSprite = Sburb::GetInstance()->GetSprite(curSprite.attribute(L"name").as_string());
             newRoom->AddSprite(actualSprite);
         }
     }
 
     void Serializer::SerialLoadRoomPaths(std::shared_ptr<Room> newRoom, pugi::xml_node pathsNode)
     {
-        auto walkables = GetNestedChildren(&pathsNode, "walkable");
+        auto walkables = GetNestedChildren(&pathsNode, L"walkable");
         for (pugi::xml_node node : walkables)
         {
-            newRoom->AddWalkable(AssetManager::GetPathByName(node.attribute("path").as_string()));
+            newRoom->AddWalkable(AssetManager::GetPathByName(node.attribute(L"path").as_string()));
         }
 
-        auto unwalkables = GetNestedChildren(&pathsNode, "unwalkable");
+        auto unwalkables = GetNestedChildren(&pathsNode, L"unwalkable");
         for (pugi::xml_node node : unwalkables)
         {
-            newRoom->AddUnwalkable(AssetManager::GetPathByName(node.attribute("path").as_string()));
+            newRoom->AddUnwalkable(AssetManager::GetPathByName(node.attribute(L"path").as_string()));
         }
 
-        auto motionPaths = GetNestedChildren(&pathsNode, "motionpath");
+        auto motionPaths = GetNestedChildren(&pathsNode, L"motionpath");
         for (pugi::xml_node node : motionPaths)
         {
             newRoom->AddMotionPath(
-                AssetManager::GetPathByName(node.attribute("path").as_string()),
-                node.attribute("xtox").as_float(1),
-                node.attribute("xtoy").as_float(),
-                node.attribute("ytox").as_float(),
-                node.attribute("ytoy").as_float(1),
-                node.attribute("dx").as_float(),
-                node.attribute("dy").as_float());
+                AssetManager::GetPathByName(node.attribute(L"path").as_string()),
+                node.attribute(L"xtox").as_float(1),
+                node.attribute(L"xtoy").as_float(),
+                node.attribute(L"ytox").as_float(),
+                node.attribute(L"ytoy").as_float(1),
+                node.attribute(L"dx").as_float(),
+                node.attribute(L"dy").as_float());
         }
     }
 
@@ -957,7 +958,7 @@ namespace SBURB
         auto candidates = triggersNode.children();
         for (pugi::xml_node candidate : candidates)
         {
-            if (std::string(candidate.name()) == "trigger")
+            if (std::wstring(candidate.name()) == L"trigger")
             {
                 newRoom->AddTrigger(Parser::ParseTrigger(candidate));
             }

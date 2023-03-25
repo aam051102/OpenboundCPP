@@ -25,7 +25,7 @@ namespace SBURB
 	class Room : public sf::Drawable
 	{
 	public:
-		Room(std::string name, int width, int height);
+		Room(std::wstring name, int width, int height);
 		~Room();
 
 		sf::Vector2f Room::GetAdjustedMovement(Sprite *sprite, float ax, float ay);
@@ -58,13 +58,13 @@ namespace SBURB
 		std::vector<std::shared_ptr<Action>> QueryActionsVisual(std::shared_ptr<Sprite> query, int x, int y);
 
 		bool IsInBounds(Sprite *sprite, int dx = 0, int dy = 0);
-		std::map<std::string, bool> IsInBoundsBatch(std::map<std::string, sf::Vector2f> queries, std::map<std::string, bool> *results);
+		std::map<std::wstring, bool> IsInBoundsBatch(std::map<std::wstring, sf::Vector2f> queries, std::map<std::wstring, bool> *results);
 
 		std::shared_ptr<Sprite> Collides(Sprite *sprite, int dx = 0, int dy = 0);
 
-		std::string Serialize(std::string output);
+		std::wstring Serialize(std::wstring output);
 
-		std::string GetName() { return this->name; };
+		std::wstring GetName() { return this->name; };
 
 		void SetMapScale(int mapScale) { this->mapScale = mapScale; };
 		int GetMapScale() { return this->mapScale; };
@@ -79,7 +79,7 @@ namespace SBURB
 		int GetHeight() { return this->height; };
 
 	private:
-		std::string name;
+		std::wstring name;
 		int width;
 		int height;
 		std::vector<std::shared_ptr<Sprite>> sprites;

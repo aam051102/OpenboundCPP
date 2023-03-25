@@ -5,14 +5,14 @@ constexpr int FOLLOW_BUFFER_LENGTH = 6;
 
 namespace SBURB
 {
-	Character::Character(std::string name, int x, int y, int width, int height, int sx, int sy, int sWidth, int sHeight, std::string sheetName, bool bootstrap) : Sprite(name, x, y, width, height, 0, 0, static_cast<int>(Depth::MG_DEPTHING), true)
+	Character::Character(std::wstring name, int x, int y, int width, int height, int sx, int sy, int sWidth, int sHeight, std::wstring sheetName, bool bootstrap) : Sprite(name, x, y, width, height, 0, 0, static_cast<int>(Depth::MG_DEPTHING), true)
 	{
 		this->speed = 12;
 		this->vx = 0;
 		this->vy = 0;
-		this->facing = "Front";
+		this->facing = L"Front";
 		this->npc = true;
-		this->spriteType = "character";
+		this->spriteType = L"character";
 		this->following = nullptr;
 		this->followBuffer = {};
 		this->follower = nullptr;
@@ -24,16 +24,16 @@ namespace SBURB
 
 		if (!bootstrap)
 		{ // Automagically generate standard animations
-			this->AddAnimation(std::make_shared<Animation>("idleFront", sheetName, sx, sy, sWidth, sHeight, 0, 1, "2"));
-			this->AddAnimation(std::make_shared<Animation>("idleRight", sheetName, sx, sy, sWidth, sHeight, 1, 1, "2"));
-			this->AddAnimation(std::make_shared<Animation>("idleBack", sheetName, sx, sy, sWidth, sHeight, 2, 1, "2"));
-			this->AddAnimation(std::make_shared<Animation>("idleLeft", sheetName, sx, sy, sWidth, sHeight, 3, 1, "2"));
-			this->AddAnimation(std::make_shared<Animation>("walkFront", sheetName, sx, sy, sWidth, sHeight, 4, 2, "4"));
-			this->AddAnimation(std::make_shared<Animation>("walkRight", sheetName, sx, sy, sWidth, sHeight, 6, 2, "4"));
-			this->AddAnimation(std::make_shared<Animation>("walkBack", sheetName, sx, sy, sWidth, sHeight, 8, 2, "4"));
-			this->AddAnimation(std::make_shared<Animation>("walkLeft", sheetName, sx, sy, sWidth, sHeight, 10, 2, "4"));
+			this->AddAnimation(std::make_shared<Animation>(L"idleFront", sheetName, sx, sy, sWidth, sHeight, 0, 1, L"2"));
+			this->AddAnimation(std::make_shared<Animation>(L"idleRight", sheetName, sx, sy, sWidth, sHeight, 1, 1, L"2"));
+			this->AddAnimation(std::make_shared<Animation>(L"idleBack", sheetName, sx, sy, sWidth, sHeight, 2, 1, L"2"));
+			this->AddAnimation(std::make_shared<Animation>(L"idleLeft", sheetName, sx, sy, sWidth, sHeight, 3, 1, L"2"));
+			this->AddAnimation(std::make_shared<Animation>(L"walkFront", sheetName, sx, sy, sWidth, sHeight, 4, 2, L"4"));
+			this->AddAnimation(std::make_shared<Animation>(L"walkRight", sheetName, sx, sy, sWidth, sHeight, 6, 2, L"4"));
+			this->AddAnimation(std::make_shared<Animation>(L"walkBack", sheetName, sx, sy, sWidth, sHeight, 8, 2, L"4"));
+			this->AddAnimation(std::make_shared<Animation>(L"walkLeft", sheetName, sx, sy, sWidth, sHeight, 10, 2, L"4"));
 
-			this->StartAnimation("walkFront");
+			this->StartAnimation(L"walkFront");
 		}
 		else
 		{
@@ -150,7 +150,7 @@ namespace SBURB
 	{
 		if (!movingSideways)
 		{
-			this->facing = "Back";
+			this->facing = L"Back";
 			this->Walk();
 			this->vx = 0;
 			this->vy = -this->speed;
@@ -166,7 +166,7 @@ namespace SBURB
 	{
 		if (!movingSideways)
 		{
-			this->facing = "Front";
+			this->facing = L"Front";
 			this->Walk();
 			this->vx = 0;
 			this->vy = this->speed;
@@ -180,7 +180,7 @@ namespace SBURB
 
 	void Character::MoveLeft()
 	{
-		this->facing = "Left";
+		this->facing = L"Left";
 		this->Walk();
 		this->vx = -this->speed;
 		this->vy = 0;
@@ -188,7 +188,7 @@ namespace SBURB
 
 	void Character::MoveRight()
 	{
-		this->facing = "Right";
+		this->facing = L"Right";
 		this->Walk();
 		this->vx = this->speed;
 		this->vy = 0;
@@ -196,7 +196,7 @@ namespace SBURB
 
 	void Character::MoveNone()
 	{
-		if (this->animations["walkFront"]->GetFrameInterval() == 4)
+		if (this->animations[L"walkFront"]->GetFrameInterval() == 4)
 		{
 			this->Idle();
 			this->vx = 0;
@@ -206,28 +206,28 @@ namespace SBURB
 
 	void Character::Walk()
 	{
-		this->StartAnimation("walk" + this->facing);
+		this->StartAnimation(L"walk" + this->facing);
 	}
 
 	void Character::Idle()
 	{
-		this->StartAnimation("idle" + this->facing);
+		this->StartAnimation(L"idle" + this->facing);
 	}
 
 	void Character::BecomeNPC()
 	{
-		this->animations["walkFront"]->SetFrameInterval(12);
-		this->animations["walkBack"]->SetFrameInterval(12);
-		this->animations["walkLeft"]->SetFrameInterval(12);
-		this->animations["walkRight"]->SetFrameInterval(12);
+		this->animations[L"walkFront"]->SetFrameInterval(12);
+		this->animations[L"walkBack"]->SetFrameInterval(12);
+		this->animations[L"walkLeft"]->SetFrameInterval(12);
+		this->animations[L"walkRight"]->SetFrameInterval(12);
 	}
 
 	void Character::BecomePlayer()
 	{
-		this->animations["walkFront"]->SetFrameInterval(4);
-		this->animations["walkBack"]->SetFrameInterval(4);
-		this->animations["walkLeft"]->SetFrameInterval(4);
-		this->animations["walkRight"]->SetFrameInterval(4);
+		this->animations[L"walkFront"]->SetFrameInterval(4);
+		this->animations[L"walkBack"]->SetFrameInterval(4);
+		this->animations[L"walkLeft"]->SetFrameInterval(4);
+		this->animations[L"walkRight"]->SetFrameInterval(4);
 	}
 
 	void Character::HandleInputs(std::vector<sf::Keyboard::Key> order)
@@ -479,25 +479,25 @@ namespace SBURB
 		std::vector<Vector2> queries = {};
 		queries.push_back(Vector2(this->x, this->y));
 
-		if (this->facing == "Front")
+		if (this->facing == L"Front")
 		{
 			queries.push_back(Vector2(this->x, this->y + (this->height / 2 + 15)));
 			queries.push_back(Vector2(this->x - this->width / 2, this->y + (this->height / 2 + 15)));
 			queries.push_back(Vector2(this->x + this->width / 2, this->y + (this->height / 2 + 15)));
 		}
-		else if (this->facing == "Back")
+		else if (this->facing == L"Back")
 		{
 			queries.push_back(Vector2(this->x, this->y - (this->height / 2 + 15)));
 			queries.push_back(Vector2(this->x - this->width / 2, this->y - (this->height / 2 + 15)));
 			queries.push_back(Vector2(this->x + this->width / 2, this->y - (this->height / 2 + 15)));
 		}
-		else if (this->facing == "Right")
+		else if (this->facing == L"Right")
 		{
 			queries.push_back(Vector2(this->x + (this->width / 2 + 15), this->y));
 			queries.push_back(Vector2(this->x + (this->width / 2 + 15), this->y + this->height / 2));
 			queries.push_back(Vector2(this->x + (this->width / 2 + 15), this->y - this->height / 2));
 		}
-		else if (this->facing == "Left")
+		else if (this->facing == L"Left")
 		{
 			queries.push_back(Vector2(this->x - (this->width / 2 + 15), this->y));
 			queries.push_back(Vector2(this->x - (this->width / 2 + 15), this->y + this->height / 2));
@@ -507,42 +507,42 @@ namespace SBURB
 		return queries;
 	}
 
-	std::string Character::Serialize(std::string output)
+	std::wstring Character::Serialize(std::wstring output)
 	{
-		output = output + "\n<character name='" + this->name +
-				 "' x='" + std::to_string(this->x) +
-				 "' y='" + std::to_string(this->y) +
-				 "' width='" + std::to_string(this->width) +
-				 "' height='" + std::to_string(this->height) +
-				 "' state='" + this->state +
-				 "' facing='" + this->facing;
+		output = output + L"\n<character name='" + this->name +
+				 L"' x='" + std::to_wstring(this->x) +
+				 L"' y='" + std::to_wstring(this->y) +
+				 L"' width='" + std::to_wstring(this->width) +
+				 L"' height='" + std::to_wstring(this->height) +
+				 L"' state='" + this->state +
+				 L"' facing='" + this->facing;
 
 		if (!this->bootstrap)
 		{
-			output = output + "' sx='" + std::to_string(this->animations["walkFront"]->GetX()) +
-					 "' sy='" + std::to_string(this->animations["walkFront"]->GetY()) +
-					 "' sWidth='" + std::to_string(this->animations["walkFront"]->GetColSize()) +
-					 "' sHeight='" + std::to_string(this->animations["walkFront"]->GetRowSize()) +
-					 "' sheet='" + this->animations["walkFront"]->GetSheet()->GetName();
+			output = output + L"' sx='" + std::to_wstring(this->animations[L"walkFront"]->GetX()) +
+					 L"' sy='" + std::to_wstring(this->animations[L"walkFront"]->GetY()) +
+					 L"' sWidth='" + std::to_wstring(this->animations[L"walkFront"]->GetColSize()) +
+					 L"' sHeight='" + std::to_wstring(this->animations[L"walkFront"]->GetRowSize()) +
+					 L"' sheet='" + this->animations[L"walkFront"]->GetSheet()->GetName();
 		}
 		else
 		{
-			output = output + "' bootstrap='true";
+			output = output + L"' bootstrap='true";
 		}
 		if (this->following)
 		{
-			output = output + "' following='" + this->following->GetName() + "";
+			output = output + L"' following='" + this->following->GetName() + L"";
 		}
 		if (this->follower)
 		{
-			output = output + "' follower='" + this->follower->GetName() + "";
+			output = output + L"' follower='" + this->follower->GetName() + L"";
 		}
 
-		output = output + "'>";
+		output = output + L"'>";
 
 		for (auto anim : this->animations)
 		{
-			if (this->bootstrap || (anim.second->GetName().find("idle") == std::string::npos && anim.second->GetName().find("walk") == std::string::npos))
+			if (this->bootstrap || (anim.second->GetName().find(L"idle") == std::wstring::npos && anim.second->GetName().find(L"walk") == std::wstring::npos))
 			{
 				output = anim.second->Serialize(output);
 			}
@@ -553,13 +553,13 @@ namespace SBURB
 			output = action->Serialize(output);
 		}
 
-		output = output + "\n</character>";
+		output = output + L"\n</character>";
 
 		return output;
 	}
 
 	bool Character::IsNPC()
 	{
-		return this->animations["walkFront"]->GetFrameInterval() == 12;
+		return this->animations[L"walkFront"]->GetFrameInterval() == 12;
 	}
 }

@@ -9,7 +9,7 @@ namespace SBURB {
 
     }
 
-    std::string Event::Serialize() {
-        return "";
+    std::wstring Event::Serialize() {
+        return L"";
     }
 }

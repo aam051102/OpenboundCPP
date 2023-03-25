@@ -11,7 +11,7 @@ namespace SBURB
     class EventPlayed : public Event
     {
     public:
-        EventPlayed(std::string spriteName);
+        EventPlayed(std::wstring spriteName);
         ~EventPlayed();
 
         virtual void Reset() override;
@@ -21,7 +21,7 @@ namespace SBURB
 
     protected:
         std::shared_ptr<Sprite> entity;
-        std::string spriteName;
+        std::wstring spriteName;
 
     };
 }

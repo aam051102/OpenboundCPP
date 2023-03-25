@@ -3,11 +3,11 @@
 #include "Sburb.h"
 
 namespace SBURB {
-    ActionQueue::ActionQueue(std::shared_ptr<Action> action, std::string id, std::vector<std::string> groups, bool noWait, bool isPaused, std::shared_ptr<Trigger> trigger) {
+    ActionQueue::ActionQueue(std::shared_ptr<Action> action, std::wstring id, std::vector<std::wstring> groups, bool noWait, bool isPaused, std::shared_ptr<Trigger> trigger) {
         this->curAction = action;
 
-		if (id == "") {
-			this->id = std::to_string(Sburb::GetInstance()->GetNextQueueId() + 1);
+		if (id == L"") {
+			this->id = std::to_wstring(Sburb::GetInstance()->GetNextQueueId() + 1);
 			Sburb::GetInstance()->SetNextQueueId(Sburb::GetInstance()->GetNextQueueId() + 1);
 
 		}
@@ -25,7 +25,7 @@ namespace SBURB {
 
     }
 
-	bool ActionQueue::HasGroup(std::string group) {
+	bool ActionQueue::HasGroup(std::wstring group) {
 		for (int i = 0; i < this->groups.size(); i++) {
 			if (this->groups[i] == group) {
 				return true;
@@ -35,30 +35,30 @@ namespace SBURB {
 		return false;
 	}
 
-    std::string ActionQueue::Serialize(std::string output) {
+    std::wstring ActionQueue::Serialize(std::wstring output) {
 
 		if (this->curAction.get() == NULL) {
-			return "";
+			return L"";
 		}
 
-		std::string groupString = "";
+		std::wstring groupString = L"";
 		for (int i = 0; i < this->groups.size(); i++) {
-			groupString += ((i > 0) ? ":" : "") + this->groups[i];
+			groupString += ((i > 0) ? L":" : L"") + this->groups[i];
 		}
 
-		std::string newOutput = output + "\n<actionQueue " + ">";
-			"id = '" + this->id +
-			"' noWait='" + std::to_string(this->noWait) +
-			"' paused='" + std::to_string(this->isPaused) + "'" +
-			(groupString.length() == 0 ? "" : " groups='" + groupString + "'") +
-			">";
+		std::wstring newOutput = output + L"\n<actionQueue " + L">";
+			L"id = '" + this->id +
+			L"' noWait='" + std::to_wstring(this->noWait) +
+			L"' paused='" + std::to_wstring(this->isPaused) + L"'" +
+			(groupString.length() == 0 ? L"" : L" groups='" + groupString + L"'") +
+			L">";
 
 		newOutput = this->curAction.get()->Serialize(newOutput);
 		if (this->trigger.get() != NULL) {
 			newOutput = this->trigger.get()->Serialize(newOutput);
 		}
 
-		newOutput += "</actionQueue>";
+		newOutput += L"</actionQueue>";
 		return newOutput;
     }
 }

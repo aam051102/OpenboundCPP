@@ -3,12 +3,13 @@
 #include "AssetManager.h"
 
 namespace SBURB {
-    AssetAudio::AssetAudio(std::string name, std::vector<std::string> sources) {
-        this->type = "audio";
+    AssetAudio::AssetAudio(std::wstring name, std::vector<std::wstring> sources) {
+        this->type = L"audio";
         this->name = name;
         this->sources = sources;
         this->asset = std::make_shared<sf::SoundBuffer>();
-        this->asset->loadFromFile(Sburb::ResolvePath(sources[0]));
+        const auto resolvedPath = Sburb::ResolvePath(sources[0]);
+        this->asset->loadFromFile(std::string(resolvedPath.begin(), resolvedPath.end()));
 
         AssetManager::AddFilePath(name, Sburb::ResolvePath(sources[0]));
     }

@@ -4,15 +4,16 @@
 
 namespace SBURB
 {
-    Music::Music(std::string name, double startLoop)
+    Music::Music(std::wstring name, double startLoop)
     {
-        this->type = "music";
+        this->type = L"music";
         this->path = path;
         this->startLoop = startLoop;
         this->name = name;
 
         this->asset = std::make_shared<sf::Music>();
-        this->asset->openFromFile(AssetManager::GetFilePathByName(name));
+        const auto resolvedPath = AssetManager::GetFilePathByName(name);
+        this->asset->openFromFile(std::string(resolvedPath.begin(), resolvedPath.end()));
 
         this->SetLoopPoints(startLoop);
     }

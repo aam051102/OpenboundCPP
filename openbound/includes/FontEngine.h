@@ -8,10 +8,10 @@ namespace SBURB {
     struct FormatRange {
         int minIndex;
         int maxIndex;
-        std::string type;
+        std::wstring type;
         sf::Color extra;
 
-        FormatRange(int minIndex, int maxIndex, std::string type, sf::Color extra = sf::Color::Black) {
+        FormatRange(int minIndex, int maxIndex, std::wstring type, sf::Color extra = sf::Color::Black) {
             this->minIndex = minIndex;
             this->maxIndex = maxIndex;
             this->type = type;
@@ -21,7 +21,7 @@ namespace SBURB {
 
     class FontEngine : public sf::Drawable {
     public:
-        FontEngine(std::string text = "");
+        FontEngine(std::wstring text = L"");
         ~FontEngine();
 
         void ParseEverything();
@@ -31,9 +31,9 @@ namespace SBURB {
         void ParsePrefixes();
         void ParseUnderlines();
         void ParseColors();
-        void ParsePrefix(std::string prefix);
+        void ParsePrefix(std::wstring prefix);
 
-        sf::Color PrefixColouration(std::string prefix);
+        sf::Color PrefixColouration(std::wstring prefix);
 
         void AddToFormatQueue(FormatRange format);
         void RealignFormatQueue(int startPos, int shiftSize);
@@ -45,8 +45,8 @@ namespace SBURB {
 
         void SetColor(sf::Color color) { this->color = color; };
 
-        void SetText(std::string text);
-        void SetAlign(std::string align) { this->align = align; };
+        void SetText(std::wstring text);
+        void SetAlign(std::wstring align) { this->align = align; };
 
         bool NextBatch();
         bool OnLastBatch();
@@ -71,21 +71,21 @@ namespace SBURB {
         int GetLineHeight() const { return this->lineHeight; };
         int GetCharWidth() const { return this->charWidth; };
 
-        std::string GetFontName() const { return this->fontName; };
+        std::wstring GetFontName() const { return this->fontName; };
         int GetFontSize() const { return this->fontSize; };
 
-        const std::string GetLine(int index) const { return this->lines[index]; };
+        const std::wstring GetLine(int index) const { return this->lines[index]; };
 
     private:
-        std::map<std::string, int32_t> prefixColours;
+        std::map<std::wstring, int32_t> prefixColours;
 
         std::map<char, std::map<int, bool>> escaped;
-        std::string fontName;
+        std::wstring fontName;
         int fontSize;
         sf::Color color;
         int start;
         int end;
-        std::string text;
+        std::wstring text;
         bool formatted;
         int width;
         int height;
@@ -93,8 +93,8 @@ namespace SBURB {
         int y;
         int lineHeight;
         int charWidth;
-        std::string align;
-        std::vector<std::string> lines;
+        std::wstring align;
+        std::vector<std::wstring> lines;
         std::vector<FormatRange> formatQueue;
 
     private:

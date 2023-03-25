@@ -22,7 +22,7 @@ namespace SBURB
         };
 
         void OpenLogFile();
-        void _unique_Log(LogLevel level, std::string message, const char *calling, const char *file, int line);
+        void _unique_Log(LogLevel level, std::string message, const char* calling, const char* file, int line);
         static Logger *GetGlobalLogger();
 
     private:

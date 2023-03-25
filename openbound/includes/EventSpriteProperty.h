@@ -11,7 +11,7 @@ namespace SBURB
     class EventSpriteProperty: public Event
     {
     public:
-        EventSpriteProperty(std::string spriteName, std::string query);
+        EventSpriteProperty(std::wstring spriteName, std::wstring query);
         ~EventSpriteProperty();
 
         virtual void Reset() override;
@@ -21,12 +21,12 @@ namespace SBURB
 
     protected:
         std::shared_ptr<Sprite> entity;
-        std::string spriteName;
-        std::string query;
+        std::wstring spriteName;
+        std::wstring query;
 
-        std::string token;
-        std::string prop;
-        std::string target;
+        std::wstring token;
+        std::wstring prop;
+        std::wstring target;
 
     };
 }

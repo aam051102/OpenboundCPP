@@ -3,8 +3,8 @@
 #include "AssetManager.h"
 
 namespace SBURB {
-    FontEngine::FontEngine(std::string text) {
-		this->fontName = "SburbFont";
+    FontEngine::FontEngine(std::wstring text) {
+		this->fontName = L"SburbFont";
 		this->fontSize = 14;
 		this->color = sf::Color::Black;
 		this->text = text;
@@ -17,7 +17,7 @@ namespace SBURB {
 		this->lines = {};
 		this->lineHeight = 17;
 		this->charWidth = 8;
-		this->align = "left";
+		this->align = L"left";
 		this->escaped = {};
 
 		this->formatted = true;
@@ -25,32 +25,32 @@ namespace SBURB {
 		this->formatQueue = {};
 
 		this->prefixColours = {
-			{ "aa", 0xa10000ff }, { "aradia", 0xa10000ff },
-			{ "ac", 0x416600ff }, { "nepeta", 0x416600ff },
-			{ "ag", 0x005682ff }, { "vriska", 0x005682ff },
-			{ "at", 0xa15000ff }, { "tavros", 0xa15000ff },
-			{ "ca", 0x6a006aff }, { "eridan", 0x6a006aff },
-			{ "cc", 0x77003cff }, { "feferi", 0x77003cff },
-			{ "cg", 0x626262ff }, { "karkat", 0x626262ff },
-			{ "ct", 0x000056ff }, { "equius", 0x000056ff },
-			{ "ga", 0x008141ff }, { "kanaya", 0x008141ff },
-			{ "gc", 0x008282ff }, { "terezi", 0x008282ff },
-			{ "ta", 0xa1a100ff }, { "sollux", 0xa1a100ff },
-			{ "tc", 0x2b0057ff }, { "gamzee", 0x2b0057ff },
-			{ "dave", 0xe00707ff },
-			{ "meenah", 0x77003cff },
-			{ "rose", 0xb536daff },
-			{ "aranea", 0x005682ff },
-			{ "kankri", 0xff0000ff },
-			{ "porrim", 0x008141ff },
-			{ "latula", 0x008282ff },
-			{ "cronus", 0x6a006aff },
-			{ "mituna", 0xa1a100ff },
-			{ "kurloz", 0x6c00daff },
-			{ "meulin", 0x416600ff },
-			{ "rufioh", 0xa15000ff },
-			{ "horuss", 0x000056ff },
-			{ "damara", 0xa10000ff }
+			{ L"aa", 0xa10000ff }, { L"aradia", 0xa10000ff },
+			{ L"ac", 0x416600ff }, { L"nepeta", 0x416600ff },
+			{ L"ag", 0x005682ff }, { L"vriska", 0x005682ff },
+			{ L"at", 0xa15000ff }, { L"tavros", 0xa15000ff },
+			{ L"ca", 0x6a006aff }, { L"eridan", 0x6a006aff },
+			{ L"cc", 0x77003cff }, { L"feferi", 0x77003cff },
+			{ L"cg", 0x626262ff }, { L"karkat", 0x626262ff },
+			{ L"ct", 0x000056ff }, { L"equius", 0x000056ff },
+			{ L"ga", 0x008141ff }, { L"kanaya", 0x008141ff },
+			{ L"gc", 0x008282ff }, { L"terezi", 0x008282ff },
+			{ L"ta", 0xa1a100ff }, { L"sollux", 0xa1a100ff },
+			{ L"tc", 0x2b0057ff }, { L"gamzee", 0x2b0057ff },
+			{ L"dave", 0xe00707ff },
+			{ L"meenah", 0x77003cff },
+			{ L"rose", 0xb536daff },
+			{ L"aranea", 0x005682ff },
+			{ L"kankri", 0xff0000ff },
+			{ L"porrim", 0x008141ff },
+			{ L"latula", 0x008282ff },
+			{ L"cronus", 0x6a006aff },
+			{ L"mituna", 0xa1a100ff },
+			{ L"kurloz", 0x6c00daff },
+			{ L"meulin", 0x416600ff },
+			{ L"rufioh", 0xa15000ff },
+			{ L"horuss", 0x000056ff },
+			{ L"damara", 0xa10000ff }
         };
     }
 
@@ -58,7 +58,7 @@ namespace SBURB {
 
 	}
 
-    void FontEngine::SetText(std::string text) {
+    void FontEngine::SetText(std::wstring text) {
         this->text = text;
         this->ParseEverything();
     }
@@ -98,14 +98,14 @@ namespace SBURB {
 			if (this->text[i] == ' ') {
 				lastSpace = i;
 			}
-			else if (this->text[i] == '\n') {
+			/*else if (this->text[i] == L'\n') {
 				// NOTE: This might not actually be necessary, but I'm not certain enough to remove it.
 				this->lines.push_back(this->text.substr(lineStart, i - lineStart));
 				lineStart = i + 1;
 				lastSpace = lineStart;
 				continue;
-			}
-			else if (i < l - 1; this->text[i] == '\\' && this->text[i + 1] == 'n') {
+			}*/
+			else if (i < l - 1; this->text[i] == L'\\' && this->text[i + 1] == L'n') {
 				this->lines.push_back(this->text.substr(lineStart, i - lineStart));
 				lineStart = i + 2;
 				lastSpace = lineStart;
@@ -148,10 +148,10 @@ namespace SBURB {
 		int escapeLocation = 0;
 
 		do {
-			index = this->text.find("/", escapeLocation);
+			index = this->text.find(L"/", escapeLocation);
 
-			if (index < this->text.size() - 1 && index != std::string::npos) {
-				char character = this->text[index + 1];
+			if (index < this->text.size() - 1 && index != std::wstring::npos) {
+				wchar_t character = this->text[index + 1];
 
 				if (character == '/') {
 					escapeLocation = index + 1;
@@ -174,7 +174,7 @@ namespace SBURB {
 				}
 			}
 
-			if (index == std::string::npos) {
+			if (index == std::wstring::npos) {
 				break;
 			}
 
@@ -183,11 +183,11 @@ namespace SBURB {
 	}
 
 	void FontEngine::ParsePrefixes() {
-		std::string prefix = this->text.substr(0, this->text.find(" "));
-		std::string actor;
-		if (prefix != "!") {
-			if (prefix.find("_") != std::string::npos) {
-				actor = prefix.substr(0, this->text.find("_"));
+		std::wstring prefix = this->text.substr(0, this->text.find(L" "));
+		std::wstring actor;
+		if (prefix != L"!") {
+			if (prefix.find(L"_") != std::wstring::npos) {
+				actor = prefix.substr(0, this->text.find(L"_"));
 			}
 			else {
 				actor = prefix.substr(0, 2);
@@ -206,7 +206,7 @@ namespace SBURB {
 		while (true) {
 			while (true) {
 				count++;
-				index = this->text.find("_", escapePoint);
+				index = this->text.find(L"_", escapePoint);
 				if (this->escaped.find('_') != this->escaped.end() && this->escaped['_'][count]) {
 					escapePoint = index + 1;
 				}
@@ -215,13 +215,13 @@ namespace SBURB {
 				}
 			}
 			
-			if (index == std::string::npos) {
+			if (index == std::wstring::npos) {
 				break;
 			}
 
 			bool closing = false;
 			for (int i = this->formatQueue.size() - 1; i >= 0; i--) {
-				if (this->formatQueue[i].type == "underline" && this->formatQueue[i].maxIndex == 999999) {
+				if (this->formatQueue[i].type == L"underline" && this->formatQueue[i].maxIndex == 999999) {
 					this->formatQueue[i].maxIndex = index;
 					closing = true;
 					break;
@@ -229,7 +229,7 @@ namespace SBURB {
 			}
 
 			if (!closing) {
-				this->AddToFormatQueue(FormatRange(index, 999999, "underline"));
+				this->AddToFormatQueue(FormatRange(index, 999999, L"underline"));
 			}
 			
 			this->text = this->text.substr(0, index) + this->text.substr(index + 1);
@@ -238,7 +238,7 @@ namespace SBURB {
 	}
 
 	// I (MadCreativity) wrote this function, so it may be faulty.
-	sf::Color HexToColor(std::string hex) {
+	sf::Color HexToColor(std::wstring hex) {
 		if (hex.size() != 6) throw std::invalid_argument("Hex is not 6 characters long.");
 		std::transform(hex.begin(), hex.end(), hex.begin(), [](unsigned char c) { return std::tolower(c); });
 
@@ -268,8 +268,8 @@ namespace SBURB {
 		while (true) {
 			while (true) {
 				count++;
-				index = this->text.find("#", escapePoint);
-				if (this->escaped.find('#') != this->escaped.end() && this->escaped['#'][count]) {
+				index = this->text.find(L"#", escapePoint);
+				if (this->escaped.find(L'#') != this->escaped.end() && this->escaped[L'#'][count]) {
 					escapePoint = index + 1;
 				}
 				else {
@@ -277,13 +277,13 @@ namespace SBURB {
 				}
 			}
 
-			if (index == std::string::npos) {
+			if (index == std::wstring::npos) {
 				break;
 			}
 
-			if (this->text.find("##", escapePoint) == index) {
+			if (this->text.find(L"##", escapePoint) == index) {
 				for (int i = this->formatQueue.size()  - 1; i >= 0; i--) {
-					if (this->formatQueue[i].type == "colour" && this->formatQueue[i].maxIndex == 999999) {
+					if (this->formatQueue[i].type == L"colour" && this->formatQueue[i].maxIndex == 999999) {
 						this->formatQueue[i].maxIndex = index;
 						break;
 					}
@@ -294,7 +294,7 @@ namespace SBURB {
 				this->RealignFormatQueue(index, 2);
 			}
 			else {
-				this->AddToFormatQueue(FormatRange(index, 999999, "colour", HexToColor(this->text.substr(index + 1, index + 7 - (index + 1)))));
+				this->AddToFormatQueue(FormatRange(index, 999999, L"colour", HexToColor(this->text.substr(index + 1, index + 7 - (index + 1)))));
 				this->text = this->text.substr(0, index) + this->text.substr(index + 7, this->text.size() - (index + 7));
 				this->RealignFormatQueue(index, 7);
 			}
@@ -327,11 +327,11 @@ namespace SBURB {
 		}
 	}
 
-	void FontEngine::ParsePrefix(std::string prefix) {
-		this->formatQueue.push_back(FormatRange(0, this->text.size(), "colour", this->PrefixColouration(prefix)));
+	void FontEngine::ParsePrefix(std::wstring prefix) {
+		this->formatQueue.push_back(FormatRange(0, this->text.size(), L"colour", this->PrefixColouration(prefix)));
 	}
 
-	sf::Color FontEngine::PrefixColouration(std::string prefix) {
+	sf::Color FontEngine::PrefixColouration(std::wstring prefix) {
 		std::transform(prefix.begin(), prefix.end(), prefix.begin(), [](unsigned char c) { return std::tolower(c); });
 
 		if (this->prefixColours[prefix]) {
@@ -379,7 +379,7 @@ namespace SBURB {
 		int currentFormat = 0;
 		std::vector<FormatRange> currentFormats = {};
 		int nextStop;
-		std::string curLine;
+		std::wstring curLine;
 
 		i = 0;
 		lenCount = 0;
@@ -413,14 +413,14 @@ namespace SBURB {
 			}
 
 			for (int k = 0; k < currentFormats.size(); k++) {
-				if (currentFormats[k].type == "colour") {
+				if (currentFormats[k].type == L"colour") {
 					curColor = currentFormats[k].extra;
 
 				}
-				else if (currentFormats[k].type == "underline") {
+				else if (currentFormats[k].type == L"underline") {
 					underlining = true;
 				}
-				else if (currentFormats[k].type == "italic") {
+				else if (currentFormats[k].type == L"italic") {
 					textWriter.setStyle(sf::Text::Italic | textWriter.getStyle());
 				}
 			}
@@ -478,10 +478,10 @@ namespace SBURB {
 				textWriter.setPosition(startX, startY);
 				textWriter.setString(curLine.substr(strStart, strEnd - strStart));
 
-				if (this->align == "center") {
+				if (this->align == L"center") {
 					textWriter.setOrigin(sf::Vector2f(textWriter.getLocalBounds().width / 2, 0));
 				}
-				else if (this->align == "right") {
+				else if (this->align == L"right") {
 					textWriter.setOrigin(sf::Vector2f(textWriter.getLocalBounds().width, 0));
 				}
 				else {

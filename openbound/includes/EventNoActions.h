@@ -10,7 +10,7 @@ namespace SBURB
     class EventNoActions: public Event
     {
     public:
-        EventNoActions(std::string queue = "");
+        EventNoActions(std::wstring queue = L"");
         ~EventNoActions();
 
         virtual void Reset() override;
@@ -19,7 +19,7 @@ namespace SBURB
         bool canSerialize;
 
     protected:
-        std::string queue;
+        std::wstring queue;
 
     };
 }

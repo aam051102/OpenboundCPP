@@ -3,16 +3,16 @@
 
 // NOTE: This can obviously be optimized in the future.
 namespace SBURB {
-    EventGameState::EventGameState(std::string query) {
+    EventGameState::EventGameState(std::wstring query) {
         this->canSerialize = false;
 
-        this->token = "";
-        if (query.find(">") != std::string::npos) this->token = ">";
-        else if (query.find("GREATER") != std::string::npos) this->token = "GREATER";
-        else if (query.find("<") != std::string::npos) this->token = "<";
-        else if (query.find("LESS") != std::string::npos) this->token = "LESS";
-        else if (query.find("!=") != std::string::npos) this->token = "!=";
-        else if (query.find("=") != std::string::npos) this->token = "=";
+        this->token = L"";
+        if (query.find(L">") != std::wstring::npos) this->token = L">";
+        else if (query.find(L"GREATER") != std::wstring::npos) this->token = L"GREATER";
+        else if (query.find(L"<") != std::wstring::npos) this->token = L"<";
+        else if (query.find(L"LESS") != std::wstring::npos) this->token = L"LESS";
+        else if (query.find(L"!=") != std::wstring::npos) this->token = L"!=";
+        else if (query.find(L"=") != std::wstring::npos) this->token = L"=";
 
         auto queryParts = split(query, this->token);
 
@@ -28,20 +28,22 @@ namespace SBURB {
     }
 
     bool EventGameState::CheckCompletion() {
-        if (token == ">" || token == "GREATER") {
+        if (token == L">" || token == L"GREATER") {
             return std::stoi(Sburb::GetInstance()->GetGameState(this->prop)) > std::stoi(target);
         }
 
-        if (token == "<" || token == "LESS") {
+        if (token == L"<" || token == L"LESS") {
             return std::stoi(Sburb::GetInstance()->GetGameState(this->prop)) < std::stoi(target);
         }
 
-        if (token == "!=") {
+        if (token == L"!=") {
             return Sburb::GetInstance()->GetGameState(this->prop) != target;
         }
 
-        if (token == "=") {
+        if (token == L"=") {
             return Sburb::GetInstance()->GetGameState(this->prop) == target;
         }
+
+        return false;
     }
 }

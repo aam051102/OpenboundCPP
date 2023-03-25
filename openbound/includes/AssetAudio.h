@@ -10,14 +10,14 @@ namespace SBURB
     class AssetAudio : public Asset
     {
     public:
-        AssetAudio(std::string name, std::vector<std::string> sources);
+        AssetAudio(std::wstring name, std::vector<std::wstring> sources);
 
         std::shared_ptr<sf::SoundBuffer> GetAsset() { return this->asset; };
 
-        std::vector<std::string> GetSources() { return this->sources; };
+        std::vector<std::wstring> GetSources() { return this->sources; };
 
     private:
-        std::vector<std::string> sources;
+        std::vector<std::wstring> sources;
         std::shared_ptr<sf::SoundBuffer> asset;
 
     };

@@ -10,7 +10,7 @@ namespace SBURB
     class EventFactory
     {
     public:
-        static std::shared_ptr<Event> CreateEvent(std::string info);
+        static std::shared_ptr<Event> CreateEvent(std::wstring info);
 
     };
 }

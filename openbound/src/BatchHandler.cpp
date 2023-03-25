@@ -7,16 +7,16 @@
 namespace SBURB
 {
     BatchHandler::BatchHandler()
-        : currentTexName(""), verticesInitialized(false),
+        : currentTexName(L""), verticesInitialized(false),
           offset(0), verticesSize(0), target(nullptr)
     {
     }
 
     void BatchHandler::DrawPrimitive(const sf::VertexArray &coords, sf::RenderTarget &target)
     {
-        if (currentTexName != "")
+        if (currentTexName != L"")
             DrawBatch();
-        currentTexName = "";
+        currentTexName = L"";
 
         if (this->target == nullptr)
             this->target = &target;
@@ -42,11 +42,11 @@ namespace SBURB
         offset += 4;
     }
 
-    void BatchHandler::DrawSpriteRect(std::string textureName, const sf::VertexArray &coords, sf::RenderTarget &target)
+    void BatchHandler::DrawSpriteRect(std::wstring textureName, const sf::VertexArray &coords, sf::RenderTarget &target)
     {
         if (textureName != currentTexName)
         {
-            if (currentTexName != "")
+            if (currentTexName != L"")
                 DrawBatch();
             this->currentTexName = textureName;
         }
@@ -83,7 +83,7 @@ namespace SBURB
     void BatchHandler::DrawBatch()
     {
         sf::RenderStates states = sf::RenderStates();
-        if (currentTexName != "")
+        if (currentTexName != L"")
             states.texture = AssetManager::GetGraphicByName(currentTexName)->GetAsset().get();
         if (offset != verticesSize)
             vertices.resize(offset);

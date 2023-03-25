@@ -10,14 +10,14 @@ namespace SBURB
     class AssetGraphic: public Asset
     {
     public:
-        AssetGraphic(std::string name, std::string path);
+        AssetGraphic(std::wstring name, std::wstring path);
 
         std::shared_ptr<sf::Texture> GetAsset() { return this->asset; };
 
-        std::string GetPath() { return this->path; };
+        std::wstring GetPath() { return this->path; };
 
     private:
-        std::string path;
+        std::wstring path;
         std::shared_ptr<sf::Texture> asset;
 
     };

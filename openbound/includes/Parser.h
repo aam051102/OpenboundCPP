@@ -19,10 +19,10 @@ namespace SBURB
     class Parser
     {
     public:
-        static std::shared_ptr<Sprite> ParseCharacterString(std::string spriteName);
-        static std::vector<std::shared_ptr<Action>> ParseActionString(std::string str);
-        static std::vector<std::shared_ptr<Trigger>> ParseTriggerString(std::string str);
-        static std::string ParseURLString(std::string str);
+        static std::shared_ptr<Sprite> ParseCharacterString(std::wstring spriteName);
+        static std::vector<std::shared_ptr<Action>> ParseActionString(std::wstring str);
+        static std::vector<std::shared_ptr<Trigger>> ParseTriggerString(std::wstring str);
+        static std::wstring ParseURLString(std::wstring str);
 
 
         static std::shared_ptr<Action> ParseAction(pugi::xml_node node);

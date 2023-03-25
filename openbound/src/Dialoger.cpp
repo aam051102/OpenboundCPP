@@ -6,14 +6,14 @@
 
 namespace SBURB
 {
-	Dialoger::Dialoger(Vector2 hiddenPos, Vector2 alertPos, Vector2 talkPosLeft, Vector2 talkPosRight, Vector2 spriteStartRight, Vector2 spriteEndRight, Vector2 spriteStartLeft, Vector2 spriteEndLeft, Vector4 alertTextDimensions, Vector4 leftTextDimensions, Vector4 rightTextDimensions, std::string type)
+	Dialoger::Dialoger(Vector2 hiddenPos, Vector2 alertPos, Vector2 talkPosLeft, Vector2 talkPosRight, Vector2 spriteStartRight, Vector2 spriteEndRight, Vector2 spriteStartLeft, Vector2 spriteEndLeft, Vector4 alertTextDimensions, Vector4 leftTextDimensions, Vector4 rightTextDimensions, std::wstring type)
 	{
-		this->name = "default";
-		this->currentDialog = "";
+		this->name = L"default";
+		this->currentDialog = L"";
 
 		this->talking = false;
 		this->queue = {};
-		this->extraArgs = "";
+		this->extraArgs = L"";
 		this->dialog = std::make_shared<FontEngine>();
 
 		this->hiddenPos = hiddenPos;
@@ -33,8 +33,8 @@ namespace SBURB
 
 		this->pos = Vector2(hiddenPos.x, hiddenPos.y);
 
-		this->actor = "";
-		this->dialogSide = "Left";
+		this->actor = L"";
+		this->dialogSide = L"Left";
 		this->graphic = nullptr;
 		this->box = nullptr;
 		this->defaultBox = nullptr;
@@ -53,7 +53,7 @@ namespace SBURB
 
 	void Dialoger::HandleType()
 	{
-		if (this->type == "social")
+		if (this->type == L"social")
 		{
 			this->hashes = std::make_shared<FontEngine>();
 			this->hashes->SetFormatted(false);
@@ -96,20 +96,20 @@ namespace SBURB
 		this->talking = false;
 	}
 
-	void Dialoger::StartDialog(std::string info)
+	void Dialoger::StartDialog(std::wstring info)
 	{
 		this->inPosition = false;
-		this->actor = "";
+		this->actor = L"";
 		this->currentDialog = info;
-		this->queue = split(info, "@");
+		this->queue = split(info, L"@");
 
 		for (int i = this->queue.size() - 2; i >= 0; i--)
 		{
-			std::string line = this->queue[i];
+			std::wstring line = this->queue[i];
 			int escapeCount = 0;
 			int index = line.size() - 1;
 
-			while (index >= 0 && line[index] == '/')
+			while (index >= 0 && line[index] == L'/')
 			{
 				escapeCount++;
 				index--;
@@ -117,26 +117,26 @@ namespace SBURB
 
 			if (escapeCount % 2 == 1)
 			{
-				this->queue[i] += "@" + this->queue[i + 1];
+				this->queue[i] += L"@" + this->queue[i + 1];
 				this->queue.erase(this->queue.begin() + i + 1);
 			}
 		}
 
-		if (this->type == "social")
+		if (this->type == L"social")
 		{
-			this->hashes->SetText("");
+			this->hashes->SetText(L"");
 		}
 
 		std::reverse(this->queue.begin(), this->queue.end());
 		this->queue.pop_back();
 		this->NextDialog();
 
-		if (this->type == "social")
+		if (this->type == L"social")
 		{
-			Sburb::GetInstance()->GetButton("spadeButton")->StartAnimation("state0");
-			Sburb::GetInstance()->GetButton("heartButton")->StartAnimation("state0");
+			Sburb::GetInstance()->GetButton(L"spadeButton")->StartAnimation(L"state0");
+			Sburb::GetInstance()->GetButton(L"heartButton")->StartAnimation(L"state0");
 
-			if (this->actor != "" && !this->choices[this->currentDialog])
+			if (this->actor != L"" && !this->choices[this->currentDialog])
 			{
 				this->choices[this->currentDialog] = 0;
 			}
@@ -144,11 +144,11 @@ namespace SBURB
 			{
 				if (this->choices[this->currentDialog] == 1)
 				{
-					Sburb::GetInstance()->GetButton("heartButton")->StartAnimation("state1");
+					Sburb::GetInstance()->GetButton(L"heartButton")->StartAnimation(L"state1");
 				}
 				else
 				{
-					Sburb::GetInstance()->GetButton("spadeButton")->StartAnimation("state1");
+					Sburb::GetInstance()->GetButton(L"spadeButton")->StartAnimation(L"state1");
 				}
 			}
 		}
@@ -159,30 +159,30 @@ namespace SBURB
 
 	void Dialoger::NextDialog()
 	{
-		std::string nextDialog = trim(this->queue.back());
+		std::wstring nextDialog = trim(this->queue.back());
 		this->queue.pop_back();
 
 		this->dialog->SetText(nextDialog);
 		this->dialog->ShowSubText(0, 0);
 
-		std::string prefix = nextDialog.substr(0, nextDialog.find(" "));
-		if (prefix.find("~") != std::string::npos)
+		std::wstring prefix = nextDialog.substr(0, nextDialog.find(L" "));
+		if (prefix.find(L"~") != std::wstring::npos)
 		{
-			size_t firstIndex = prefix.find("~");
+			size_t firstIndex = prefix.find(L"~");
 			size_t lastIndex = prefix.size();
-			size_t ampIndex = prefix.find("%");
-			if (ampIndex != std::string::npos && ampIndex > firstIndex)
+			size_t ampIndex = prefix.find(L"%");
+			if (ampIndex != std::wstring::npos && ampIndex > firstIndex)
 			{
 				lastIndex = ampIndex;
 			}
 
-			size_t colIndex = prefix.find(":");
-			if (colIndex != std::string::npos && colIndex < lastIndex)
+			size_t colIndex = prefix.find(L":");
+			if (colIndex != std::wstring::npos && colIndex < lastIndex)
 			{
 				lastIndex = colIndex;
 			}
 
-			std::string resource = prefix.substr(firstIndex + 1, lastIndex - (firstIndex + 1));
+			std::wstring resource = prefix.substr(firstIndex + 1, lastIndex - (firstIndex + 1));
 			prefix = prefix.substr(0, firstIndex) + prefix.substr(lastIndex);
 
 			this->graphic = Sburb::GetInstance()->GetSprite(resource);
@@ -191,8 +191,8 @@ namespace SBURB
 			{
 				std::shared_ptr<AssetGraphic> img = AssetManager::GetGraphicByName(resource);
 				this->graphic = std::make_shared<Sprite>();
-				this->graphic->AddAnimation(std::make_shared<Animation>("image", img->GetName(), 0, 0, (int)img->GetAsset()->getSize().x, (int)img->GetAsset()->getSize().y, 0, 1, "1"));
-				this->graphic->StartAnimation("image");
+				this->graphic->AddAnimation(std::make_shared<Animation>(L"image", img->GetName(), 0, 0, (int)img->GetAsset()->getSize().x, (int)img->GetAsset()->getSize().y, 0, 1, L"1"));
+				this->graphic->StartAnimation(L"image");
 			}
 		}
 		else
@@ -200,19 +200,19 @@ namespace SBURB
 			this->graphic = nullptr;
 		}
 
-		if (prefix.find("%") != std::string::npos)
+		if (prefix.find(L"%") != std::wstring::npos)
 		{
-			size_t firstIndex = prefix.find("%");
+			size_t firstIndex = prefix.find(L"%");
 			size_t lastIndex = prefix.size();
 
-			size_t colIndex = prefix.find(":");
+			size_t colIndex = prefix.find(L":");
 
 			if (colIndex >= 0 && colIndex < lastIndex)
 			{
 				lastIndex = colIndex;
 			}
 
-			std::string resource = prefix.substr(firstIndex + 1, lastIndex - (firstIndex + 1));
+			std::wstring resource = prefix.substr(firstIndex + 1, lastIndex - (firstIndex + 1));
 			prefix = prefix.substr(0, firstIndex) + prefix.substr(lastIndex);
 
 			this->SetBox(resource);
@@ -222,48 +222,48 @@ namespace SBURB
 			this->box = this->defaultBox;
 		}
 
-		if (prefix.find(":") != std::string::npos)
+		if (prefix.find(L":") != std::wstring::npos)
 		{
-			size_t firstIndex = prefix.find(":");
+			size_t firstIndex = prefix.find(L":");
 			size_t lastIndex = prefix.size();
 
-			std::string resource = prefix.substr(firstIndex + 1, lastIndex - (firstIndex + 1));
+			std::wstring resource = prefix.substr(firstIndex + 1, lastIndex - (firstIndex + 1));
 			prefix = prefix.substr(0, firstIndex) + prefix.substr(lastIndex);
 
 			this->extraArgs = resource;
-			if (this->type == "social")
+			if (this->type == L"social")
 			{
-				this->hashes->SetText(trim(replace(replace(this->extraArgs, "#", " #"), "-", " ")));
+				this->hashes->SetText(trim(replace(replace(this->extraArgs, L"#", L" #"), L"-", L" ")));
 			}
 		}
 		else
 		{
-			this->extraArgs = "";
-			if (this->type == "social")
+			this->extraArgs = L"";
+			if (this->type == L"social")
 			{
-				this->hashes->SetText("");
+				this->hashes->SetText(L"");
 			}
 		}
 
-		if (prefix == "!")
+		if (prefix == L"!")
 		{
-			this->actor = "";
-			this->dialogSide = "Left";
+			this->actor = L"";
+			this->dialogSide = L"Left";
 		}
 		else
 		{
-			std::string newActor;
-			if (prefix.find("_") != std::string::npos)
+			std::wstring newActor;
+			if (prefix.find(L"_") != std::wstring::npos)
 			{
-				newActor = prefix.substr(0, prefix.find("_"));
+				newActor = prefix.substr(0, prefix.find(L"_"));
 			}
 			else
 			{
 				newActor = prefix.substr(0, 2);
 			}
-			if (this->actor == "")
+			if (this->actor == L"")
 			{
-				this->dialogSide = "Left";
+				this->dialogSide = L"Left";
 				std::shared_ptr<Sprite> sprite = this->DialogOnSide(this->dialogSide);
 				Vector2 desiredPos = this->StartOnSide(this->OppositeSide(this->dialogSide));
 				sprite->SetX(desiredPos.x);
@@ -283,21 +283,21 @@ namespace SBURB
 		}
 	}
 
-	std::string Dialoger::OppositeSide(std::string side)
+	std::wstring Dialoger::OppositeSide(std::wstring side)
 	{
-		if (side == "Left")
+		if (side == L"Left")
 		{
-			return "Right";
+			return L"Right";
 		}
 		else
 		{
-			return "Left";
+			return L"Left";
 		}
 	}
 
-	std::shared_ptr<Sprite> Dialoger::DialogOnSide(std::string side)
+	std::shared_ptr<Sprite> Dialoger::DialogOnSide(std::wstring side)
 	{
-		if (side == "Left")
+		if (side == L"Left")
 		{
 			return this->dialogSpriteLeft;
 		}
@@ -307,9 +307,9 @@ namespace SBURB
 		}
 	}
 
-	Vector2 Dialoger::StartOnSide(std::string side)
+	Vector2 Dialoger::StartOnSide(std::wstring side)
 	{
-		if (side == "Left")
+		if (side == L"Left")
 		{
 			return this->spriteStartLeft;
 		}
@@ -319,9 +319,9 @@ namespace SBURB
 		}
 	}
 
-	Vector2 Dialoger::EndOnSide(std::string side)
+	Vector2 Dialoger::EndOnSide(std::wstring side)
 	{
-		if (side == "Left")
+		if (side == L"Left")
 		{
 			return this->spriteEndLeft;
 		}
@@ -387,13 +387,13 @@ namespace SBURB
 		std::shared_ptr<SpriteButton> bubbleButton;
 		std::shared_ptr<Sprite> hashTagBar;
 
-		if (this->type == "social")
+		if (this->type == L"social")
 		{
-			closeButton = Sburb::GetInstance()->GetButton("closeButton");
-			spadeButton = Sburb::GetInstance()->GetButton("spadeButton");
-			heartButton = Sburb::GetInstance()->GetButton("heartButton");
-			bubbleButton = Sburb::GetInstance()->GetButton("bubbleButton");
-			hashTagBar = Sburb::GetInstance()->GetSprite("hashTagBar");
+			closeButton = Sburb::GetInstance()->GetButton(L"closeButton");
+			spadeButton = Sburb::GetInstance()->GetButton(L"spadeButton");
+			heartButton = Sburb::GetInstance()->GetButton(L"heartButton");
+			bubbleButton = Sburb::GetInstance()->GetButton(L"bubbleButton");
+			hashTagBar = Sburb::GetInstance()->GetSprite(L"hashTagBar");
 		}
 
 		bool init = false;
@@ -402,14 +402,14 @@ namespace SBURB
 			Vector2 desiredPos;
 			bool ready = true;
 
-			if (this->actor == "")
+			if (this->actor == L"")
 			{
 				desiredPos = this->alertPos;
 				this->inPosition = true;
 			}
 			else
 			{
-				desiredPos = this->dialogSide == "Left" ? this->talkPosLeft : this->talkPosRight;
+				desiredPos = this->dialogSide == L"Left" ? this->talkPosLeft : this->talkPosRight;
 				ready = this->MoveToward(this->DialogOnSide(this->dialogSide), this->EndOnSide(this->dialogSide));
 				this->MoveToward(this->DialogOnSide(this->OppositeSide(this->dialogSide)), this->StartOnSide(this->OppositeSide(this->dialogSide)));
 			}
@@ -428,16 +428,16 @@ namespace SBURB
 				}
 				this->dialog->ShowSubText(this->dialog->GetStart(), this->dialog->GetEnd() + 2);
 
-				if (this->actor != "")
+				if (this->actor != L"")
 				{
 					this->DialogOnSide(this->dialogSide)->Update();
 				}
 
-				if (this->type == "social")
+				if (this->type == L"social")
 				{
 					if (this->queue.size() == 0)
 					{
-						if (this->actor != "")
+						if (this->actor != L"")
 						{
 							spadeButton->Update();
 							heartButton->Update();
@@ -469,7 +469,7 @@ namespace SBURB
 			this->graphic = nullptr;
 			this->MoveToward(this->pos, this->hiddenPos, 120);
 
-			if (this->actor != "")
+			if (this->actor != L"")
 			{
 				if (this->MoveToward(this->DialogOnSide(this->dialogSide), this->StartOnSide(this->OppositeSide(this->dialogSide))))
 				{
@@ -482,7 +482,7 @@ namespace SBURB
 					std::shared_ptr<Sprite> sprite2 = this->DialogOnSide(this->OppositeSide(this->dialogSide));
 					sprite2->SetX(pos2.x);
 					sprite2->SetY(pos2.y);
-					this->actor = "";
+					this->actor = L"";
 				}
 			}
 		}
@@ -490,12 +490,12 @@ namespace SBURB
 		this->box->SetX(this->pos.x);
 		this->box->SetY(this->pos.y);
 
-		if (this->type == "social")
+		if (this->type == L"social")
 		{
 			hashTagBar->SetX(this->pos.x);
 			hashTagBar->SetY(this->pos.y + this->box->GetHeight());
 
-			if (this->dialogSide == "Right")
+			if (this->dialogSide == L"Right")
 			{
 				spadeButton->SetX(hashTagBar->GetX() + 20);
 				heartButton->SetX(hashTagBar->GetX() + 60);
@@ -512,13 +512,13 @@ namespace SBURB
 			heartButton->SetY(hashTagBar->GetY() + 15);
 			bubbleButton->SetY(hashTagBar->GetY() + 15);
 
-			if (this->actor != "")
+			if (this->actor != L"")
 			{
-				if (spadeButton->GetAnimation()->GetName() == "state1")
+				if (spadeButton->GetAnimation()->GetName() == L"state1")
 				{
 					this->choices[this->currentDialog] = -1;
 				}
-				else if (heartButton->GetAnimation()->GetName() == "state1")
+				else if (heartButton->GetAnimation()->GetName() == L"state1")
 				{
 					this->choices[this->currentDialog] = 1;
 				}
@@ -530,7 +530,7 @@ namespace SBURB
 
 			if (init)
 			{
-				if (this->dialogSide == "Right")
+				if (this->dialogSide == L"Right")
 				{
 					this->hashes->SetDimensions(this->dialog->GetX(), hashTagBar->GetY() + 13, this->dialog->GetWidth(), hashTagBar->GetAnimation()->GetRowSize() - 10);
 				}
@@ -554,14 +554,14 @@ namespace SBURB
 
 	Vector4 Dialoger::DecideDialogDimensions()
 	{
-		if (this->actor == "")
+		if (this->actor == L"")
 		{
 			return Vector4(this->pos.x + this->alertTextDimensions.x,
 						   this->pos.y + this->alertTextDimensions.y,
 						   this->alertTextDimensions.z,
 						   this->alertTextDimensions.w);
 		}
-		else if (this->dialogSide == "Left")
+		else if (this->dialogSide == L"Left")
 		{
 			return Vector4(this->pos.x + this->leftTextDimensions.x,
 						   this->pos.y + this->leftTextDimensions.y,
@@ -577,16 +577,16 @@ namespace SBURB
 		}
 	}
 
-	void Dialoger::SetBox(std::string box)
+	void Dialoger::SetBox(std::wstring box)
 	{
 		std::shared_ptr<Sprite> dialogBox = Sburb::GetInstance()->GetSprite(box);
 		if (!dialogBox)
 		{
 			std::shared_ptr<AssetGraphic> boxAsset = AssetManager::GetGraphicByName(box);
 
-			dialogBox = std::make_shared<Sprite>(std::string("dialogBox"), Sburb::GetInstance()->GetViewSize().x + 1, 1000, boxAsset->GetAsset()->getSize().x, boxAsset->GetAsset()->getSize().y, 0, 0, 0);
-			dialogBox->AddAnimation(std::make_shared<Animation>(std::string("image"), boxAsset->GetName(), 0, 0, boxAsset->GetAsset()->getSize().x, boxAsset->GetAsset()->getSize().y, 0, 1, "1"));
-			dialogBox->StartAnimation("image");
+			dialogBox = std::make_shared<Sprite>(std::wstring(L"dialogBox"), Sburb::GetInstance()->GetViewSize().x + 1, 1000, boxAsset->GetAsset()->getSize().x, boxAsset->GetAsset()->getSize().y, 0, 0, 0);
+			dialogBox->AddAnimation(std::make_shared<Animation>(std::wstring(L"image"), boxAsset->GetName(), 0, 0, boxAsset->GetAsset()->getSize().x, boxAsset->GetAsset()->getSize().y, 0, 1, L"1"));
+			dialogBox->StartAnimation(L"image");
 		}
 
 		if (!this->box)
@@ -602,32 +602,32 @@ namespace SBURB
 		this->box = dialogBox;
 	}
 
-	std::string Dialoger::Serialize(std::string output)
+	std::wstring Dialoger::Serialize(std::wstring output)
 	{
-		output += "\n<dialoger " +
-				  Serializer::SerializeAttribute("hiddenPos", this->hiddenPos) +
-				  Serializer::SerializeAttribute("alertPos", this->alertPos) +
-				  Serializer::SerializeAttribute("talkPosLeft", this->talkPosLeft) +
-				  Serializer::SerializeAttribute("talkPosRight", this->talkPosRight) +
-				  Serializer::SerializeAttribute("spriteStartRight", this->spriteStartRight) +
-				  Serializer::SerializeAttribute("spriteEndRight", this->spriteEndRight) +
-				  Serializer::SerializeAttribute("spriteStartLeft", this->spriteStartLeft) +
-				  Serializer::SerializeAttribute("spriteEndLeft", this->spriteEndLeft) +
-				  Serializer::SerializeAttribute("alertTextDimensions", this->alertTextDimensions) +
-				  Serializer::SerializeAttribute("leftTextDimensions", this->leftTextDimensions) +
-				  Serializer::SerializeAttribute("rightTextDimensions", this->rightTextDimensions);
-		output += Serializer::SerializeAttribute("type", this->type);
-		output += "box='" + this->box->GetAnimation()->GetSheet()->GetName() + "' ";
-		output += ">";
-		output += "</dialoger>";
+		output += L"\n<dialoger " +
+				  Serializer::SerializeAttribute(L"hiddenPos", this->hiddenPos) +
+				  Serializer::SerializeAttribute(L"alertPos", this->alertPos) +
+				  Serializer::SerializeAttribute(L"talkPosLeft", this->talkPosLeft) +
+				  Serializer::SerializeAttribute(L"talkPosRight", this->talkPosRight) +
+				  Serializer::SerializeAttribute(L"spriteStartRight", this->spriteStartRight) +
+				  Serializer::SerializeAttribute(L"spriteEndRight", this->spriteEndRight) +
+				  Serializer::SerializeAttribute(L"spriteStartLeft", this->spriteStartLeft) +
+				  Serializer::SerializeAttribute(L"spriteEndLeft", this->spriteEndLeft) +
+				  Serializer::SerializeAttribute(L"alertTextDimensions", this->alertTextDimensions) +
+				  Serializer::SerializeAttribute(L"leftTextDimensions", this->leftTextDimensions) +
+				  Serializer::SerializeAttribute(L"rightTextDimensions", this->rightTextDimensions);
+		output += Serializer::SerializeAttribute(L"type", this->type);
+		output += L"box='" + this->box->GetAnimation()->GetSheet()->GetName() + L"' ";
+		output += L">";
+		output += L"</dialoger>";
 		return output;
 	}
 
 	void Dialoger::draw(sf::RenderTarget &target, sf::RenderStates states) const
 	{
-		if (this->type == "social")
+		if (this->type == L"social")
 		{
-			target.draw(*Sburb::GetInstance()->GetSprite("hashTagBar"), states);
+			target.draw(*Sburb::GetInstance()->GetSprite(L"hashTagBar"), states);
 		}
 
  		target.draw(*this->box, states);
@@ -645,28 +645,28 @@ namespace SBURB
 		{
 			target.draw(*this->dialog, states);
 
-			if (this->type == "social")
+			if (this->type == L"social")
 			{
 				if (this->queue.size() > 0)
 				{
-					target.draw(*Sburb::GetInstance()->GetButton("closeButton"), states);
+					target.draw(*Sburb::GetInstance()->GetButton(L"closeButton"), states);
 				}
 
 				if (this->dialog->GetStart() != this->dialog->GetEnd())
 				{
 					target.draw(*this->hashes, states);
 
-					if (this->queue.size() == 0 && this->actor != "")
+					if (this->queue.size() == 0 && this->actor != L"")
 					{
-						target.draw(*Sburb::GetInstance()->GetButton("spadeButton"), states);
-						target.draw(*Sburb::GetInstance()->GetButton("heartButton"), states);
-						target.draw(*Sburb::GetInstance()->GetButton("bubbleButton"), states);
+						target.draw(*Sburb::GetInstance()->GetButton(L"spadeButton"), states);
+						target.draw(*Sburb::GetInstance()->GetButton(L"heartButton"), states);
+						target.draw(*Sburb::GetInstance()->GetButton(L"bubbleButton"), states);
 					}
 				}
 			}
 		}
 
-		if (this->actor != "")
+		if (this->actor != L"")
 		{
 			target.draw(*this->dialogSpriteLeft, states);
 

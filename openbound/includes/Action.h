@@ -9,30 +9,30 @@ namespace SBURB
     class Action
     {
     public:
-        Action(std::string command, std::string info = "", std::string name = "", std::string sprite = "", std::shared_ptr<Action> followUp = nullptr, bool noWait = false, bool noDelay = false, uint16_t times = 1, bool soft = false, std::string silent = "");
+        Action(std::wstring command, std::wstring info = L"", std::wstring name = L"", std::wstring sprite = L"", std::shared_ptr<Action> followUp = nullptr, bool noWait = false, bool noDelay = false, uint16_t times = 1, bool soft = false, std::wstring silent = L"");
         ~Action();
 
         std::shared_ptr<Action> Clone();
-        std::string Serialize(std::string output);
+        std::wstring Serialize(std::wstring output);
 
         void SetFollowUp(std::shared_ptr<Action> followUp) { this->followUp = followUp; };
 
-        std::string GetSprite() { return this->sprite; };
-        std::string GetName() { return this->name; };
+        std::wstring GetSprite() { return this->sprite; };
+        std::wstring GetName() { return this->name; };
 
         void SetTimes(int times) { this->times = times; };
         int GetTimes() { return this->times; };
 
-        std::string GetCommand() { return this->command; };
+        std::wstring GetCommand() { return this->command; };
 
         void SetSoft(bool soft) { this->soft = soft; };
         bool GetSoft() { return this->soft; };
 
         bool GetNoDelay() { return this->noDelay; };
 
-        void SetSilent(std::string silent)
+        void SetSilent(std::wstring silent)
         {
-            if (silent == "" || silent == "false")
+            if (silent == L"" || silent == L"false")
             {
                 this->silent = false;
             }
@@ -44,25 +44,25 @@ namespace SBURB
             this->silentCause = silentCause;
         };
         bool GetSilent() { return this->silent; };
-        std::string GetSilentCause() { return this->silentCause; };
+        std::wstring GetSilentCause() { return this->silentCause; };
 
         std::shared_ptr<Action> GetFollowUp() { return this->followUp; };
 
-        std::string info;
+        std::wstring info;
 
         bool GetNoWait() { return this->noWait; };
 
     protected:
         std::shared_ptr<Action> followUp;
-        std::string sprite;
-        std::string name;
-        std::string command;
+        std::wstring sprite;
+        std::wstring name;
+        std::wstring command;
         bool noWait;
         bool noDelay;
         int times;
         bool soft;
         bool silent;
-        std::string silentCause;
+        std::wstring silentCause;
     };
 }
 #endif

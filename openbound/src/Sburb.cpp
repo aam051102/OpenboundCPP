@@ -33,10 +33,10 @@ namespace SBURB
 
     Sburb::Sburb()
     {
-        this->name = "Jterniabound";
-        this->version = "1.0";
-        this->description = "";
-        this->engineMode = "wander";
+        this->name = L"Jterniabound";
+        this->version = L"1.0";
+        this->description = L"";
+        this->engineMode = L"wander";
 
         this->isFullscreen = false;
         this->FPS = 30;
@@ -44,9 +44,9 @@ namespace SBURB
 
         this->curRoom = nullptr;
         this->globalVolume = 100;
-        this->levelPath = "";
-        this->resourcePath = "";
-        this->queue = std::make_shared<ActionQueue>(nullptr, "__SBURB__");
+        this->levelPath = L"";
+        this->resourcePath = L"";
+        this->queue = std::make_shared<ActionQueue>(nullptr, L"__SBURB__");
         this->playingMovie = false;
         this->loadingRoom = false;
         this->inputDisabled = false;
@@ -126,8 +126,8 @@ namespace SBURB
         this->dialoger = nullptr;
         this->curRoom = nullptr;
         this->character = nullptr;
-        this->resourcePath = "";
-        this->levelPath = "";
+        this->resourcePath = L"";
+        this->levelPath = L"";
         this->nextQueueId = 0;
 
         for (auto cursor : this->cursors) {
@@ -453,7 +453,7 @@ namespace SBURB
     {
         window->clear(sf::Color(0, 0, 0, 255));
 
-        auto preloaderBG = AssetManager::GetGraphicByName("preloaderBG");
+        auto preloaderBG = AssetManager::GetGraphicByName(L"preloaderBG");
 
         if (preloaderBG)
         {
@@ -464,9 +464,9 @@ namespace SBURB
         }
 
         // Check if Verdana is defined - use SburbFont otherwise
-        auto font = AssetManager::GetFontByName("Verdana");
+        auto font = AssetManager::GetFontByName(L"Verdana");
         if (!font)
-            font = AssetManager::GetFontByName("SburbFont");
+            font = AssetManager::GetFontByName(L"SburbFont");
 
         if (font)
         {
@@ -639,7 +639,7 @@ namespace SBURB
     bool Sburb::Start()
     {
         // Create & initialize main window
-        window.Init(name, {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar); // Standard
+        window.Init(std::string(name.begin(), name.end()), {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar); // Standard
 
         if (!window.GetWin())
         {
@@ -689,7 +689,7 @@ namespace SBURB
         if (initFilePath == "") initFilePath = "levels/init.xml";
 
         // Initialize room
-        std::thread t1(Serializer::LoadSerialFromXML, initFilePath, false);
+        std::thread t1(Serializer::LoadSerialFromXML, std::wstring(initFilePath.begin(), initFilePath.end()), false);
 
         // Start update loop
         while (window->isOpen())
@@ -721,18 +721,18 @@ namespace SBURB
 
     void Sburb::SaveStateToStorage(std::string state, bool automatic, bool local)
     {
-        std::string serialized = Serializer::Serialize();
+        std::wstring serialized = Serializer::Serialize();
         auto byteArray = Iuppiter::StringToByteArray(serialized);
         auto compressed = Iuppiter::Compress(byteArray);
-        std::string encoded = Iuppiter::Base64::Encode(compressed, true);
+        std::wstring encoded = Iuppiter::Base64::Encode(compressed, true);
 
-        std::string saveStateName = description + (automatic ? " (auto)" : "") + "_savedState_" + this->name + "_" + this->version;
+        std::string saveStateName = std::string(description.begin(), description.end()) + (automatic ? " (auto)" : "") + "_savedState_" + std::string(this->name.begin(), this->name.end()) + "_" + std::string(this->version.begin(), this->version.end());
 
         this->DeleteStateFromStorage(automatic);
 
         auto savePath = GetAppDataDirectory("saves");
         savePath /= saveStateName;
-        std::ofstream os(savePath.string());
+        std::wofstream os(savePath.string());
         os << encoded;
         os.close();
     }
@@ -751,12 +751,12 @@ namespace SBURB
             auto savedIndex = key.find("_savedState_");
             if (savedIndex != std::string::npos) // this key is a saved state
             {
-                if (automatic && key.find("(auto)") != std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex)
+                if (automatic && key.find("(auto)") != std::string::npos && key.find(std::string(this->name.begin(), this->name.end()) + "_" + std::string(this->version.begin(), this->version.end())) >= savedIndex)
                 {
                     saveStateName = file.path().string();
                     break;
                 }
-                else if (!automatic && key.find("(auto)") == std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex)
+                else if (!automatic && key.find("(auto)") == std::string::npos && key.find(std::string(this->name.begin(), this->name.end()) + "_" + std::string(this->version.begin(), this->version.end())) >= savedIndex)
                 {
                     saveStateName = file.path().string();
                     break;
@@ -764,14 +764,14 @@ namespace SBURB
             }
         }
 
-        std::ifstream fs(saveStateName);
-        std::string compressed;
+        std::wifstream fs(saveStateName);
+        std::wstring compressed;
         fs >> compressed;
         fs.close();
 
-        if (compressed == "") return;
+        if (compressed == L"") return;
         
-        auto decompressed = replace(Iuppiter::ByteArrayToString(Iuppiter::Decompress(Iuppiter::Base64::Decode(Iuppiter::StringToByteArray(compressed), true))), "\0", "");
+        auto decompressed = replace(Iuppiter::ByteArrayToString(Iuppiter::Decompress(Iuppiter::Base64::Decode(Iuppiter::StringToByteArray(compressed), true))), L"\0", L"");
         
         if (!Serializer::LoadSerialFromXMLMemory(decompressed)) {
             GlobalLogger->Log(Logger::Error, "Failed to load serialized XML " + saveStateName);
@@ -791,10 +791,10 @@ namespace SBURB
             auto savedIndex = key.find("_savedState_");
             if (savedIndex >= 0) // this key is a saved state
             {
-                if (automatic && key.find("(auto)") != std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex) {
+                if (automatic && key.find("(auto)") != std::string::npos && key.find(std::string(this->name.begin(), this->name.end()) + "_" + std::string(this->version.begin(), this->version.end())) >= savedIndex) {
                     return true;
                 }
-                else if (!automatic && key.find("(auto)") == std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex) {
+                else if (!automatic && key.find("(auto)") == std::string::npos && key.find(std::string(this->name.begin(), this->name.end()) + "_" + std::string(this->version.begin(), this->version.end())) >= savedIndex) {
                     return true;
                 }
             }
@@ -803,7 +803,7 @@ namespace SBURB
         return false;
     }
 
-    std::string Sburb::GetStateDescription(bool automatic, bool local)
+    std::wstring Sburb::GetStateDescription(bool automatic, bool local)
     {
         auto savePath = GetAppDataDirectory("saves");
 
@@ -815,16 +815,18 @@ namespace SBURB
             auto savedIndex = key.find("_savedState_");
             if (savedIndex != std::string::npos) // this key is a saved state
             {
-                if (automatic && key.find("(auto)") != std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex) {
-                    return key.substr(0, savedIndex);
+                if (automatic && key.find("(auto)") != std::string::npos && key.find(std::string(this->name.begin(), this->name.end()) + "_" + std::string(this->version.begin(), this->version.end())) >= savedIndex) {
+                    auto loc = key.substr(0, savedIndex);
+                    return std::wstring(loc.begin(), loc.end());
                 } 
-                else if (!automatic && key.find("(auto)") == std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex) {
-                    return key.substr(0, savedIndex);
+                else if (!automatic && key.find("(auto)") == std::string::npos && key.find(std::string(this->name.begin(), this->name.end()) + "_" + std::string(this->version.begin(), this->version.end())) >= savedIndex) {
+                    auto loc = key.substr(0, savedIndex);
+                    return std::wstring(loc.begin(), loc.end());
                 }
             }
         }
 
-        return "";
+        return L"";
     }
 
     void Sburb::DeleteStateFromStorage(bool automatic, bool local) {
@@ -841,10 +843,10 @@ namespace SBURB
             auto savedIndex = key.find("_savedState_");
             if (savedIndex != std::string::npos) // this key is a saved state
             {
-                if (automatic && key.find("(auto)") != std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex) {
+                if (automatic && key.find("(auto)") != std::string::npos && key.find(std::string(this->name.begin(), this->name.end()) + "_" + std::string(this->version.begin(), this->version.end())) >= savedIndex) {
                     std::remove(file.path().string().c_str());
                 }
-                else if (!automatic && key.find("(auto)") == std::string::npos && key.find(this->name + "_" + this->version) >= savedIndex) {
+                else if (!automatic && key.find("(auto)") == std::string::npos && key.find(std::string(this->name.begin(), this->name.end()) + "_" + std::string(this->version.begin(), this->version.end())) >= savedIndex) {
                     std::remove(file.path().string().c_str());
                 }
             }
@@ -864,7 +866,7 @@ namespace SBURB
             if (savedIndex != std::string::npos) // this key is a saved state
             {
                 // This is a key for our game, but not of the right version
-                if (key.find(this->name + "_") >= savedIndex && key.find("_" + this->version) == std::string::npos) {
+                if (key.find(std::string(this->name.begin(), this->name.end()) + "_") >= savedIndex && key.find("_" + std::string(this->version.begin(), this->version.end())) == std::wstring::npos) {
                     std::remove(file.path().string().c_str());
                 }
             }
@@ -890,12 +892,12 @@ namespace SBURB
         return !this->dialoger->GetTalking() && !this->chooser->GetChoosing() && !this->destRoom && !this->fading && !this->destFocus;
     }
 
-    std::string Sburb::ResolvePath(std::string path)
+    std::wstring Sburb::ResolvePath(std::wstring path)
     {
         // NOTE: Used to have ?version=[version] added
-        if (path.find(gameInstance->resourcePath) == std::string::npos)
+        if (path.find(gameInstance->resourcePath) == std::wstring::npos)
         {
-            return gameInstance->resourcePath + "/" + path;
+            return gameInstance->resourcePath + L"/" + path;
         }
 
         return path;
@@ -908,12 +910,12 @@ namespace SBURB
         this->fadeShape.setSize(sf::Vector2f(this->viewSize.x, this->viewSize.y));
     }
 
-    void Sburb::SetName(std::string name) {
+    void Sburb::SetName(std::wstring name) {
         this->name = name;
         this->window->setTitle(name);
     };
     
-    std::shared_ptr<ActionQueue> Sburb::GetActionQueueById(std::string id)
+    std::shared_ptr<ActionQueue> Sburb::GetActionQueueById(std::wstring id)
     {
         for (int i = 0; i < this->actionQueues.size(); i++)
         {
@@ -927,7 +929,7 @@ namespace SBURB
         return nullptr;
     }
 
-    void Sburb::RemoveActionQueueById(std::string id)
+    void Sburb::RemoveActionQueueById(std::wstring id)
     {
         for (int i = 0; i < this->actionQueues.size(); i++)
         {
@@ -940,7 +942,7 @@ namespace SBURB
         }
     }
 
-    void Sburb::RemoveActionQueuesByGroup(std::string group)
+    void Sburb::RemoveActionQueuesByGroup(std::wstring group)
     {
         for (int i = 0; i < this->actionQueues.size(); i++)
         {
@@ -953,7 +955,7 @@ namespace SBURB
         }
     }
 
-    void Sburb::ForEachActionQueueInGroup(std::string group, void (*func)(std::shared_ptr<ActionQueue>))
+    void Sburb::ForEachActionQueueInGroup(std::wstring group, void (*func)(std::shared_ptr<ActionQueue>))
     {
         for (int i = 0; i < this->actionQueues.size(); i++)
         {
@@ -977,15 +979,15 @@ namespace SBURB
 
             if ((!queue) || (queue == this->queue))
             {
-                if (action->GetSilentCause() == "true")
+                if (action->GetSilentCause() == L"true")
                 {
                     queue = std::make_shared<ActionQueue>(action);
                 }
                 else
                 {
-                    auto options = split(action->GetSilentCause(), ":");
-                    bool noWait = (options[0] == "full") ? true : false;
-                    std::string id = "";
+                    auto options = split(action->GetSilentCause(), L":");
+                    bool noWait = (options[0] == L"full") ? true : false;
+                    std::wstring id = L"";
 
                     if (noWait)
                     {
@@ -1090,7 +1092,7 @@ namespace SBURB
         this->curRoom->AddEffect(effect->Clone(x, y));
     }
 
-    void Sburb::PlaySound(std::string name)
+    void Sburb::PlaySound(std::wstring name)
     {
         if (!this->sounds[name])
         {
@@ -1105,7 +1107,7 @@ namespace SBURB
     void Sburb::PlayMovie()
     {
         // UNSUPPORTED
-        // this->queue->SetTrigger(std::make_shared<Trigger>("movie," + movie->GetName() + ",5"));
+        // this->queue->SetTrigger(std::make_shared<Trigger>(L"movie," + movie->GetName() + ",5"));
         this->playingMovie = true;
     }
 

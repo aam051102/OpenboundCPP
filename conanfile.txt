@@ -12,3 +12,4 @@ sfml:window=True
 sfml:audio=True
 sfml:graphics=True
 openal:shared=True
+pugixml:wchar_mode=True

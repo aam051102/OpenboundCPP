@@ -5,7 +5,7 @@
 #include <sstream>
 #include <filesystem>
 
-const char *LevelToString(SBURB::Logger::LogLevel level)
+const char* LevelToString(SBURB::Logger::LogLevel level)
 {
     switch (level)
     {

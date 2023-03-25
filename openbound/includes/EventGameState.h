@@ -9,7 +9,7 @@ namespace SBURB
     class EventGameState : public Event
     {
     public:
-        EventGameState(std::string query);
+        EventGameState(std::wstring query);
         ~EventGameState();
 
         virtual void Reset() override;
@@ -18,9 +18,9 @@ namespace SBURB
         bool canSerialize;
 
     protected:
-        std::string token;
-        std::string prop;
-        std::string target;
+        std::wstring token;
+        std::wstring prop;
+        std::wstring target;
 
     };
 }

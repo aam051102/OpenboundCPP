@@ -3,21 +3,21 @@
 #include "EventFactory.h"
 
 namespace SBURB {
-    Trigger::Trigger(std::vector<std::string> info, std::shared_ptr<Action> action, std::shared_ptr<Trigger> followUp, bool shouldRestart, bool shouldDetonate, std::string op) {
+    Trigger::Trigger(std::vector<std::wstring> info, std::shared_ptr<Action> action, std::shared_ptr<Trigger> followUp, bool shouldRestart, bool shouldDetonate, std::wstring op) {
         this->info = info;
         this->action = action;
         this->followUp = followUp;
         this->shouldRestart = shouldRestart;
         this->shouldDetonate = shouldDetonate;
 
-        if (op == "") op = "AND";
+        if (op == L"") op = L"AND";
         this->op = op;
         
         this->waitFor = NULL;
 
         this->events = {};
         for (int i = 0; i < info.size(); i++) {
-            std::string inf = trim(this->info[i]);
+            std::wstring inf = trim(this->info[i]);
 
             this->events.push_back(EventFactory::CreateEvent(inf));
         }
@@ -36,7 +36,7 @@ namespace SBURB {
     }
 
     bool Trigger::CheckCompletion() {
-        if (this->op == "AND") {
+        if (this->op == L"AND") {
             bool result = true;
             
             for (int i = 0; i < this->events.size(); i++) {
@@ -45,7 +45,7 @@ namespace SBURB {
             
             return result;
         }
-        else if (this->op == "NAND") {
+        else if (this->op == L"NAND") {
             bool result = true;
 
             for (int i = 0; i < this->events.size(); i++) {
@@ -54,7 +54,7 @@ namespace SBURB {
 
             return !result;
         }
-        else if (this->op == "NOT") {
+        else if (this->op == L"NOT") {
             bool result = true;
 
             for (int i = 0; i < this->events.size(); i++) {
@@ -63,7 +63,7 @@ namespace SBURB {
 
             return !result;
         }
-        else if (this->op == "OR") {
+        else if (this->op == L"OR") {
             bool result = false;
             
             for (int i = 0; i < this->events.size(); i++) {
@@ -72,7 +72,7 @@ namespace SBURB {
 
             return result;
         }
-        else if (this->op == "NOR") {
+        else if (this->op == L"NOR") {
             bool result = false;
 
             for (int i = 0; i < this->events.size(); i++) {
@@ -81,7 +81,7 @@ namespace SBURB {
 
             return !result;
         }
-        else if (this->op == "XOR") {
+        else if (this->op == L"XOR") {
             bool result = false;
 
             for (int i = 0; i < this->events.size(); i++) {
@@ -116,10 +116,10 @@ namespace SBURB {
                 std::shared_ptr<ActionQueue> result = Sburb::GetInstance()->PerformAction(this->action);
 
                 if (result) {
-                    this->waitFor = std::make_shared<Trigger>(std::vector<std::string>({ "noActions," + result->GetId() }));
+                    this->waitFor = std::make_shared<Trigger>(std::vector<std::wstring>({ L"noActions," + result->GetId() }));
                 }
                 else {
-                    this->waitFor = std::make_shared<Trigger>(std::vector<std::string>({ "noActions" }));
+                    this->waitFor = std::make_shared<Trigger>(std::vector<std::wstring>({ L"noActions" }));
                 }
             }
             
@@ -139,18 +139,18 @@ namespace SBURB {
         return false;
     }
 
-    std::string Trigger::Serialize(std::string output) {
-        std::string newOutput = output + "\n<trigger" +
-            (this->shouldRestart ? " restart='true'" : "") +
-            (this->shouldDetonate ? " detonate='true'" : "") +
-            (this->op != "" ? " operator='" + this->op + "'" : "") +
-            ">";
+    std::wstring Trigger::Serialize(std::wstring output) {
+        std::wstring newOutput = output + L"\n<trigger" +
+            (this->shouldRestart ? L" restart='true'" : L"") +
+            (this->shouldDetonate ? L" detonate='true'" : L"") +
+            (this->op != L"" ? L" operator='" + this->op + L"'" : L"") +
+            L">";
         for (int i = 0; i < this->info.size(); i++) {
             if (this->events[i]->canSerialize) {
-                newOutput = newOutput + "<args>" + escape(this->events[i]->Serialize().c_str()) + "</args>";
+                newOutput = newOutput + L"<args>" + escape(this->events[i]->Serialize().c_str()) + L"</args>";
             }
             else {
-                newOutput = newOutput + "<args>" + escape(this->info[i].c_str()) + "</args>";
+                newOutput = newOutput + L"<args>" + escape(this->info[i].c_str()) + L"</args>";
             }
         }
         if (this->action) {
@@ -160,7 +160,7 @@ namespace SBURB {
             newOutput = this->followUp->Serialize(newOutput);
         }
 
-        newOutput = newOutput + "\n</trigger>";
+        newOutput = newOutput + L"\n</trigger>";
 
         return newOutput;
     }
