@@ -19,7 +19,7 @@ namespace SBURB {
                 auto extension = path.substr(path.find_last_of(L".") + 1, path.size() - (path.find_last_of(L".") + 1));
                 auto format = "";
 
-                if (extension == L"ttf") {
+                if (extension == L"ttf" || extension == L"otf" || extension == L"ttc") {
                     format = "truetype";
                 }
                 else if (extension == L"woff") {
@@ -30,7 +30,7 @@ namespace SBURB {
                 }
 
                 if (format == "truetype" || format == "woff") {
-                    // NOTE: UNSURE IF WOFF IS SUPPORTED?????
+                    // NOTE: Unsure if WOFF is supported
                     const auto resolvedPath = Sburb::ResolvePath(path);
                     if (!this->asset->loadFromFile(std::string(resolvedPath.begin(), resolvedPath.end()))) {
                         GlobalLogger->Log(Logger::Error, "Font does not exist.");
@@ -39,7 +39,7 @@ namespace SBURB {
                 }
             }
             else if (type == L"local") {
-                // NOTE: Probably not possible anymore. Unknown.
+                // NOTE: Is possible. Consider implementation.
                 //ret.sources.push(L"local('" + path + "')");
             }
             else if (type == L"weight") {

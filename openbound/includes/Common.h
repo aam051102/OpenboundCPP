@@ -42,18 +42,6 @@ namespace SBURB
         Vector4(int x, int y, int z, int w) : x(x), y(y), z(z), w(w){};
     };
 
-    // Vector 4 Float
-    struct Vector4f
-    {
-        float x;
-        float y;
-        float z;
-        float w;
-
-        Vector4f() : x(0), y(0), z(0), w(0){};
-        Vector4f(float x, float y, float z, float w) : x(x), y(y), z(z), w(w){};
-    };
-
     // Transform
     struct Transform
     {
@@ -64,28 +52,97 @@ namespace SBURB
         Transform(sf::Vector2f position, int rotation) : position(position), rotation(rotation){};
     };
 
+
     /*
-    TODO
+    Source 1: https://stackoverflow.com/questions/154536/encode-decode-urls-in-c
     */
-    static inline const wchar_t* unescape(const std::wstring& in) {
-        return in.c_str();
-        /*std::basic_ostringstream<unsigned char, std::char_traits<unsigned char>, std::allocator<unsigned char>> unescaped;
-        unescaped.fill('0');
-        unescaped << std::hex;
-        
-        return unescaped.str().c_str();*/
+    static inline std::wstring unescape(const std::wstring& string) {
+        std::wstring ret;
+        wchar_t ch;
+        int ii;
+
+        for (size_t i = 0, len = string.size(); i < len; i++) {
+            if (string[i] != '%') {
+                if (string[i] == '+')
+                    ret += ' ';
+                else
+                    ret += string[i];
+            }
+            else {
+                if (swscanf(string.substr(i + 1, 2).c_str(), L"%x", &ii) == EOF) {
+                    throw std::runtime_error("Failed to scan escaped unicode data");
+                }
+
+                ch = static_cast<wchar_t>(ii);
+                ret += ch;
+                i = i + 2;
+            }
+        }
+
+        return ret;
+
+       // NOTE: This is my attempt at implementing the function according to the actual spec
+       /*std::wstring R = L"";
+
+        for (size_t k = 0, len = string.size(); k < len; k++) {
+            auto C = string[k];
+
+            if (C == L'%') {
+                std::wstring hexDigits = L"";
+                size_t optionalAdvance = 0;
+
+                if (k + 5 < len && string[k + 1] == L'u') {
+                    hexDigits = string.substr(k + 2, 4);
+                    optionalAdvance = 5;
+                }
+                else if(k + 3 <= len) {
+                    hexDigits = string.substr(k + 1, 2);
+                    optionalAdvance = 2;
+                }
+
+                auto parseResult = ;
+
+                C = static_cast<wchar_t>(parseResult);
+                k += optionalAdvance;
+            }
+
+            R += C;
+        }
+
+        return R;*/
     }
 
     /*
     Source 1: https://stackoverflow.com/questions/154536/encode-decode-urls-in-c
-    Source 2: https://stackoverflow.com/questions/23689733/convert-string-from-utf-8-to-iso-8859-1
+    Source 2: https://stackoverflow.com/questions/23689733/convert-string-from-utf-8-to-iso-8859-1 - no longer used
     */
-    static inline std::wstring escape(const wchar_t* in) {
-        // NOTE: function is complete, but incompatible with unescape, which is incomplete, and therefore commented out until unescape is complete.
-        return in;
+    static inline std::wstring escape(const std::wstring& string) {
+        std::wstring new_str = L"";
+        wchar_t c;
+        int ic;
+        const wchar_t* chars = string.c_str();
+        wchar_t bufHex[10];
+        size_t len = wcslen(chars);
 
-        
-        /*std::ostringstream escaped;
+        for (int i = 0; i < len; i++) {
+            c = chars[i];
+            ic = c;
+            // uncomment this if you want to encode spaces with +
+            /*if (c==' ') new_str += '+';
+            else */if (isalnum(c) || c == L'-' || c == L'_' || c == L'.' || c == L'~') new_str += c;
+            else {
+                swprintf(bufHex, L"%X", c);
+                if (ic < 16)
+                    new_str += L"%0";
+                else
+                    new_str += L"%";
+                new_str += bufHex;
+            }
+        }
+
+        return new_str;
+
+        /*std::wostringstream escaped;
         escaped.fill('0');
         escaped << std::hex;
         if (in == NULL)
@@ -94,7 +151,7 @@ namespace SBURB
         unsigned int codepoint = 0;
         while (*in != 0)
         {
-            unsigned wchar_t ch = static_cast<unsigned char>(*in);
+            wchar_t ch = static_cast<wchar_t>(*in);
             if (ch <= 0x7f) {
                 codepoint = ch;
             }

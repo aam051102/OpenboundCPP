@@ -2,6 +2,8 @@
 #include "Sburb.h"
 #include "AssetManager.h"
 
+// Refer to https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/fonts/win/font_fallback_win.cc for font fallback implementation.
+
 namespace SBURB {
     FontEngine::FontEngine(std::wstring text) {
 		this->fontName = L"SburbFont";
@@ -98,13 +100,6 @@ namespace SBURB {
 			if (this->text[i] == ' ') {
 				lastSpace = i;
 			}
-			/*else if (this->text[i] == L'\n') {
-				// NOTE: This might not actually be necessary, but I'm not certain enough to remove it.
-				this->lines.push_back(this->text.substr(lineStart, i - lineStart));
-				lineStart = i + 1;
-				lastSpace = lineStart;
-				continue;
-			}*/
 			else if (i < l - 1; this->text[i] == L'\\' && this->text[i + 1] == L'n') {
 				this->lines.push_back(this->text.substr(lineStart, i - lineStart));
 				lineStart = i + 2;
@@ -251,7 +246,7 @@ namespace SBURB {
 				val = hex[i] - 'a' + 10;
 			}
 			else {
-				val = stoi(std::to_string(hex[i]));
+				val = stoi(std::to_wstring(hex[i]));
 			}
 
 			c += pow(16, 7 - i) * val;

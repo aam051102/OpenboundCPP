@@ -15,10 +15,10 @@ namespace SBURB
             this->text = unescape(trim(text));
         };
 
-        const wchar_t* GetText() { return this->text; };
+        const std::wstring& GetText() { return this->text; };
 
     private:
-        const wchar_t* text;
+        std::wstring text;
 
     };
 }

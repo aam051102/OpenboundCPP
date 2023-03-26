@@ -491,6 +491,8 @@ namespace SBURB
         {
             return std::make_shared<Trigger>(std::vector({ L"noActions," + newQueue->GetId() }));
         }
+
+        return nullptr;
     }
 
     std::shared_ptr<Trigger> CommandHandler::WaitFor(std::wstring info)

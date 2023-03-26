@@ -344,17 +344,28 @@ namespace SBURB
             PurgeAssets();
             Sburb::GetInstance()->PurgeState();
 
-            // Load Verdana, if it exists.
+            // Load default fonts, if they exist
+            // TODO: Make this into a function and implement it into AssetFont
             std::wstring fontVerdanaPath = L"";
+            std::wstring fontMeiryoPath = L"";
 
 #if defined(_WIN32) || defined(WIN32)
             fontVerdanaPath = L"C:/Windows/Fonts/Verdana.ttf";
+            fontMeiryoPath = L"C:/Windows/Fonts/meiryob.ttc";
 #endif
 
             if (fontVerdanaPath != L"")
             {
+                // Verdana is used for general non-gameplay text like debug info and loading percentages.
                 auto fontVerdana = std::make_shared<AssetFont>(L"Verdana", std::vector({L"url:" + fontVerdanaPath}));
                 AssetManager::LoadAsset(fontVerdana);
+            }
+
+            if (fontMeiryoPath != L"")
+            {
+                // Meiryo is used for the Japanese characters in Damara's dialogue. On Windows, at least.
+                auto fontMeiryo = std::make_shared<AssetFont>(L"Meiryo", std::vector({ L"url:" + fontMeiryoPath }));
+                AssetManager::LoadAsset(fontMeiryo);
             }
         }
 
