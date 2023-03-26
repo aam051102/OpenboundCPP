@@ -146,6 +146,40 @@ namespace SBURB
         this->chooser->BeginChoosing(this->character->GetX(), this->character->GetY());
     }
 
+    sf::View GetLetterboxView(sf::View view, int windowWidth, int windowHeight) {
+        // Compares the aspect ratio of the window to the aspect ratio of the view,
+        // and sets the view's viewport accordingly in order to archieve a letterbox effect.
+        // A new view (with a new viewport set) is returned.
+
+        float windowRatio = windowWidth / (float)windowHeight;
+        float viewRatio = view.getSize().x / (float)view.getSize().y;
+        float sizeX = 1;
+        float sizeY = 1;
+        float posX = 0;
+        float posY = 0;
+
+        bool horizontalSpacing = true;
+        if (windowRatio < viewRatio)
+            horizontalSpacing = false;
+
+        // If horizontalSpacing is true, the black bars will appear on the left and right side.
+        // Otherwise, the black bars will appear on the top and bottom.
+
+        if (horizontalSpacing) {
+            sizeX = viewRatio / windowRatio;
+            posX = (1 - sizeX) / 2.f;
+        }
+
+        else {
+            sizeY = windowRatio / viewRatio;
+            posY = (1 - sizeY) / 2.f;
+        }
+
+        view.setViewport(sf::FloatRect(posX, posY, sizeX, sizeY));
+
+        return view;
+    }
+
     void Sburb::Update()
     {
         sf::Int32 FPStime = FPStimeObj.getElapsedTime().asMilliseconds();
@@ -162,14 +196,22 @@ namespace SBURB
                     window->close();
                 }
                 else if (event.key.code == sf::Keyboard::F) {
-                    /*if (this->isFullscreen) {
+                    if (this->isFullscreen) {
                         window->create(sf::VideoMode(this->viewSize.x, this->viewSize.y), this->name, sf::Style::Close | sf::Style::Titlebar);
+                        this->view = GetLetterboxView(view, this->viewSize.x, this->viewSize.y);
                     } else {
-                        window->create(sf::VideoMode(sf::VideoMode::getFullscreenModes()[0].width, sf::VideoMode::getFullscreenModes()[0].height), this->name, sf::Style::Fullscreen);
-                    }*/
+                        window->create(sf::VideoMode(this->viewSize.x, this->viewSize.y), this->name, sf::Style::Fullscreen);
+                        this->view = GetLetterboxView(view, sf::VideoMode::getFullscreenModes()[0].width, sf::VideoMode::getFullscreenModes()[0].height);
+                    }
+                    
+                    window->setVerticalSyncEnabled(true);
 
                     this->isFullscreen = !this->isFullscreen;
                 }
+            }
+            else if (event.type == sf::Event::Resized)
+            {
+                this->view = GetLetterboxView(view, event.size.width, event.size.height);
             }
             else if (event.type == sf::Event::Closed)
             {
@@ -190,6 +232,7 @@ namespace SBURB
             // Run main update method for all objects
             if (this->shouldUpdate)
             {
+                auto oldMouseCursor = this->mouseCursor;
                 this->mouseCursor = sf::Cursor::Arrow;
 
                 this->HandleAudio();
@@ -213,7 +256,9 @@ namespace SBURB
                 this->UpdateWait();
 
                 // Update mouse cursor
-                window.GetWin()->setMouseCursor(*cursors[this->mouseCursor]);
+                if (this->mouseCursor != oldMouseCursor) {
+                    window.GetWin()->setMouseCursor(*cursors[this->mouseCursor]);    
+                }
             }
 
             this->window->setView(this->view);
@@ -639,7 +684,7 @@ namespace SBURB
     bool Sburb::Start()
     {
         // Create & initialize main window
-        window.Init(std::string(name.begin(), name.end()), {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar); // Standard
+        window.Init(std::string(name.begin(), name.end()), {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar | sf::Style::Resize);
 
         if (!window.GetWin())
         {
@@ -905,6 +950,7 @@ namespace SBURB
 
     void Sburb::SetDimensions(float width, float height)
     {
+        return;
         this->window->setSize(sf::Vector2u(width, height));
         this->viewSize = Vector2(width, height);
         this->fadeShape.setSize(sf::Vector2f(this->viewSize.x, this->viewSize.y));
