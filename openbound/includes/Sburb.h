@@ -170,6 +170,9 @@ namespace SBURB
         std::wstring GetName() { return this->name; };
         void SetName(std::wstring name);
 
+        bool CheckFileIsLoaded(const std::wstring& path) { return this->loadedFiles.find(path) != this->loadedFiles.end() && this->loadedFiles[path]; }
+        void SetFileIsLoaded(const std::wstring& path) { this->loadedFiles[path] = true; }
+
         Window window;
 
         std::wstring levelPath;
@@ -177,6 +180,8 @@ namespace SBURB
         std::wstring resourcePath;
 
     private:
+        std::unordered_map<std::wstring, bool> loadedFiles;
+
         std::wstring name;
 
         sf::Cursor::Type mouseCursor;

@@ -125,7 +125,7 @@ namespace SBURB {
             
             if (this->followUp) {
                 if (this->followUp->TryToTrigger()) {
-                    this->followUp = NULL;
+                    this->followUp = nullptr;
                 }
             }
 

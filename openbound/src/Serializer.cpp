@@ -263,16 +263,15 @@ namespace SBURB
         Sburb::GetInstance()->HaltUpdateProcess();
         path = Sburb::GetInstance()->levelPath + path;
 
-        // TODO: Add loadedFiles back in - it'll DEFINITELY break without.
-        /*if (keepOld && Sburb::GetInstance()->loadedFiles[path])
+        if (keepOld && Sburb::GetInstance()->CheckFileIsLoaded(path))
         {
             Sburb::GetInstance()->StartUpdateProcess();
             return true;
         }
         else
         {
-            //Sburb::GetInstance()->loadedFiles[path] = true;
-        }*/
+            Sburb::GetInstance()->SetFileIsLoaded(path);
+        }
 
         pugi::xml_document doc;
         pugi::xml_parse_result initDocRes = doc.load_file(path.c_str());
@@ -289,18 +288,7 @@ namespace SBURB
 
     bool Serializer::LoadSerialFromXMLMemory(std::wstring memory, bool keepOld)
     {
-        Sburb::GetInstance()->HaltUpdateProcess();
-
-        // TODO: Add loadedFiles back in - it'll DEFINITELY break without.
-        /*if (keepOld && Sburb::GetInstance()->loadedFiles[path])
-        {
-            Sburb::GetInstance()->StartUpdateProcess();
-            return true;
-        }
-        else
-        {
-            //Sburb::GetInstance()->loadedFiles[path] = true;
-        }*/
+        //Sburb::GetInstance()->HaltUpdateProcess();
 
         pugi::xml_document doc;
         pugi::xml_parse_result initDocRes = doc.load_string(memory.c_str());
