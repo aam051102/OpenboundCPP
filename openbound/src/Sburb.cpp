@@ -255,7 +255,7 @@ namespace SBURB
                 this->ChainAction();
                 this->UpdateWait();
 
-                // Update mouse cursor
+                // Update mouse cursor - checks for changes to prevent messing up the cursor on resize and similar
                 if (this->mouseCursor != oldMouseCursor) {
                     window.GetWin()->setMouseCursor(*cursors[this->mouseCursor]);    
                 }

@@ -32,6 +32,7 @@ namespace SBURB
 
     void Music::Play(double pos)
     {
+        this->FixVolume();
         this->asset->setPlayingOffset(sf::milliseconds(pos));
         this->asset->play();
     }
