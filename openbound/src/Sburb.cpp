@@ -684,7 +684,7 @@ namespace SBURB
     bool Sburb::Start()
     {
         // Create & initialize main window
-        window.Init(std::string(name.begin(), name.end()), {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar | sf::Style::Resize);
+        window.Init(std::string(name.begin(), name.end()), {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar);
 
         if (!window.GetWin())
         {

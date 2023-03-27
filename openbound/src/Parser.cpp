@@ -267,14 +267,14 @@ namespace SBURB
 
 		int startPos = node.attribute(L"startPos").as_int();
 
-		int frameInterval = node.attribute(L"frameInterval").as_int(1);
+		std::wstring frameInterval = node.attribute(L"frameInterval").as_string(L"1");
 		int loopNum = node.attribute(L"loopNum").as_int(-1);
 		std::wstring followUp = node.attribute(L"followUp").as_string();
 
 		bool flipX = node.attribute(L"flipX").as_bool();
 		bool flipY = node.attribute(L"flipY").as_bool();
 
-		return std::make_shared<Animation>(name, tmpSheet, x, y, colSize, rowSize, startPos, length, std::to_wstring(frameInterval), loopNum, followUp, flipX, flipY, sliced, numCols, numRows);
+		return std::make_shared<Animation>(name, tmpSheet, x, y, colSize, rowSize, startPos, length, frameInterval, loopNum, followUp, flipX, flipY, sliced, numCols, numRows);
 	}
 
 	std::shared_ptr<Character> Parser::ParseCharacter(pugi::xml_node node)

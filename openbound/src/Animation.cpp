@@ -60,7 +60,7 @@ namespace SBURB
 		}
 		else
 		{
-			if (frameInterval.find(L":") == -1)
+			if (frameInterval.find(L":") == std::wstring::npos)
 			{
 				this->frameInterval = stoi(frameInterval);
 			}
