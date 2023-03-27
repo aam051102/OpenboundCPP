@@ -29,8 +29,8 @@ namespace SBURB
         virtual void Update();
         
         bool IsBehind(std::shared_ptr<Sprite> other);
-        bool Collides(std::shared_ptr<Sprite> other, int dx, int dy);
-        bool HitsPoint(int x, int y);
+        bool Collides(std::shared_ptr<Sprite> other, float dx, float dy);
+        bool HitsPoint(float x, float y);
         bool IsVisuallyUnder(int x, int y);
         
         void AddAction(std::shared_ptr<Action> action);

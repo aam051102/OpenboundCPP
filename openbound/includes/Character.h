@@ -33,7 +33,7 @@ namespace SBURB
         
         void Follow(std::shared_ptr<Character> sprite);
         void Unfollow();
-        std::vector<Vector2> GetActionQueries();
+        std::vector<sf::Vector2f> GetActionQueries();
 
         bool IsNPC();
 

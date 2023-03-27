@@ -57,15 +57,15 @@ namespace SBURB
         }
     }
 
-    bool Sprite::Collides(std::shared_ptr<Sprite> other, int dx = 0, int dy = 0) {
-        int x = this->x + dx;
-        int y = this->y + dy;
+    bool Sprite::Collides(std::shared_ptr<Sprite> other, float dx = 0, float dy = 0) {
+        float x = this->x + dx;
+        float y = this->y + dy;
 
         if (other->collidable) {
-            if ((x - this->width / 2 < other->x + other->width / 2) &&
-                (x + this->width / 2 > other->x - other->width / 2) &&
-                (y - this->height / 2 < other->y + other->height / 2) &&
-                (y + this->height / 2 > other->y - other->height / 2)) {
+            if ((x - this->width / 2.0f < other->x + other->width / 2.0f) &&
+                (x + this->width / 2.0f > other->x - other->width / 2.0f) &&
+                (y - this->height / 2.0f < other->y + other->height / 2.0f) &&
+                (y + this->height / 2.0f > other->y - other->height / 2.0f)) {
                 return true;
             }
         }
@@ -73,11 +73,12 @@ namespace SBURB
         return false;
     }
 
-    bool Sprite::HitsPoint(int x, int y) {
-        if ((this->x - this->width / 2 <= x) &&
-            (this->x + this->width / 2 >= x) &&
-            (this->y - this->height / 2 <= y) &&
-            (this->y + this->height / 2 >= y)) {
+    bool Sprite::HitsPoint(float x, float y) {
+        if ((this->x - this->width / 2.0f <= x) &&
+            (this->x + this->width / 2.0f >= x) &&
+            (this->y - this->height / 2.0f <= y) &&
+            (this->y + this->height / 2.0f >= y)) {
+
             return true;
         }
 

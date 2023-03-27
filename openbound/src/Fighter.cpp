@@ -128,24 +128,25 @@ namespace SBURB
 		return queries;
 	}
 
-	bool Fighter::Collides(std::shared_ptr<Sprite> sprite, int dx, int dy)
+	bool Fighter::Collides(std::shared_ptr<Sprite> sprite, float dx, float dy)
 	{
 		if (!this->width || !sprite->GetWidth())
 		{
 			return false;
 		}
-		int x1 = this->x + dx;
-		int y1 = this->y + dy;
-		int w1 = this->width / 2;
-		int h1 = this->height / 2;
 
-		int x2 = sprite->GetX();
-		int y2 = sprite->GetY();
-		int w2 = sprite->GetWidth() / 2;
-		int h2 = sprite->GetHeight() / 2;
+		float x1 = this->x + dx;
+		float y1 = this->y + dy;
+		float w1 = this->width / 2.0f;
+		float h1 = this->height / 2.0f;
 
-		int xDiff = x2 - x1;
-		int yDiff = y2 - y1;
+		float x2 = sprite->GetX();
+		float y2 = sprite->GetY();
+		float w2 = sprite->GetWidth() / 2.0f;
+		float h2 = sprite->GetHeight() / 2.0f;
+
+		float xDiff = x2 - x1;
+		float yDiff = y2 - y1;
 		return sqrt(xDiff * xDiff / w2 / w1 + yDiff * yDiff / h2 / h1) < 2;
 	}
 

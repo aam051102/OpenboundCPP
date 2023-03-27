@@ -31,7 +31,7 @@ namespace SBURB
         
         std::vector<int> GetActionQueries();
         
-        bool Collides(std::shared_ptr<Sprite> sprite, int dx = 0, int dy = 0);
+        bool Collides(std::shared_ptr<Sprite> sprite, float dx = 0, float dy = 0);
         
         std::map<std::wstring, sf::Vector2f> GetBoundaryQueries(int dx = 0, int dy = 0);
         

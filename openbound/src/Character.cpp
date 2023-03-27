@@ -474,34 +474,34 @@ namespace SBURB
 		}
 	}
 
-	std::vector<Vector2> Character::GetActionQueries()
+	std::vector<sf::Vector2f> Character::GetActionQueries()
 	{
-		std::vector<Vector2> queries = {};
-		queries.push_back(Vector2(this->x, this->y));
+		std::vector<sf::Vector2f> queries = {};
+		queries.push_back(sf::Vector2f(this->x, this->y));
 
 		if (this->facing == L"Front")
 		{
-			queries.push_back(Vector2(this->x, this->y + (this->height / 2 + 15)));
-			queries.push_back(Vector2(this->x - this->width / 2, this->y + (this->height / 2 + 15)));
-			queries.push_back(Vector2(this->x + this->width / 2, this->y + (this->height / 2 + 15)));
+			queries.push_back(sf::Vector2f(this->x, this->y + (this->height / 2.0f + 15)));
+			queries.push_back(sf::Vector2f(this->x - this->width / 2.0f, this->y + (this->height / 2.0f + 15)));
+			queries.push_back(sf::Vector2f(this->x + this->width / 2.0f, this->y + (this->height / 2.0f + 15)));
 		}
 		else if (this->facing == L"Back")
 		{
-			queries.push_back(Vector2(this->x, this->y - (this->height / 2 + 15)));
-			queries.push_back(Vector2(this->x - this->width / 2, this->y - (this->height / 2 + 15)));
-			queries.push_back(Vector2(this->x + this->width / 2, this->y - (this->height / 2 + 15)));
+			queries.push_back(sf::Vector2f(this->x, this->y - (this->height / 2.0f + 15)));
+			queries.push_back(sf::Vector2f(this->x - this->width / 2.0f, this->y - (this->height / 2.0f + 15)));
+			queries.push_back(sf::Vector2f(this->x + this->width / 2.0f, this->y - (this->height / 2.0f + 15)));
 		}
 		else if (this->facing == L"Right")
 		{
-			queries.push_back(Vector2(this->x + (this->width / 2 + 15), this->y));
-			queries.push_back(Vector2(this->x + (this->width / 2 + 15), this->y + this->height / 2));
-			queries.push_back(Vector2(this->x + (this->width / 2 + 15), this->y - this->height / 2));
+			queries.push_back(sf::Vector2f(this->x + (this->width / 2.0f + 15), this->y));
+			queries.push_back(sf::Vector2f(this->x + (this->width / 2.0f + 15), this->y + this->height / 2.0f));
+			queries.push_back(sf::Vector2f(this->x + (this->width / 2.0f + 15), this->y - this->height / 2.0f));
 		}
 		else if (this->facing == L"Left")
 		{
-			queries.push_back(Vector2(this->x - (this->width / 2 + 15), this->y));
-			queries.push_back(Vector2(this->x - (this->width / 2 + 15), this->y + this->height / 2));
-			queries.push_back(Vector2(this->x - (this->width / 2 + 15), this->y - this->height / 2));
+			queries.push_back(sf::Vector2f(this->x - (this->width / 2.0f + 15), this->y));
+			queries.push_back(sf::Vector2f(this->x - (this->width / 2.0f + 15), this->y + this->height / 2.0f));
+			queries.push_back(sf::Vector2f(this->x - (this->width / 2.0f + 15), this->y - this->height / 2.0f));
 		}
 
 		return queries;
