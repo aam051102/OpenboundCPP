@@ -155,7 +155,7 @@ namespace SBURB
             CommandHandler::Load(info);
         else if (command == L"saveOrLoad")
             CommandHandler::SaveOrLoad(info);
-        else if (command == L"setgameState")
+        else if (command == L"setGameState")
             CommandHandler::SetGameState(info);
         else if (command == L"goBack")
             CommandHandler::GoBack(info);
