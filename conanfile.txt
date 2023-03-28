@@ -5,7 +5,7 @@ pugixml/1.13@
 openal/1.22.2@
 
 [generators]
-premake
+cmake
 
 [options]
 sfml:window=True
