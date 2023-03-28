@@ -237,7 +237,7 @@ namespace SBURB {
 		if (hex.size() != 6) throw std::invalid_argument("Hex is not 6 characters long.");
 		std::transform(hex.begin(), hex.end(), hex.begin(), [](unsigned char c) { return std::tolower(c); });
 
-		int32_t c = 0x000000FF;
+		uint32_t c = 0x000000FF;
 
 		for (int i = 0; i < hex.size(); i++) {
 			int val = 0;
