@@ -282,7 +282,7 @@ namespace SBURB
             GlobalLogger->Log(Logger::Error, errMsg);
             return false;
         }
-
+        
         return Serializer::LoadSerial(&doc, keepOld);
     }
 

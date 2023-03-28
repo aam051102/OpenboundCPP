@@ -136,7 +136,7 @@ namespace SBURB
 
 		if (this->sliced)
 		{
-			// TODO: Keep inside of camera view for optimization??? May not be necessary.
+			// TODO: Resize rendered slices to be inside of camera view for optimization??? May not be necessary. Already culling the most serious cases
 			// TODO: Support flipped slices
 
 			for (int colNum = 0; colNum < this->numCols; colNum++)
@@ -155,6 +155,18 @@ namespace SBURB
 
 						sf::FloatRect transformRect(offsetX, offsetY, drawWidth, drawHeight);
 						transformRect = states.transform.transformRect(transformRect);
+
+						// Cull
+						sf::IntRect cam = sf::IntRect(Sburb::GetInstance()->GetViewPos().x, Sburb::GetInstance()->GetViewPos().y, Sburb::GetInstance()->GetViewSize().x, Sburb::GetInstance()->GetViewSize().y);
+
+						if (
+							(transformRect.left + transformRect.width < cam.left || transformRect.left > cam.left + cam.width) ||
+							(transformRect.top + transformRect.height < cam.top || transformRect.top > cam.top + cam.height)
+							) {
+							continue;
+						}
+
+						// Render
 						sf::VertexArray arr(sf::Quads, 4);
 						arr[0].position = sf::Vector2f(transformRect.left, transformRect.top);
 						arr[1].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top);
@@ -194,6 +206,17 @@ namespace SBURB
 				transformRect.left -= transformRect.width;
 			}
 
+			// Cull
+			sf::IntRect cam = sf::IntRect(Sburb::GetInstance()->GetViewPos().x, Sburb::GetInstance()->GetViewPos().y, Sburb::GetInstance()->GetViewSize().x, Sburb::GetInstance()->GetViewSize().y);
+
+			if (
+				(transformRect.left + transformRect.width < cam.left || transformRect.left > cam.left + cam.width) ||
+				(transformRect.top + transformRect.height < cam.top || transformRect.top > cam.top + cam.height)
+				) {
+				return;
+			}
+
+			// Render
 			sf::VertexArray arr(sf::Quads, 4);
 			
 			arr[0].position = sf::Vector2f(transformRect.left, transformRect.top);
