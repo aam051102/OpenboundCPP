@@ -510,10 +510,11 @@ namespace SBURB
 
         // Check if Verdana is defined - use SburbFont otherwise
         auto font = AssetManager::GetFontByName(L"Verdana");
-        if (!font)
+        if (font == nullptr) {
             font = AssetManager::GetFontByName(L"SburbFont");
+        }
 
-        if (font)
+        if (font != nullptr)
         {
             int percent = floor((AssetManager::GetTotalLoaded() / (float)AssetManager::GetTotalAssets()) * 100);
 
