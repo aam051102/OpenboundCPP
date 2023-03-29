@@ -37,6 +37,7 @@ build/
 # Ignore conan build files
 graph_info.json
 conanbuildinfo.premake.lua
+conanbuildinfo.cmake
 conanbuildinfo.txt
 conaninfo.txt
 conan.lock
