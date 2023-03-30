@@ -4,6 +4,10 @@ project(Openbound)  # Defines the project name.
 include(${CMAKE_CURRENT_SOURCE_DIR}/conanbuildinfo.cmake)  # Includes the contents of the conanbuildinfo.cmake file.
 conan_basic_setup()  # Prepares the CMakeList.txt for Conan.
 
+set(BUILD_SHARED_LIBS OFF)
+set(SFML_USE_STATIC_STD_LIBS ON)
+add_subdirectory("lib/SFML")
+
 # $source_files is a space-delimited list of filenames.
 add_executable(Openbound 
     "openbound/src/Action.cpp"
@@ -56,4 +60,6 @@ target_include_directories(Openbound PUBLIC "openbound/includes/" "lib/")
     
 add_custom_command(TARGET Openbound POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CONAN_OPENAL_ROOT}/bin/OpenAL32.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     
-target_link_libraries(Openbound ${CONAN_LIBS})  # Specifies what libraries to link, using Conan.
+target_include_directories(Openbound PUBLIC "lib/SFML/include")
+
+target_link_libraries(Openbound ${CONAN_LIBS} "sfml-graphics" "sfml-system" "sfml-window" "sfml-audio" "gdi32.lib" "opengl32.lib" "winmm.lib")  # Specifies what libraries to link, using Conan.

@@ -37,7 +37,7 @@ namespace SBURB {
         int time = 0;
 
     private:
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+        void draw(sf::RenderTarget& target, const sf::RenderStates& states) const override;
 
     };
 }

@@ -1,6 +1,5 @@
 [requires]
 zlib/1.2.13@
-sfml/2.5.1@
 pugixml/1.13@
 openal/1.22.2@
 
@@ -8,8 +7,5 @@ openal/1.22.2@
 cmake
 
 [options]
-sfml:window=True
-sfml:audio=True
-sfml:graphics=True
 openal:shared=True
 pugixml:wchar_mode=True

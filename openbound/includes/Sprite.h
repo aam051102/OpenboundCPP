@@ -49,10 +49,10 @@ namespace SBURB
 
         void SetDepthing(int depthing) { this->depthing = depthing; };
 
-        void SetX(int x) { this->x = x; this->setPosition(this->x, this->y); };
+        void SetX(int x) { this->x = x; this->setPosition(sf::Vector2f(this->x, this->y)); };
         int GetX() { return this->x; };
 
-        void SetY(int y) { this->y = y; this->setPosition(this->x, this->y); };
+        void SetY(int y) { this->y = y; this->setPosition(sf::Vector2f(this->x, this->y)); };
         int GetY() { return this->y; };
 
         std::wstring GetProp(std::wstring prop);
@@ -75,7 +75,7 @@ namespace SBURB
         std::map<std::wstring, sf::Vector2f> queries;
 
     private:
-        virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
+        virtual void draw(sf::RenderTarget &target, const sf::RenderStates& states) const override;
     };
 }
 

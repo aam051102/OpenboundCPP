@@ -21,7 +21,7 @@ namespace SBURB
         this->animation = nullptr;
         this->actions = {};
 
-        this->setPosition(this->x, this->y);
+        this->setPosition(sf::Vector2f(this->x, this->y));
     }
 
     void Sprite::AddAnimation(std::shared_ptr<Animation> anim) {
@@ -183,11 +183,12 @@ namespace SBURB
         return newSprite;
     }
 
-    void Sprite::draw(sf::RenderTarget& target, sf::RenderStates states) const
+    void Sprite::draw(sf::RenderTarget& target, const sf::RenderStates& states) const
     {
         if (this->animation) {
-            states.transform *= getTransform();
-            target.draw(*this->animation, states);
+            sf::RenderStates localStates = states;
+            localStates.transform *= getTransform();
+            target.draw(*this->animation, localStates);
         }
     }
 

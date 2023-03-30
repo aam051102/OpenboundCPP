@@ -14,17 +14,17 @@ namespace SBURB
         this->title = title;
         this->size = size;
         
-        this->win = new sf::RenderWindow(sf::VideoMode(size.x, size.y), title, flags);
+        this->win = new sf::RenderWindow(sf::VideoMode(sf::Vector2u(size.x, size.y)), title, flags);
         this->win->setVerticalSyncEnabled(true);
         
         if (flags == sf::Style::Fullscreen)
         {
-            win->setSize({sf::VideoMode::getFullscreenModes()[0].width, sf::VideoMode::getFullscreenModes()[0].height});
+            win->setSize({sf::VideoMode::getFullscreenModes()[0].size.x, sf::VideoMode::getFullscreenModes()[0].size.y});
         }
 
         if (const auto &size = icon.getSize(); size.x != 0)
         {
-            this->win->setIcon(size.x, size.y, icon.getPixelsPtr());
+            this->win->setIcon(sf::Vector2u(size.x, size.y), icon.getPixelsPtr());
         }
     }
 
@@ -40,7 +40,7 @@ namespace SBURB
             return;
         const auto &desktopMode = sf::VideoMode::getDesktopMode();
         const auto &size = this->win->getSize();
-        sf::Vector2u center{desktopMode.width / 2 - (size.x / 2), desktopMode.height / 2 - (size.y / 2)};
+        sf::Vector2u center{desktopMode.size.x / 2 - (size.x / 2), desktopMode.size.y / 2 - (size.y / 2)};
         this->win->setPosition((sf::Vector2i)center);
     }
 

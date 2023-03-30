@@ -33,13 +33,17 @@ namespace SBURB
         quad[1].position = coords[1].position;
         quad[2].position = coords[2].position;
         quad[3].position = coords[3].position;
+        quad[4].position = coords[4].position;
+        quad[5].position = coords[5].position;
 
         quad[0].color = coords[0].color;
         quad[1].color = coords[1].color;
         quad[2].color = coords[2].color;
         quad[3].color = coords[3].color;
+        quad[4].color = coords[4].color;
+        quad[5].color = coords[5].color;
 
-        offset += 4;
+        offset += 6;
     }
 
     void BatchHandler::DrawSpriteRect(std::wstring textureName, const sf::VertexArray &coords, sf::RenderTarget &target)
@@ -66,18 +70,24 @@ namespace SBURB
         quad[1].position = coords[1].position;
         quad[2].position = coords[2].position;
         quad[3].position = coords[3].position;
+        quad[4].position = coords[4].position;
+        quad[5].position = coords[5].position;
 
         quad[0].texCoords = coords[0].texCoords;
         quad[1].texCoords = coords[1].texCoords;
         quad[2].texCoords = coords[2].texCoords;
         quad[3].texCoords = coords[3].texCoords;
+        quad[4].texCoords = coords[4].texCoords;
+        quad[5].texCoords = coords[5].texCoords;
 
         quad[0].color = coords[0].color;
         quad[1].color = coords[1].color;
         quad[2].color = coords[2].color;
         quad[3].color = coords[3].color;
+        quad[4].color = coords[4].color;
+        quad[5].color = coords[5].color;
 
-        offset += 4;
+        offset += 6;
     }
 
     void BatchHandler::DrawBatch()
@@ -97,7 +107,7 @@ namespace SBURB
 
     void BatchHandler::InitializeVertices()
     {
-        vertices.setPrimitiveType(sf::Quads);
+        vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
         vertices.resize(BATCH_SIZE);
         verticesSize = BATCH_SIZE;
         offset = 0;

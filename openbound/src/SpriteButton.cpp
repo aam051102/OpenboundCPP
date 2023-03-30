@@ -24,7 +24,7 @@ namespace SBURB
 		}
 
 		this->StartAnimation(L"state0");
-		this->setPosition(x, y);
+		this->setPosition(sf::Vector2f(x, y));
 	}
 
 	SpriteButton::~SpriteButton()

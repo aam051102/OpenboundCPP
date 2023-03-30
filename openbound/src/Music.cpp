@@ -21,7 +21,12 @@ namespace SBURB
     void Music::SetLoopPoints(double start)
     {
         this->startLoop = start;
-        this->asset->setLoopPoints(sf::Music::TimeSpan(sf::milliseconds(start), this->asset->getDuration() - sf::milliseconds(start)));
+
+        sf::Music::TimeSpan span = sf::Music::TimeSpan();
+        span.offset = sf::milliseconds(start);
+        span.length = this->asset->getDuration() - sf::milliseconds(start);
+        this->asset->setLoopPoints(span);
+
         this->asset->setLoop(true);
     }
 

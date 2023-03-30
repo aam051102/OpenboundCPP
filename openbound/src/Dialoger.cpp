@@ -379,7 +379,7 @@ namespace SBURB
 
 	void Dialoger::Update()
 	{
-		this->setPosition(Sburb::GetInstance()->GetViewPos().x, Sburb::GetInstance()->GetViewPos().y);
+		this->setPosition(sf::Vector2f(Sburb::GetInstance()->GetViewPos().x, Sburb::GetInstance()->GetViewPos().y));
 
 		std::shared_ptr<SpriteButton> closeButton;
 		std::shared_ptr<SpriteButton> spadeButton;
@@ -623,7 +623,7 @@ namespace SBURB
 		return output;
 	}
 
-	void Dialoger::draw(sf::RenderTarget &target, sf::RenderStates states) const
+	void Dialoger::draw(sf::RenderTarget &target, const sf::RenderStates& states) const
 	{
 		if (this->type == L"social")
 		{

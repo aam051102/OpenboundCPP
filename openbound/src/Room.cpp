@@ -188,7 +188,7 @@ namespace SBURB
 		this->SortDepths(); // Moved here from draw due to const issue. If issues occur, refer to source code.
 	}
 
-	void Room::draw(sf::RenderTarget &target, sf::RenderStates states) const
+	void Room::draw(sf::RenderTarget &target, const sf::RenderStates& states) const
 	{
 		for (int i = 0; i < this->sprites.size(); i++)
 		{
@@ -292,7 +292,7 @@ namespace SBURB
 					int mapX = round(pt.x / (float)this->mapScale);
 					int mapY = round(pt.y / (float)this->mapScale);
 
-					(*results)[query.first] = this->mapData->getPixel(mapX, mapY) == sf::Color::White;
+					(*results)[query.first] = this->mapData->getPixel(sf::Vector2u(mapX, mapY)) == sf::Color::White;
 				}
 			}
 		}

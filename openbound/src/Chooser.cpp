@@ -96,7 +96,7 @@ namespace SBURB {
 		}
     }
 
-    void Chooser::draw(sf::RenderTarget& target, sf::RenderStates states) const
+    void Chooser::draw(sf::RenderTarget& target, const sf::RenderStates& states) const
     {
 		if (this->choosing && this->dialogs.size() > 0) {
 			int x = 0;

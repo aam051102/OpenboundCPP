@@ -366,7 +366,7 @@ namespace SBURB {
 		this->end = this->BatchLength() + 1;
 	}
 
-	void FontEngine::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+	void FontEngine::draw(sf::RenderTarget& target, const sf::RenderStates& states) const {
 		int i;
 		int lenCount;
 		int linePos = 0;
@@ -470,7 +470,7 @@ namespace SBURB {
 				int startY = this->y + i * this->lineHeight;
 
 				textWriter.setFillColor(curColor);
-				textWriter.setPosition(startX, startY);
+				textWriter.setPosition(sf::Vector2f(startX, startY));
 				textWriter.setString(curLine.substr(strStart, strEnd - strStart));
 
 				if (this->align == L"center") {
@@ -484,7 +484,7 @@ namespace SBURB {
 				}
 				
 				// NOTE: An unfortunate, hardcoded solution to match browser behavior. May be subject to betterment.
-				textWriter.setPosition(textWriter.getPosition().x, textWriter.getPosition().y - 2); 
+				textWriter.setPosition(sf::Vector2f(textWriter.getPosition().x, textWriter.getPosition().y - 2)); 
 
 				target.draw(textWriter, states);
 
@@ -492,7 +492,7 @@ namespace SBURB {
 
 				if (underlining && strStart < strEnd) {
 					sf::RectangleShape underlineShape(sf::Vector2f(numChars * this->charWidth, this->lineHeight - 3 + 0.6));
-					underlineShape.setPosition(startX, startY + this->lineHeight - 3);
+					underlineShape.setPosition(sf::Vector2f(startX, startY + this->lineHeight - 3));
 					underlineShape.setFillColor(curColor);
 					target.draw(underlineShape, states);
 				}

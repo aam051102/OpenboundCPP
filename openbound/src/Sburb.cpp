@@ -52,7 +52,7 @@ namespace SBURB
         this->inputDisabled = false;
 
         this->viewSize = Vector2(650, 450);
-        this->view = sf::View(sf::FloatRect((float)viewPos.x, (float)viewPos.y, (float)viewSize.x, (float)viewSize.y));
+        this->view = sf::View(sf::FloatRect(sf::Vector2f((float)viewPos.x, (float)viewPos.y), sf::Vector2f((float)viewSize.x, (float)viewSize.y)));
 
         this->destRoom = nullptr;
         this->destFocus = nullptr;
@@ -175,14 +175,14 @@ namespace SBURB
             posY = (1 - sizeY) / 2.f;
         }
 
-        view.setViewport(sf::FloatRect(posX, posY, sizeX, sizeY));
+        view.setViewport(sf::FloatRect(sf::Vector2f(posX, posY), sf::Vector2f(sizeX, sizeY)));
 
         return view;
     }
 
     void Sburb::Update()
     {
-        sf::Int32 FPStime = FPStimeObj.getElapsedTime().asMilliseconds();
+        std::int32_t FPStime = FPStimeObj.getElapsedTime().asMilliseconds();
 
         // Event polling
         sf::Event event;
@@ -197,11 +197,11 @@ namespace SBURB
                 }
                 else if (event.key.code == sf::Keyboard::F) {
                     if (this->isFullscreen) {
-                        window->create(sf::VideoMode(this->viewSize.x, this->viewSize.y), this->name, sf::Style::Close | sf::Style::Titlebar);
+                        window->create(sf::VideoMode(sf::Vector2u(this->viewSize.x, this->viewSize.y)), this->name, sf::Style::Close | sf::Style::Titlebar);
                         this->view = GetLetterboxView(view, this->viewSize.x, this->viewSize.y);
                     } else {
-                        window->create(sf::VideoMode(this->viewSize.x, this->viewSize.y), this->name, sf::Style::Fullscreen);
-                        this->view = GetLetterboxView(view, sf::VideoMode::getFullscreenModes()[0].width, sf::VideoMode::getFullscreenModes()[0].height);
+                        window->create(sf::VideoMode(sf::Vector2u(this->viewSize.x, this->viewSize.y)), this->name, sf::Style::Fullscreen);
+                        this->view = GetLetterboxView(view, sf::VideoMode::getFullscreenModes()[0].size.x, sf::VideoMode::getFullscreenModes()[0].size.y);
                     }
                     
                     window->setVerticalSyncEnabled(true);
@@ -503,7 +503,7 @@ namespace SBURB
         if (preloaderBG)
         {
             sf::Sprite preloaderBGSprite;
-            preloaderBGSprite.setPosition(0, 0);
+            preloaderBGSprite.setPosition(sf::Vector2f(0, 0));
             preloaderBGSprite.setTexture(*preloaderBG->GetAsset());
             window->draw(preloaderBGSprite);
         }
@@ -520,12 +520,12 @@ namespace SBURB
 
             sf::Text textWriter;
             textWriter.setString(std::to_string(percent) + "%");
-            textWriter.setColor(sf::Color::White);
+            textWriter.setFillColor(sf::Color::White);
             textWriter.setFont(*font->GetAsset());
             textWriter.setCharacterSize(10);
             textWriter.setStyle(font->GetStyle());
             textWriter.setOrigin(sf::Vector2f(textWriter.getLocalBounds().width / 2.0f, 0));
-            textWriter.setPosition(this->viewSize.x / 2, this->viewSize.y - 50);
+            textWriter.setPosition(sf::Vector2f(this->viewSize.x / 2, this->viewSize.y - 50));
 
             window->draw(textWriter);
         }
@@ -711,7 +711,7 @@ namespace SBURB
                         sf::Image icon;
                         if (icon.loadFromMemory(cBuffer, hMemorySize))
                         {
-                            window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+                            window->setIcon(sf::Vector2u(icon.getSize().x, icon.getSize().y), icon.getPixelsPtr());
                         }
                         else {
                             GlobalLogger->Log(Logger::Error, "Failed to load icon.");

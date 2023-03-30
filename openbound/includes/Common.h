@@ -11,6 +11,7 @@
 #include <pugixml.hpp>
 #include <iostream>
 #include <filesystem>
+#include <map>
 
 const std::map<char, bool> specialCharsIgnore = {
     {'a', true}

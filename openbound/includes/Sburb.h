@@ -236,7 +236,7 @@ namespace SBURB
         InputHandler inputHandler;
 
         bool isFullscreen;
-        sf::Int32 FPS;
+        std::int32_t FPS;
         sf::Clock FPStimeObj;
 
         int destX;

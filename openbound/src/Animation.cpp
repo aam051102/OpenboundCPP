@@ -130,9 +130,10 @@ namespace SBURB
 		}
 	}
 
-	void Animation::draw(sf::RenderTarget &target, sf::RenderStates states) const
+	void Animation::draw(sf::RenderTarget &target, const sf::RenderStates& states) const
 	{
-		states.transform *= getTransform();
+		sf::RenderStates localStates = states;
+		localStates.transform *= getTransform();
 
 		if (this->sliced)
 		{
@@ -153,11 +154,11 @@ namespace SBURB
 						int offsetX = colNum * this->colSize;
 						int offsetY = rowNum * this->rowSize;
 
-						sf::FloatRect transformRect(offsetX, offsetY, drawWidth, drawHeight);
-						transformRect = states.transform.transformRect(transformRect);
+						sf::FloatRect transformRect(sf::Vector2f(offsetX, offsetY), sf::Vector2f(drawWidth, drawHeight));
+						transformRect = localStates.transform.transformRect(transformRect);
 
 						// Cull
-						sf::IntRect cam = sf::IntRect(Sburb::GetInstance()->GetViewPos().x, Sburb::GetInstance()->GetViewPos().y, Sburb::GetInstance()->GetViewSize().x, Sburb::GetInstance()->GetViewSize().y);
+						sf::IntRect cam = sf::IntRect(sf::Vector2(Sburb::GetInstance()->GetViewPos().x, Sburb::GetInstance()->GetViewPos().y), sf::Vector2(Sburb::GetInstance()->GetViewSize().x, Sburb::GetInstance()->GetViewSize().y));
 
 						if (
 							(transformRect.left + transformRect.width < cam.left || transformRect.left > cam.left + cam.width) ||
@@ -167,21 +168,27 @@ namespace SBURB
 						}
 
 						// Render
-						sf::VertexArray arr(sf::Quads, 4);
+						sf::VertexArray arr(sf::PrimitiveType::Triangles, 6);
 						arr[0].position = sf::Vector2f(transformRect.left, transformRect.top);
 						arr[1].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top);
-						arr[2].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top + transformRect.height);
+						arr[2].position = sf::Vector2f(transformRect.left, transformRect.top + transformRect.height);
 						arr[3].position = sf::Vector2f(transformRect.left, transformRect.top + transformRect.height);
+						arr[4].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top);
+						arr[5].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top + transformRect.height);
 
 						arr[0].texCoords = sf::Vector2f(frameX, frameY);
 						arr[1].texCoords = sf::Vector2f(frameX + drawWidth, frameY);
-						arr[2].texCoords = sf::Vector2f(frameX + drawWidth, frameY + drawHeight);
+						arr[2].texCoords = sf::Vector2f(frameX, frameY + drawHeight);
 						arr[3].texCoords = sf::Vector2f(frameX, frameY + drawHeight);
+						arr[4].texCoords = sf::Vector2f(frameX + drawWidth, frameY);
+						arr[5].texCoords = sf::Vector2f(frameX + drawWidth, frameY + drawHeight);
 
 						arr[0].color = sf::Color::White;
 						arr[1].color = sf::Color::White;
 						arr[2].color = sf::Color::White;
 						arr[3].color = sf::Color::White;
+						arr[4].color = sf::Color::White;
+						arr[5].color = sf::Color::White;
 
 						BatchHandler::getInstance().DrawSpriteRect(this->sheetName + L"_" + std::to_wstring(colNum) + L"_" + std::to_wstring(rowNum), arr, target);
 					}
@@ -197,8 +204,8 @@ namespace SBURB
 			int drawWidth = this->colSize;
 			int drawHeight = this->rowSize;
 
-			sf::FloatRect transformRect(0, 0, drawWidth, drawHeight);
-			transformRect = states.transform.transformRect(transformRect);
+			sf::FloatRect transformRect(sf::Vector2f(0, 0), sf::Vector2f(drawWidth, drawHeight));
+			transformRect = localStates.transform.transformRect(transformRect);
 
 			if (this->flipX) {
 				transformRect.left += -this->x;
@@ -207,7 +214,7 @@ namespace SBURB
 			}
 
 			// Cull
-			sf::IntRect cam = sf::IntRect(Sburb::GetInstance()->GetViewPos().x, Sburb::GetInstance()->GetViewPos().y, Sburb::GetInstance()->GetViewSize().x, Sburb::GetInstance()->GetViewSize().y);
+			sf::IntRect cam = sf::IntRect(sf::Vector2(Sburb::GetInstance()->GetViewPos().x, Sburb::GetInstance()->GetViewPos().y), sf::Vector2(Sburb::GetInstance()->GetViewSize().x, Sburb::GetInstance()->GetViewSize().y));
 
 			if (
 				(transformRect.left + transformRect.width < cam.left || transformRect.left > cam.left + cam.width) ||
@@ -217,22 +224,28 @@ namespace SBURB
 			}
 
 			// Render
-			sf::VertexArray arr(sf::Quads, 4);
+			sf::VertexArray arr(sf::PrimitiveType::Triangles, 6);
 			
 			arr[0].position = sf::Vector2f(transformRect.left, transformRect.top);
 			arr[1].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top);
-			arr[2].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top + transformRect.height);
+			arr[2].position = sf::Vector2f(transformRect.left, transformRect.top + transformRect.height);
 			arr[3].position = sf::Vector2f(transformRect.left, transformRect.top + transformRect.height);
+			arr[4].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top);
+			arr[5].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top + transformRect.height);
 
 			arr[0].texCoords = sf::Vector2f(this->flipX ? (frameX + drawWidth) : frameX, this->flipY ? (frameY + drawHeight) : frameY);
 			arr[1].texCoords = sf::Vector2f(this->flipX ? (frameX) : (frameX + drawWidth), this->flipY ? (frameY + drawHeight) : frameY);
-			arr[2].texCoords = sf::Vector2f(this->flipX ? (frameX) : (frameX + drawWidth), this->flipY ? frameY : (frameY + drawHeight));
+			arr[2].texCoords = sf::Vector2f(this->flipX ? (frameX + drawWidth) : frameX, this->flipY ? frameY : (frameY + drawHeight));
 			arr[3].texCoords = sf::Vector2f(this->flipX ? (frameX + drawWidth) : frameX, this->flipY ? frameY : (frameY + drawHeight));
+			arr[4].texCoords = sf::Vector2f(this->flipX ? (frameX) : (frameX + drawWidth), this->flipY ? (frameY + drawHeight) : (frameY));
+			arr[5].texCoords = sf::Vector2f(this->flipX ? (frameX) : (frameX + drawWidth), this->flipY ? frameY : (frameY + drawHeight));
 
 			arr[0].color = sf::Color::White;
 			arr[1].color = sf::Color::White;
 			arr[2].color = sf::Color::White;
 			arr[3].color = sf::Color::White;
+			arr[4].color = sf::Color::White;
+			arr[5].color = sf::Color::White;
 
 			BatchHandler::getInstance().DrawSpriteRect(this->sheetName, arr, target);
 		}
@@ -280,13 +293,13 @@ namespace SBURB
 	void Animation::SetX(int newX)
 	{
 		this->x = newX;
-		this->setPosition(this->x, this->y);
+		this->setPosition(sf::Vector2f(this->x, this->y));
 	};
 
 	void Animation::SetY(int newY)
 	{
 		this->y = newY;
-		this->setPosition(this->x, this->y);
+		this->setPosition(sf::Vector2f(this->x, this->y));
 	};
 
 	void Animation::SetFlipX(bool newFlipX)
