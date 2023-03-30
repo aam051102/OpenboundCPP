@@ -169,12 +169,19 @@ namespace SBURB
 
 						// Render
 						sf::VertexArray arr(sf::PrimitiveType::Triangles, 6);
-						arr[0].position = sf::Vector2f(transformRect.left, transformRect.top);
-						arr[1].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top);
-						arr[2].position = sf::Vector2f(transformRect.left, transformRect.top + transformRect.height);
-						arr[3].position = sf::Vector2f(transformRect.left, transformRect.top + transformRect.height);
-						arr[4].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top);
-						arr[5].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top + transformRect.height);
+
+						const float leftPos = this->flipX ? (transformRect.left + transformRect.width) : transformRect.left;
+						const float rightPos = this->flipX ? transformRect.left : (transformRect.left + transformRect.width);
+
+						const float topPos = this->flipY ? (transformRect.top + transformRect.height) : transformRect.top;
+						const float bottomPos = this->flipY ? transformRect.top : (transformRect.top + transformRect.height);
+
+						arr[0].position = sf::Vector2f(leftPos, topPos);
+						arr[1].position = sf::Vector2f(rightPos, topPos);
+						arr[2].position = sf::Vector2f(leftPos, bottomPos);
+						arr[3].position = sf::Vector2f(leftPos, bottomPos);
+						arr[4].position = sf::Vector2f(rightPos, topPos);
+						arr[5].position = sf::Vector2f(rightPos, bottomPos);
 
 						arr[0].texCoords = sf::Vector2f(frameX, frameY);
 						arr[1].texCoords = sf::Vector2f(frameX + drawWidth, frameY);
@@ -226,19 +233,25 @@ namespace SBURB
 			// Render
 			sf::VertexArray arr(sf::PrimitiveType::Triangles, 6);
 			
-			arr[0].position = sf::Vector2f(transformRect.left, transformRect.top);
-			arr[1].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top);
-			arr[2].position = sf::Vector2f(transformRect.left, transformRect.top + transformRect.height);
-			arr[3].position = sf::Vector2f(transformRect.left, transformRect.top + transformRect.height);
-			arr[4].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top);
-			arr[5].position = sf::Vector2f(transformRect.left + transformRect.width, transformRect.top + transformRect.height);
+			const float leftPos = this->flipX ? (transformRect.left + transformRect.width) : transformRect.left;
+			const float rightPos = this->flipX ? transformRect.left : (transformRect.left + transformRect.width);
 
-			arr[0].texCoords = sf::Vector2f(this->flipX ? (frameX + drawWidth) : frameX, this->flipY ? (frameY + drawHeight) : frameY);
-			arr[1].texCoords = sf::Vector2f(this->flipX ? (frameX) : (frameX + drawWidth), this->flipY ? (frameY + drawHeight) : frameY);
-			arr[2].texCoords = sf::Vector2f(this->flipX ? (frameX + drawWidth) : frameX, this->flipY ? frameY : (frameY + drawHeight));
-			arr[3].texCoords = sf::Vector2f(this->flipX ? (frameX + drawWidth) : frameX, this->flipY ? frameY : (frameY + drawHeight));
-			arr[4].texCoords = sf::Vector2f(this->flipX ? (frameX) : (frameX + drawWidth), this->flipY ? (frameY + drawHeight) : (frameY));
-			arr[5].texCoords = sf::Vector2f(this->flipX ? (frameX) : (frameX + drawWidth), this->flipY ? frameY : (frameY + drawHeight));
+			const float topPos = this->flipY ? (transformRect.top + transformRect.height) : transformRect.top;
+			const float bottomPos = this->flipY ? transformRect.top: (transformRect.top + transformRect.height);
+
+			arr[0].position = sf::Vector2f(leftPos, topPos);
+			arr[1].position = sf::Vector2f(rightPos, topPos);
+			arr[2].position = sf::Vector2f(leftPos, bottomPos);
+			arr[3].position = sf::Vector2f(leftPos, bottomPos);
+			arr[4].position = sf::Vector2f(rightPos, topPos);
+			arr[5].position = sf::Vector2f(rightPos, bottomPos);
+
+			arr[0].texCoords = sf::Vector2f(frameX, frameY);
+			arr[1].texCoords = sf::Vector2f(frameX + drawWidth,  frameY);
+			arr[2].texCoords = sf::Vector2f(frameX, frameY + drawHeight);
+			arr[3].texCoords = sf::Vector2f(frameX, frameY + drawHeight);
+			arr[4].texCoords = sf::Vector2f(frameX + drawWidth, frameY);
+			arr[5].texCoords = sf::Vector2f(frameX + drawWidth, frameY + drawHeight);
 
 			arr[0].color = sf::Color::White;
 			arr[1].color = sf::Color::White;

@@ -2,6 +2,9 @@
 zlib/1.2.13@
 pugixml/1.13@
 openal/1.22.2@
+libpng/1.6.39@
+bzip2/1.0.8@
+brotli/1.0.9@
 
 [generators]
 cmake
