@@ -33,17 +33,24 @@ namespace SBURB {
     {
 		int width = MIN_WIDTH;
 		int height = 0;
+
 		FontEngine basis = FontEngine();
 
+		sf::Text textMeasurer;
+		auto font = AssetManager::GetFontByName(basis.GetFontName());
+		textMeasurer.setFont(*font->GetAsset());
+		textMeasurer.setCharacterSize(basis.GetFontSize());
+		textMeasurer.setStyle(font->GetStyle());
+
 		for (int i = 0; i < this->choices.size(); i++) {
-			width = std::max(width, (int)(this->choices[i]->GetName().size()  + 3) * basis.GetCharWidth()  + 10);
+			textMeasurer.setString(L" > " + this->choices[i]->GetName());
+			width = std::max(width, (int)ceil(textMeasurer.getGlobalBounds().width) + 10);
 		}
 
 		height = basis.GetLineHeight() * this->choices.size()  + 10;
 
 		Vector2 stageSize = Sburb::GetInstance()->GetViewSize();
 		Vector2 stagePos = Sburb::GetInstance()->GetViewPos();
-
 
 		if (x < stagePos.x + 10) {
 			x = stagePos.x + 10;
