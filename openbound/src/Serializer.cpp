@@ -333,8 +333,15 @@ namespace SBURB
             Sburb::GetInstance()->PurgeState();
 
             // Load default fonts, if they exist
-            auto fontVerdana = std::make_shared<AssetFont>(L"Verdana", std::vector({ std::wstring(L"local:Verdana") }));
+            auto fontVerdana = std::make_shared<AssetFont>(L"Verdana", std::vector({std::wstring(L"local:Verdana")}));
             AssetManager::LoadAsset(fontVerdana);
+
+
+            // TODO: Load fallback fonts
+            auto _A = std::make_shared<AssetFont>(L"Meiryo", std::vector({std::wstring(L"local:Meiryo")}));
+            AssetManager::LoadAsset(_A);
+
+
         }
 
         std::wstring levelPath = rootNode.attribute(L"levelPath").as_string();

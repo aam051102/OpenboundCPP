@@ -237,7 +237,6 @@ namespace SBURB
 
         bool isFullscreen;
         std::int32_t FPS;
-        sf::Clock FPStimeObj;
 
         int destX;
         int destY;

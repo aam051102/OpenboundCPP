@@ -40,7 +40,6 @@ namespace SBURB
 
         this->isFullscreen = false;
         this->FPS = 30;
-        this->FPStimeObj = sf::Clock();
 
         this->curRoom = nullptr;
         this->globalVolume = 100;
@@ -182,8 +181,6 @@ namespace SBURB
 
     void Sburb::Update()
     {
-        std::int32_t FPStime = FPStimeObj.getElapsedTime().asMilliseconds();
-
         // Event polling
         sf::Event event;
         while (window->pollEvent(event))
@@ -219,59 +216,48 @@ namespace SBURB
             }
         }
 
-        // FPS check
-        if (FPStime >= FPS)
+        // Run main update method for all objects
+        if (this->shouldUpdate)
         {
-            double delta = FPStimeObj.restart().asSeconds();
-            const double deltaCalculations = 1.0 / ((double)FPS - 10);
-            if (delta > deltaCalculations)
+            auto oldMouseCursor = this->mouseCursor;
+            this->mouseCursor = sf::Cursor::Arrow;
+
+            this->HandleAudio();
+            this->HandleInputs();
+            this->HandleHud();
+
+            if (this->curRoom && !this->loadingRoom)
             {
-                delta = deltaCalculations;
+                curRoom->Update();
             }
 
-            // Run main update method for all objects
-            if (this->shouldUpdate)
-            {
-                auto oldMouseCursor = this->mouseCursor;
-                this->mouseCursor = sf::Cursor::Arrow;
+            this->FocusCamera();
+            this->HandleRoomChange();
 
-                this->HandleAudio();
-                this->HandleInputs();
-                this->HandleHud();
+            if (this->chooser)
+                this->chooser->Update();
+            if (this->dialoger)
+                this->dialoger->Update();
 
-                if (this->curRoom && !this->loadingRoom)
-                {
-                    curRoom->Update();
-                }
+            this->ChainAction();
+            this->UpdateWait();
 
-                this->FocusCamera();
-                this->HandleRoomChange();
-
-                if (this->chooser)
-                    this->chooser->Update();
-                if (this->dialoger)
-                    this->dialoger->Update();
-
-                this->ChainAction();
-                this->UpdateWait();
-
-                // Update mouse cursor - checks for changes to prevent messing up the cursor on resize and similar
-                if (this->mouseCursor != oldMouseCursor) {
-                    window.GetWin()->setMouseCursor(*cursors[this->mouseCursor]);    
-                }
+            // Update mouse cursor - checks for changes to prevent messing up the cursor on resize and similar
+            if (this->mouseCursor != oldMouseCursor) {
+                window.GetWin()->setMouseCursor(*cursors[this->mouseCursor]);    
             }
+        }
 
-            this->window->setView(this->view);
+        this->window->setView(this->view);
 
-            // Render
-            if (this->shouldDraw)
-            {
-                Render();
-            }
-            else
-            {
-                RenderPreloader();
-            }
+        // Render
+        if (this->shouldDraw)
+        {
+            Render();
+        }
+        else
+        {
+            RenderPreloader();
         }
     }
 
@@ -686,6 +672,7 @@ namespace SBURB
     {
         // Create & initialize main window
         window.Init(std::string(name.begin(), name.end()), {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar);
+        window->setFramerateLimit(this->FPS);
 
         if (!window.GetWin())
         {
