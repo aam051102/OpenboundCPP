@@ -186,7 +186,7 @@ namespace SBURB
         int randomNum = floor(((rand() % 100) / 100.0f) * (dialoger->GetQueue().size() + 1));
         if (randomNum)
         {
-            dialoger->SetQueue({dialoger->GetQueueItem(randomNum - 1)});
+            dialoger->SetQueue({ dialoger->GetQueueItem(randomNum - 1) });
             dialoger->NextDialog();
         }
         else
@@ -463,7 +463,7 @@ namespace SBURB
     {
         if (trim(info).size() > 0)
         {
-            Sburb::GetInstance()->SetInputDisabledTrigger(std::make_shared<Trigger>(std::vector({info})));
+            Sburb::GetInstance()->SetInputDisabledTrigger(std::make_shared<Trigger>(std::vector({ info })));
             Sburb::GetInstance()->SetInputDisabled(false);
         }
         else
@@ -503,7 +503,7 @@ namespace SBURB
 
     std::shared_ptr<Trigger> CommandHandler::Sleep(std::wstring info)
     {
-        return std::make_shared<Trigger>(std::vector({info}));
+        return std::make_shared<Trigger>(std::vector({ info }));
     }
 
     void CommandHandler::PauseActionQueue(std::wstring info)
@@ -653,9 +653,9 @@ namespace SBURB
         auto room = Sburb::GetInstance()->GetRoom(params[7]);
 
         room->AddMotionPath(path,
-                            stof(params[1]), stof(params[2]),
-                            stof(params[3]), stof(params[4]),
-                            stof(params[5]), stof(params[6]));
+            stof(params[1]), stof(params[2]),
+            stof(params[3]), stof(params[4]),
+            stof(params[5]), stof(params[6]));
     }
 
     void CommandHandler::RemoveWalkable(std::wstring info)
@@ -678,7 +678,7 @@ namespace SBURB
 
     void CommandHandler::ToggleVolume()
     {
-        Sburb *game = Sburb::GetInstance();
+        Sburb* game = Sburb::GetInstance();
 
         if (game->GetGlobalVolume() >= 100)
         {

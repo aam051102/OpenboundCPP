@@ -31,22 +31,22 @@ std::filesystem::path GetAppDataDirectory(std::string appendedPath) {
 
 std::string GetExecutableDirectory()
 {
-    #if defined(_WIN32) || defined(WIN32)
+#if defined(_WIN32) || defined(WIN32)
     HMODULE hModule = GetModuleHandle(NULL);
     WCHAR buff[MAX_PATH];
     GetModuleFileName(hModule, buff, MAX_PATH);
     std::wstring temp(buff);
     std::string path(temp.begin(), temp.end());
     return path.substr(0, path.find_last_of("/\\"));
-    #elif defined(__linux__)
+#elif defined(__linux__)
     wchar_t buff[PATH_MAX];
-    ssize_t len = readlink(L"/proc/self/exe", buff, sizeof(buff)-1);
+    ssize_t len = readlink(L"/proc/self/exe", buff, sizeof(buff) - 1);
     buff[len] = '\0';
     std::wstring path(buff);
     return path.substr(0, path.find_last_of(L"/\\"));
-    #else
+#else
     return "./";
-    #endif
+#endif
 }
 
 #if defined(_MSC_VER)
@@ -95,13 +95,13 @@ uint32_t swapbits(uint32_t src)
 
 uint64_t swapbits(uint64_t src)
 {
-    return ((((src) & 0xff00000000000000ull) >> 56)   
-      | (((src) & 0x00ff000000000000ull) >> 40)
-      | (((src) & 0x0000ff0000000000ull) >> 24)
-      | (((src) & 0x000000ff00000000ull) >> 8)
-      | (((src) & 0x00000000ff000000ull) << 8)
-      | (((src) & 0x0000000000ff0000ull) << 24)
-      | (((src) & 0x000000000000ff00ull) << 40)
-      | (((src) & 0x00000000000000ffull) << 56));
+    return ((((src) & 0xff00000000000000ull) >> 56)
+        | (((src) & 0x00ff000000000000ull) >> 40)
+        | (((src) & 0x0000ff0000000000ull) >> 24)
+        | (((src) & 0x000000ff00000000ull) >> 8)
+        | (((src) & 0x00000000ff000000ull) << 8)
+        | (((src) & 0x0000000000ff0000ull) << 24)
+        | (((src) & 0x000000000000ff00ull) << 40)
+        | (((src) & 0x00000000000000ffull) << 56));
 }
 #endif

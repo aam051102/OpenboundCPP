@@ -44,7 +44,7 @@ namespace SBURB
 
         void ChainActionInQueue(std::shared_ptr<ActionQueue> queue);
 
-        bool Start();
+        bool Start(std::string initFilePath);
 
         double GetFPS();
 
@@ -175,8 +175,9 @@ namespace SBURB
 
         Window window;
 
-        std::wstring levelPath;
         std::wstring version;
+        std::wstring basePath;
+        std::wstring levelPath;
         std::wstring resourcePath;
 
     private:

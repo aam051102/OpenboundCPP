@@ -9,7 +9,7 @@
 #include "AssetAudio.h"
 #include "AssetFont.h"
 #include "AssetText.h"
-
+#include <filesystem>
 #include <thread>
 
 namespace SBURB
@@ -21,7 +21,7 @@ namespace SBURB
 
     std::wstring Serializer::Serialize()
     {
-        Sburb *sburbInst = Sburb::GetInstance();
+        Sburb* sburbInst = Sburb::GetInstance();
 
         std::wstring loadedFiles = L"";
         bool loadedFilesExist = false;
@@ -36,14 +36,14 @@ namespace SBURB
         auto bgm = sburbInst->GetBGM();
 
         std::wstring output = L"<sburb" +
-                              std::wstring(L" char='") + character->GetName() +
-                              (bgm ? L"' bgm='" + bgm->GetName() + (bgm->GetStartLoop() ? L"," + std::to_wstring(bgm->GetStartLoop()) : L"") : L"") +
-                              (sburbInst->GetScale().x != 1 ? L"' scale='" + sburbInst->GetScale().x : L"") +
-                              (sburbInst->GetNextQueueId() > 0 ? L"' nextQueueId='" + sburbInst->GetNextQueueId() : L"") +
-                              (sburbInst->resourcePath != L"" ? (L"' resourcePath='" + sburbInst->resourcePath) : L"") +
-                              (sburbInst->levelPath != L"" ? (L"' levelPath='" + sburbInst->levelPath) : L"") +
-                              (loadedFilesExist ? (L"' loadedFiles='" + loadedFiles) : L"") +
-                              L"'>\n";
+            std::wstring(L" char='") + character->GetName() +
+            (bgm ? L"' bgm='" + bgm->GetName() + (bgm->GetStartLoop() ? L"," + std::to_wstring(bgm->GetStartLoop()) : L"") : L"") +
+            (sburbInst->GetScale().x != 1 ? L"' scale='" + sburbInst->GetScale().x : L"") +
+            (sburbInst->GetNextQueueId() > 0 ? L"' nextQueueId='" + sburbInst->GetNextQueueId() : L"") +
+            (sburbInst->resourcePath != L"" ? (L"' resourcePath='" + sburbInst->resourcePath) : L"") +
+            (sburbInst->levelPath != L"" ? (L"' levelPath='" + sburbInst->levelPath) : L"") +
+            (loadedFilesExist ? (L"' loadedFiles='" + loadedFiles) : L"") +
+            L"'>\n";
         output = Serializer::SerializeAssets(output);
         output = Serializer::SerializeTemplates(output);
         output = Serializer::SerializeHud(output);
@@ -261,7 +261,7 @@ namespace SBURB
     bool Serializer::LoadSerialFromXML(std::wstring path, bool keepOld)
     {
         Sburb::GetInstance()->HaltUpdateProcess();
-        path = Sburb::GetInstance()->levelPath + path;
+        path = Sburb::GetInstance()->basePath + Sburb::GetInstance()->levelPath + path;
 
         if (keepOld && Sburb::GetInstance()->CheckFileIsLoaded(path))
         {
@@ -282,7 +282,7 @@ namespace SBURB
             GlobalLogger->Log(Logger::Error, errMsg);
             return false;
         }
-        
+
         return Serializer::LoadSerial(&doc, keepOld);
     }
 
@@ -322,7 +322,7 @@ namespace SBURB
         AssetManager::ClearFilePaths();
     }
 
-    bool Serializer::LoadSerial(pugi::xml_document *doc, bool keepOld)
+    bool Serializer::LoadSerial(pugi::xml_document* doc, bool keepOld)
     {
         pugi::xml_node rootNode = doc->child(L"sburb");
 
@@ -333,12 +333,12 @@ namespace SBURB
             Sburb::GetInstance()->PurgeState();
 
             // Load default fonts, if they exist
-            auto fontVerdana = std::make_shared<AssetFont>(L"Verdana", std::vector({std::wstring(L"local:Verdana")}));
+            auto fontVerdana = std::make_shared<AssetFont>(L"Verdana", std::vector({ std::wstring(L"local:Verdana") }));
             AssetManager::LoadAsset(fontVerdana);
 
 
             // TODO: Load fallback fonts
-            auto _A = std::make_shared<AssetFont>(L"Meiryo", std::vector({std::wstring(L"local:Meiryo")}));
+            auto _A = std::make_shared<AssetFont>(L"Meiryo", std::vector({ std::wstring(L"local:Meiryo") }));
             AssetManager::LoadAsset(_A);
 
 

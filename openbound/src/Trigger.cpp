@@ -12,7 +12,7 @@ namespace SBURB {
 
         if (op == L"") op = L"AND";
         this->op = op;
-        
+
         this->waitFor = NULL;
 
         this->events = {};
@@ -38,11 +38,11 @@ namespace SBURB {
     bool Trigger::CheckCompletion() {
         if (this->op == L"AND") {
             bool result = true;
-            
+
             for (int i = 0; i < this->events.size(); i++) {
                 result = result && this->events[i]->CheckCompletion();
             }
-            
+
             return result;
         }
         else if (this->op == L"NAND") {
@@ -65,7 +65,7 @@ namespace SBURB {
         }
         else if (this->op == L"OR") {
             bool result = false;
-            
+
             for (int i = 0; i < this->events.size(); i++) {
                 result = result || this->events[i]->CheckCompletion();
             }
@@ -122,7 +122,7 @@ namespace SBURB {
                     this->waitFor = std::make_shared<Trigger>(std::vector<std::wstring>({ L"noActions" }));
                 }
             }
-            
+
             if (this->followUp) {
                 if (this->followUp->TryToTrigger()) {
                     this->followUp = nullptr;

@@ -6,14 +6,14 @@ namespace SBURB {
         this->info = info;
 
         this->silentCause = silent;
-        
+
         if (silent == L"" || silent == L"false") {
             this->silent = false;
         }
         else {
             this->silent = true;
         }
-        
+
         this->soft = soft;
         this->name = name;
         this->noWait = noWait;
@@ -24,7 +24,7 @@ namespace SBURB {
     }
 
     Action::~Action() {
-        
+
     }
 
     std::shared_ptr<Action> Action::Clone() {

@@ -46,7 +46,7 @@ namespace SBURB
         {
             paths.insert(std::pair(asset->GetName(), std::static_pointer_cast<AssetPath>(asset)));
         }
-        else if(asset->GetType() == L"font")
+        else if (asset->GetType() == L"font")
         {
             fontMutex.lock();
             fonts.insert(std::pair(asset->GetName(), std::static_pointer_cast<AssetFont>(asset)));
@@ -77,7 +77,7 @@ namespace SBURB
     }
 
     // Path
-    std::shared_ptr<AssetPath> AssetManager::GetPathByName(const std::wstring &name)
+    std::shared_ptr<AssetPath> AssetManager::GetPathByName(const std::wstring& name)
     {
         return paths[name];
     }
@@ -93,7 +93,7 @@ namespace SBURB
     }
 
     // Graphic
-    std::shared_ptr<AssetGraphic> AssetManager::GetGraphicByName(const std::wstring &name)
+    std::shared_ptr<AssetGraphic> AssetManager::GetGraphicByName(const std::wstring& name)
     {
         graphicsMutex.lock();
 
@@ -124,7 +124,7 @@ namespace SBURB
     }
 
     // Audio
-    std::shared_ptr<AssetAudio> AssetManager::GetAudioByName(const std::wstring &name)
+    std::shared_ptr<AssetAudio> AssetManager::GetAudioByName(const std::wstring& name)
     {
         return audio[name];
     }
@@ -140,7 +140,7 @@ namespace SBURB
     }
 
     // Font
-    std::shared_ptr<AssetFont> AssetManager::GetFontByName(const std::wstring &name)
+    std::shared_ptr<AssetFont> AssetManager::GetFontByName(const std::wstring& name)
     {
         fontMutex.lock();
 
@@ -169,7 +169,7 @@ namespace SBURB
     }
 
     // Movie
-    std::shared_ptr<AssetMovie> AssetManager::GetMovieByName(const std::wstring &name)
+    std::shared_ptr<AssetMovie> AssetManager::GetMovieByName(const std::wstring& name)
     {
         return movies[name];
     }
@@ -185,7 +185,7 @@ namespace SBURB
     }
 
     // Text
-    std::shared_ptr<AssetText> AssetManager::GetTextByName(const std::wstring &name)
+    std::shared_ptr<AssetText> AssetManager::GetTextByName(const std::wstring& name)
     {
         return text[name];
     }

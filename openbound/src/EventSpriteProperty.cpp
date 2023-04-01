@@ -19,7 +19,7 @@ namespace SBURB {
         this->prop = trim(queryParts[0]);
         this->target = trim(queryParts[1]);
     }
-    
+
     EventSpriteProperty::~EventSpriteProperty() {
 
     }

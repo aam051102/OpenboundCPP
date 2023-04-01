@@ -15,7 +15,7 @@ const char* LevelToString(SBURB::Logger::LogLevel level)
         return "ERROR";
     case SBURB::Logger::Warning:
         return "WARN";
-    // case SBURB::Logger::Debug:
+        // case SBURB::Logger::Debug:
     default:
         return "DEBUG";
     }
@@ -27,7 +27,7 @@ namespace SBURB
 
     Logger::Logger()
     {
-        
+
     }
 
     Logger::~Logger()
@@ -48,18 +48,18 @@ namespace SBURB
         }
     }
 
-    Logger *Logger::GetGlobalLogger()
+    Logger* Logger::GetGlobalLogger()
     {
         return &globalLogger;
     }
 
-    void Logger::_unique_Log(LogLevel level, std::string message, const char *calling, const char *file, int line)
+    void Logger::_unique_Log(LogLevel level, std::string message, const char* calling, const char* file, int line)
     {
         this->OpenLogFile();
 
         std::time_t t = std::time(0);
-        std::tm *now = std::localtime(&t);
-        
+        std::tm* now = std::localtime(&t);
+
         std::stringstream out;
         // "2019-7-7@15:55 [INFO | main] This is a test log"
         out << now->tm_year + 1900 << '-'

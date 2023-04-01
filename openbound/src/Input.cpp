@@ -55,18 +55,20 @@ namespace SBURB
         inputHandlerInst->realMousePosition = sf::Vector2i(
             (mousePos.x / (double)Sburb::GetInstance()->window->getSize().x - Sburb::GetInstance()->window->getView().getViewport().left) / Sburb::GetInstance()->window->getView().getViewport().width * (double)Sburb::GetInstance()->GetViewSize().x,
             (mousePos.y / (double)Sburb::GetInstance()->window->getSize().y - Sburb::GetInstance()->window->getView().getViewport().top) / Sburb::GetInstance()->window->getView().getViewport().height * (double)Sburb::GetInstance()->GetViewSize().y
-            );
+        );
 
         // Get mouse and key states
         if (e.type == sf::Event::MouseButtonPressed) {
             if (e.mouseButton.button == sf::Mouse::Left) {
                 inputHandlerInst->OnMouseDown();
             }
-        } else if (e.type == sf::Event::MouseButtonReleased) {
+        }
+        else if (e.type == sf::Event::MouseButtonReleased) {
             if (e.mouseButton.button == sf::Mouse::Left) {
                 inputHandlerInst->OnMouseUp();
             }
-        } else if (e.type == sf::Event::KeyPressed) {
+        }
+        else if (e.type == sf::Event::KeyPressed) {
             inputHandlerInst->OnKeyDown(e.key.code);
         }
         else if (e.type == sf::Event::KeyReleased) {
@@ -79,7 +81,7 @@ namespace SBURB
 
         if (sburbInst->GetShouldUpdate() && !sburbInst->GetInputDisabled()) { // Make sure we are loaded before trying to do things
             auto chooser = sburbInst->GetChooser();
-            
+
             if (chooser->GetChoosing()) {
                 if (key == sf::Keyboard::Down || key == sf::Keyboard::S) {
                     chooser->NextChoice();
@@ -103,10 +105,10 @@ namespace SBURB
                 if (key == sf::Keyboard::Space && !inputHandlerInst->pressed[sf::Keyboard::Space] && sburbInst->GetEngineMode() == L"wander") {
                     sburbInst->GetChooser()->SetChoices({});
                     auto queries = sburbInst->GetCharacter()->GetActionQueries();
-                  
+
                     for (auto query : queries) {
                         chooser->SetChoices(sburbInst->GetCurrentRoom()->QueryActions(sburbInst->GetCharacter(), query.x, query.y));
-                       
+
                         if (chooser->GetChoices().size() > 0) {
                             break;
                         }

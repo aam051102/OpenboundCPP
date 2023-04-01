@@ -8,11 +8,11 @@ namespace SBURB
 {
     BatchHandler::BatchHandler()
         : currentTexName(L""), verticesInitialized(false),
-          offset(0), verticesSize(0), target(nullptr)
+        offset(0), verticesSize(0), target(nullptr)
     {
     }
 
-    void BatchHandler::DrawPrimitive(const sf::VertexArray &coords, sf::RenderTarget &target)
+    void BatchHandler::DrawPrimitive(const sf::VertexArray& coords, sf::RenderTarget& target)
     {
         if (currentTexName != L"")
             DrawBatch();
@@ -27,7 +27,7 @@ namespace SBURB
         if (offset >= verticesSize)
             GrowVertices();
 
-        sf::Vertex *quad = &vertices[offset];
+        sf::Vertex* quad = &vertices[offset];
 
         quad[0].position = coords[0].position;
         quad[1].position = coords[1].position;
@@ -46,7 +46,7 @@ namespace SBURB
         offset += 6;
     }
 
-    void BatchHandler::DrawSpriteRect(std::wstring textureName, const sf::VertexArray &coords, sf::RenderTarget &target)
+    void BatchHandler::DrawSpriteRect(std::wstring textureName, const sf::VertexArray& coords, sf::RenderTarget& target)
     {
         if (textureName != currentTexName)
         {
@@ -64,7 +64,7 @@ namespace SBURB
         if (offset >= verticesSize)
             GrowVertices();
 
-        sf::Vertex *quad = &vertices[offset];
+        sf::Vertex* quad = &vertices[offset];
 
         quad[0].position = coords[0].position;
         quad[1].position = coords[1].position;

@@ -169,15 +169,15 @@ namespace SBURB
         for (auto anim : this->animations) {
             newSprite->AddAnimation(anim.second->Clone());
         }
-        
+
         for (auto action : this->actions) {
             newSprite->AddAction(action->Clone());
         }
-        
+
         if (this->animation) {
             newSprite->StartAnimation(this->animation->GetName());
         }
-        
+
         Sburb::GetInstance()->SetSprite(newName, newSprite);
 
         return newSprite;

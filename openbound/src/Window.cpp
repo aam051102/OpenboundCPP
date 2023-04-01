@@ -6,22 +6,22 @@ namespace SBURB
     Window::Window()
     {
         this->title = "";
-        this->size = {0, 0};
+        this->size = { 0, 0 };
     }
 
     void Window::Init(std::string title, sf::Vector2i size, int flags, sf::Image icon)
     {
         this->title = title;
         this->size = size;
-        
+
         this->win = new sf::RenderWindow(sf::VideoMode(sf::Vector2u(size.x, size.y)), title, flags);
-        
+
         if (flags == sf::Style::Fullscreen)
         {
-            win->setSize({sf::VideoMode::getFullscreenModes()[0].size.x, sf::VideoMode::getFullscreenModes()[0].size.y});
+            win->setSize({ sf::VideoMode::getFullscreenModes()[0].size.x, sf::VideoMode::getFullscreenModes()[0].size.y });
         }
 
-        if (const auto &size = icon.getSize(); size.x != 0)
+        if (const auto& size = icon.getSize(); size.x != 0)
         {
             this->win->setIcon(sf::Vector2u(size.x, size.y), icon.getPixelsPtr());
         }
@@ -37,14 +37,14 @@ namespace SBURB
     {
         if (this->win == NULL)
             return;
-        const auto &desktopMode = sf::VideoMode::getDesktopMode();
-        const auto &size = this->win->getSize();
-        sf::Vector2u center{desktopMode.size.x / 2 - (size.x / 2), desktopMode.size.y / 2 - (size.y / 2)};
+        const auto& desktopMode = sf::VideoMode::getDesktopMode();
+        const auto& size = this->win->getSize();
+        sf::Vector2u center{ desktopMode.size.x / 2 - (size.x / 2), desktopMode.size.y / 2 - (size.y / 2) };
         this->win->setPosition((sf::Vector2i)center);
     }
 
     // Getters
-    sf::RenderWindow *Window::GetWin()
+    sf::RenderWindow* Window::GetWin()
     {
         return this->win;
     }
@@ -71,6 +71,6 @@ namespace SBURB
     {
         this->size = size;
         if (this->win != NULL)
-            this->win->setSize({(unsigned int)size.x, (unsigned int)size.y});
+            this->win->setSize({ (unsigned int)size.x, (unsigned int)size.y });
     }
 }

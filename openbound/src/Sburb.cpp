@@ -29,7 +29,7 @@ constexpr float FADE_RATE = 0.1;
 
 namespace SBURB
 {
-    static Sburb *gameInstance = nullptr;
+    static Sburb* gameInstance = nullptr;
 
     Sburb::Sburb()
     {
@@ -43,6 +43,7 @@ namespace SBURB
 
         this->curRoom = nullptr;
         this->globalVolume = 100;
+        this->basePath = L"";
         this->levelPath = L"";
         this->resourcePath = L"";
         this->queue = std::make_shared<ActionQueue>(nullptr, L"__SBURB__");
@@ -196,11 +197,12 @@ namespace SBURB
                     if (this->isFullscreen) {
                         window->create(sf::VideoMode(sf::Vector2u(this->viewSize.x, this->viewSize.y)), this->name, sf::Style::Close | sf::Style::Titlebar);
                         this->view = GetLetterboxView(view, this->viewSize.x, this->viewSize.y);
-                    } else {
+                    }
+                    else {
                         window->create(sf::VideoMode(sf::Vector2u(this->viewSize.x, this->viewSize.y)), this->name, sf::Style::Fullscreen);
                         this->view = GetLetterboxView(view, sf::VideoMode::getFullscreenModes()[0].size.x, sf::VideoMode::getFullscreenModes()[0].size.y);
                     }
-                    
+
                     window->setFramerateLimit(this->FPS);
 
                     this->isFullscreen = !this->isFullscreen;
@@ -244,7 +246,7 @@ namespace SBURB
 
             // Update mouse cursor - checks for changes to prevent messing up the cursor on resize and similar
             if (this->mouseCursor != oldMouseCursor) {
-                window.GetWin()->setMouseCursor(*cursors[this->mouseCursor]);    
+                window.GetWin()->setMouseCursor(*cursors[this->mouseCursor]);
             }
         }
 
@@ -602,7 +604,7 @@ namespace SBURB
             {L"All Documents (*.*)",         L"*.*"}
         };
 
-        #define INDEX_SBURBML 1
+#define INDEX_SBURBML 1
 
         std::string filePath = "";
 
@@ -668,10 +670,21 @@ namespace SBURB
     }
 #endif
 
-    bool Sburb::Start()
+    bool Sburb::Start(std::string initFilePath)
     {
+        if (initFilePath == "") {
+#if defined(_WIN32) || defined(WIN32)
+            initFilePath = OpenDialog(nullptr/*window->getSystemHandle()*/);
+#endif
+        }
+        
+        // Fallback path
+        if (initFilePath == "") {
+            initFilePath = "levels/init.xml";
+        }
+
         // Create & initialize main window
-        window.Init(std::string(name.begin(), name.end()), {this->viewSize.x, this->viewSize.y}, sf::Style::Close | sf::Style::Titlebar);
+        window.Init(std::string(name.begin(), name.end()), { this->viewSize.x, this->viewSize.y }, sf::Style::Close | sf::Style::Titlebar);
         window->setFramerateLimit(this->FPS);
 
         if (!window.GetWin())
@@ -712,15 +725,6 @@ namespace SBURB
         // Center window
         window.CenterWindow();
 
-        std::string initFilePath = "";
-
-#if defined(_WIN32) || defined(WIN32)
-        initFilePath = OpenDialog(window->getSystemHandle());
-#endif
-
-        // Fallback path
-        if (initFilePath == "") initFilePath = "levels/init.xml";
-
         // Initialize room
         std::thread t1(Serializer::LoadSerialFromXML, std::wstring(initFilePath.begin(), initFilePath.end()), false);
 
@@ -747,7 +751,7 @@ namespace SBURB
         return this->curRoom;
     }
 
-    Sburb *Sburb::GetInstance()
+    Sburb* Sburb::GetInstance()
     {
         return gameInstance;
     }
@@ -803,9 +807,9 @@ namespace SBURB
         fs.close();
 
         if (compressed == L"") return;
-        
+
         auto decompressed = replace(Iuppiter::ByteArrayToString(Iuppiter::Decompress(Iuppiter::Base64::Decode(Iuppiter::StringToByteArray(compressed), true))), L"\0", L"");
-        
+
         if (!Serializer::LoadSerialFromXMLMemory(decompressed)) {
             GlobalLogger->Log(Logger::Error, "Failed to load serialized XML " + saveStateName);
         }
@@ -820,7 +824,7 @@ namespace SBURB
         for (auto file : files)
         {
             auto key = file.path().filename().string();
-           
+
             auto savedIndex = key.find("_savedState_");
             if (savedIndex >= 0) // this key is a saved state
             {
@@ -851,7 +855,7 @@ namespace SBURB
                 if (automatic && key.find("(auto)") != std::string::npos && key.find(std::string(this->name.begin(), this->name.end()) + "_" + std::string(this->version.begin(), this->version.end())) >= savedIndex) {
                     auto loc = key.substr(0, savedIndex);
                     return std::wstring(loc.begin(), loc.end());
-                } 
+                }
                 else if (!automatic && key.find("(auto)") == std::string::npos && key.find(std::string(this->name.begin(), this->name.end()) + "_" + std::string(this->version.begin(), this->version.end())) >= savedIndex) {
                     auto loc = key.substr(0, savedIndex);
                     return std::wstring(loc.begin(), loc.end());
@@ -894,7 +898,7 @@ namespace SBURB
         for (auto file : files)
         {
             auto key = file.path().filename().string();
-           
+
             auto savedIndex = key.find("_savedState_");
             if (savedIndex != std::string::npos) // this key is a saved state
             {
@@ -948,7 +952,7 @@ namespace SBURB
         this->name = name;
         this->window->setTitle(name);
     };
-    
+
     std::shared_ptr<ActionQueue> Sburb::GetActionQueueById(std::wstring id)
     {
         for (int i = 0; i < this->actionQueues.size(); i++)
@@ -1048,9 +1052,9 @@ namespace SBURB
         }
 
         if (((this->queue->GetCurrentAction() &&
-              this->queue->GetCurrentAction()->GetFollowUp() != action &&
-              this->queue->GetCurrentAction() != action) ||
-             !this->HasControl()) &&
+            this->queue->GetCurrentAction()->GetFollowUp() != action &&
+            this->queue->GetCurrentAction() != action) ||
+            !this->HasControl()) &&
             action->GetSoft())
         {
             return nullptr;
@@ -1076,9 +1080,9 @@ namespace SBURB
             HandleCommandResult(queue, result);
             looped = true;
         } while (queue->GetCurrentAction() &&
-                 queue->GetCurrentAction()->GetTimes() <= 0 &&
-                 queue->GetCurrentAction()->GetFollowUp() &&
-                 queue->GetCurrentAction()->GetFollowUp()->GetNoDelay());
+            queue->GetCurrentAction()->GetTimes() <= 0 &&
+            queue->GetCurrentAction()->GetFollowUp() &&
+            queue->GetCurrentAction()->GetFollowUp()->GetNoDelay());
     }
 
     void Sburb::HandleCommandResult(std::shared_ptr<ActionQueue> queue, std::shared_ptr<Trigger> result)
