@@ -15,7 +15,6 @@ namespace SBURB
         this->size = size;
         
         this->win = new sf::RenderWindow(sf::VideoMode(sf::Vector2u(size.x, size.y)), title, flags);
-        this->win->setVerticalSyncEnabled(true);
         
         if (flags == sf::Style::Fullscreen)
         {

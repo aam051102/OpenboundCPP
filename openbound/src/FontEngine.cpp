@@ -3,6 +3,9 @@
 #include "AssetManager.h"
 
 // Refer to https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/fonts/win/font_fallback_win.cc for font fallback implementation.
+// https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/fonts/win/font_fallback_win.cc#L480
+// https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/fonts/win/font_fallback_win.cc#L365
+// https://github.com/unicode-org/icu/blob/95d905a9e9236dc5b9f44b2e1ba30aafa7c0db62/icu4c/source/common/uchar.cpp#L534
 // Refer to https://icu.unicode.org/ for ICU4C, a dedicated Unicode C++ implementation. Read up on details. Used in Chronium implementation.
 // Refer to https://unicode-org.github.io/icu/userguide/icu/i18n.html for useful reading. Read first
 

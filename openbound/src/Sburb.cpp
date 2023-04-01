@@ -201,7 +201,7 @@ namespace SBURB
                         this->view = GetLetterboxView(view, sf::VideoMode::getFullscreenModes()[0].size.x, sf::VideoMode::getFullscreenModes()[0].size.y);
                     }
                     
-                    window->setVerticalSyncEnabled(true);
+                    window->setFramerateLimit(this->FPS);
 
                     this->isFullscreen = !this->isFullscreen;
                 }
